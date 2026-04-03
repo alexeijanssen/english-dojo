@@ -605,7 +605,8 @@
                 <div class="timer" id="timer">15:00</div>
                 <div class="progress-indicator" id="progressIndicator">0/0</div>
                 <div class="streak-indicator" id="streakIndicator">
-                    <span id="currentStreakNumber">0</span> <span id="streakIcon"></span>
+                    <span id="sessionPoints">0</span> <span style="font-size:0.7em;opacity:0.6;">pts</span>
+                    <span id="streakIcon" style="margin-left:8px;"></span><span id="currentStreakNumber"></span>
                 </div>
             </div>
 
@@ -796,6 +797,16 @@
 
                 due.sort((a, b) => a[2] - b[2]);
 
+                // Shuffle new items so we get variety across types
+                for (let i = newItems.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [newItems[i], newItems[j]] = [newItems[j], newItems[i]];
+                }
+
+                // If no items have been reviewed yet, allow more new items
+                const totalEncountered = Object.values(this.items).filter(it => it.encounters > 0).length;
+                const effectiveMaxNew = totalEncountered === 0 ? targetQuestions : maxNewItems;
+
                 const queue = [];
 
                 lapsed.forEach(([id, item]) => {
@@ -812,36 +823,39 @@
 
                 let usedNewItems = 0;
                 newItems.forEach(([id, item]) => {
-                    if (queue.length < targetQuestions && usedNewItems < maxNewItems) {
+                    if (queue.length < targetQuestions && usedNewItems < effectiveMaxNew) {
                         queue.push(id);
                         usedNewItems++;
                     }
                 });
 
-                return this.deduplicateTypes(queue);
+                return this.interleaveTypes(queue);
             }
 
-            deduplicateTypes(queue) {
-                const result = [];
-                const lastThree = [];
-
+            interleaveTypes(queue) {
+                // Group items by type
+                const byType = {};
                 queue.forEach(id => {
-                    const itemType = this.items[id].type;
-                    let sameTypeCount = 0;
-
-                    lastThree.forEach(lastId => {
-                        if (this.items[lastId].type === itemType) {
-                            sameTypeCount++;
-                        }
-                    });
-
-                    if (sameTypeCount < 2) {
-                        result.push(id);
-                        lastThree.push(id);
-                        if (lastThree.length > 3) lastThree.shift();
-                    }
+                    const t = this.items[id].type;
+                    if (!byType[t]) byType[t] = [];
+                    byType[t].push(id);
                 });
 
+                // Round-robin interleave across types
+                const types = Object.keys(byType);
+                const result = [];
+                let round = 0;
+                let added = true;
+                while (added && result.length < queue.length) {
+                    added = false;
+                    for (const t of types) {
+                        if (round < byType[t].length) {
+                            result.push(byType[t][round]);
+                            added = true;
+                        }
+                    }
+                    round++;
+                }
                 return result;
             }
 
@@ -1072,6 +1086,7 @@
             }
 
             displayNextQuestion() {
+                this.answered = false;
                 if (this.sessionCurrentIndex >= this.sessionQueue.length) {
                     this.finishSession();
                     return;
@@ -1280,8 +1295,22 @@
             }
 
             handleAnswer(selectedIdx, correctIdx, explanation) {
+                if (this.answered) return;
+                this.answered = true;
                 const latency = Date.now() - this.questionStartTime;
                 const isCorrect = selectedIdx === correctIdx;
+
+                // Highlight correct and wrong options
+                const allOptions = document.querySelectorAll('.option');
+                allOptions.forEach((opt, idx) => {
+                    if (idx === correctIdx) {
+                        opt.style.borderColor = '#00b894';
+                        opt.style.background = 'rgba(0,184,148,0.15)';
+                    } else if (idx === selectedIdx && !isCorrect) {
+                        opt.style.borderColor = '#e17055';
+                        opt.style.background = 'rgba(225,112,85,0.15)';
+                    }
+                });
 
                 const itemId = this.sessionQueue[this.sessionCurrentIndex];
                 const item = this.engine.items[itemId];
@@ -1303,11 +1332,24 @@
                 this.sessionStats.pointsEarned += points;
 
                 this.showFeedback(isCorrect, explanation);
-                this.showPointsPopup(points, isCorrect && this.sessionStats.currentStreak % 5 === 0);
+                this.showPointsPopup(points, isCorrect && this.sessionStats.currentStreak > 0 && this.sessionStats.currentStreak % 5 === 0);
 
                 if (isCorrect && this.sessionStats.currentStreak > 0 && this.sessionStats.currentStreak % 5 === 0) {
                     this.triggerConfetti();
                 }
+
+                // Update session header live
+                document.getElementById('sessionPoints').textContent = this.sessionStats.pointsEarned;
+                const streak = this.sessionStats.currentStreak;
+                document.getElementById('currentStreakNumber').textContent = streak > 0 ? streak : '';
+                document.getElementById('streakIcon').textContent = streak >= 2 ? '🔥' : '';
+                document.getElementById('progressIndicator').textContent =
+                    (this.sessionCurrentIndex + 1) + '/' + Math.min(this.sessionQueue.length, 50);
+
+                // Disable option buttons after answering
+                document.querySelectorAll('.option').forEach(opt => {
+                    opt.style.pointerEvents = 'none';
+                });
 
                 document.getElementById('nextBtn').classList.add('show');
 
