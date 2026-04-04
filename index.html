@@ -145,6 +145,18 @@
             transform: scale(0.98);
         }
 
+        .btn-mock {
+            background: rgba(230, 126, 34, 0.15);
+            border-color: rgba(230, 126, 34, 0.5);
+            color: #ffa500;
+        }
+
+        .btn-mock:hover {
+            background: rgba(230, 126, 34, 0.25);
+            border-color: #e67e22;
+            color: #ffb347;
+        }
+
         .readiness-meter {
             margin-bottom: 30px;
         }
@@ -176,6 +188,33 @@
             text-align: center;
             font-size: 0.95em;
             color: #b0b0c0;
+        }
+
+        .topic-breakdown {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(108, 92, 231, 0.08);
+            border-radius: 8px;
+        }
+
+        .breakdown-title {
+            font-size: 0.85em;
+            color: #9090a0;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .breakdown-content {
+            font-size: 0.8em;
+            color: #b0b0c0;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .breakdown-item {
+            display: inline-block;
+            margin-right: 12px;
+            margin-bottom: 5px;
         }
 
         /* Session Screen */
@@ -593,9 +632,17 @@
                 <div class="mastered-counter" id="masteredCounter">0 items mastered</div>
             </div>
 
+            <div class="topic-breakdown" id="topicBreakdown">
+                <div class="breakdown-title">Accuracy by Type:</div>
+                <div class="breakdown-content" id="breakdownContent">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
             <div class="mode-buttons">
                 <button class="btn-mode" data-duration="900">15 min</button>
                 <button class="btn-mode" data-duration="1800">30 min</button>
+                <button class="btn-mode btn-mock" data-duration="1500" data-questions="25">Mock Exam</button>
             </div>
         </div>
 
@@ -680,7 +727,10 @@
                     ...VOCAB_QUESTIONS,
                     ...SPELLING_QUESTIONS,
                     ...PUNCTUATION_QUESTIONS,
-                    ...COMPREHENSION_QUESTIONS
+                    ...COMPREHENSION_QUESTIONS,
+                    ...CLOZE_QUESTIONS,
+                    ...SYNONYM_QUESTIONS,
+                    ...ANTONYM_QUESTIONS
                 ];
 
                 allQuestions.forEach((q, idx) => {
@@ -776,6 +826,24 @@
                 const totalCorrect = reviewedItems.reduce((sum, item) => sum + item.correctCount, 0);
                 if (totalEncounters === 0) return null;
                 return Math.round((totalCorrect / totalEncounters) * 100);
+            }
+
+            getAccuracyByType() {
+                const typeAccuracy = {};
+                const types = ['vocab', 'spelling', 'punctuation', 'comprehension', 'cloze', 'synonym', 'antonym'];
+
+                types.forEach(type => {
+                    const typeItems = Object.values(this.items).filter(item => item.type === type && item.encounters > 0);
+                    if (typeItems.length === 0) {
+                        typeAccuracy[type] = null;
+                    } else {
+                        const totalEncounters = typeItems.reduce((sum, item) => sum + item.encounters, 0);
+                        const totalCorrect = typeItems.reduce((sum, item) => sum + item.correctCount, 0);
+                        typeAccuracy[type] = Math.round((totalCorrect / totalEncounters) * 100);
+                    }
+                });
+
+                return typeAccuracy;
             }
 
             buildSessionQueue(targetQuestions, maxNewItems = 4) {
@@ -878,7 +946,10 @@
                     vocab: { fluent: 8000, slow: 15000 },
                     spelling: { fluent: 10000, slow: 20000 },
                     punctuation: { fluent: 12000, slow: 25000 },
-                    comprehension: { fluent: 20000, slow: 40000 }
+                    comprehension: { fluent: 20000, slow: 40000 },
+                    cloze: { fluent: 8000, slow: 15000 },
+                    synonym: { fluent: 6000, slow: 12000 },
+                    antonym: { fluent: 6000, slow: 12000 }
                 };
 
                 const threshold = thresholds[item.type] || { fluent: 10000, slow: 20000 };
@@ -1153,6 +1224,115 @@
 
         ];
 
+        const CLOZE_QUESTIONS = [
+            { type: 'cloze', sentence: 'The _____ dog barked loudly at the postman every morning.', options: ['ferocious', 'delicious', 'precious', 'spacious'], correct: 0, explanation: '\'Ferocious\' means fierce — it describes a dog that barks aggressively.' },
+            { type: 'cloze', sentence: 'She _____ to the shop yesterday to buy some milk.', options: ['go', 'goes', 'went', 'going'], correct: 2, explanation: '\'Went\' is the past tense. Yesterday tells us the action already happened.' },
+            { type: 'cloze', sentence: 'The children _____ playing in the park when it started to rain.', options: ['was', 'were', 'is', 'are'], correct: 1, explanation: '\'Were\' is correct because \'children\' is plural, and the action was ongoing.' },
+            { type: 'cloze', sentence: 'I _____ my homework before dinner every day.', options: ['do', 'did', 'does', 'done'], correct: 0, explanation: '\'Do\' is the present tense for \'I\'. It shows a regular habit.' },
+            { type: 'cloze', sentence: 'The cat _____ on the mat for three hours this afternoon.', options: ['lay', 'laid', 'lain', 'lies'], correct: 0, explanation: '\'Lay\' is the past tense of \'lie\'. The cat was resting on the mat.' },
+            { type: 'cloze', sentence: 'By next month, we _____ lived in this house for five years.', options: ['will', 'have', 'will have', 'are'], correct: 2, explanation: '\'Will have\' shows a future action that will be completed by a specific time.' },
+            { type: 'cloze', sentence: 'She _____ finishing her project when her friend arrived.', options: ['was', 'were', 'is', 'has'], correct: 0, explanation: '\'Was\' is the past continuous tense. It shows an action in progress in the past.' },
+            { type: 'cloze', sentence: 'They _____ already eaten their lunch before we arrived.', options: ['have', 'has', 'had', 'are'], correct: 2, explanation: '\'Had\' is the past perfect tense. Their eating happened before our arrival.' },
+            { type: 'cloze', sentence: 'The flowers _____ grow in the spring when it gets warmer.', options: ['will', 'shall', 'can', 'is'], correct: 2, explanation: '\'Can\' shows ability or possibility. Flowers are able to grow in spring.' },
+            { type: 'cloze', sentence: 'He _____ his keys, so he couldn\'t open the door.', options: ['lose', 'lost', 'loses', 'losing'], correct: 1, explanation: '\'Lost\' is past tense. He couldn\'t open the door because he had already lost them.' },
+            { type: 'cloze', sentence: 'We went to the beach _____ the weather was beautiful.', options: ['because', 'although', 'until', 'unless'], correct: 0, explanation: '\'Because\' shows a reason. We went to the beach for a reason — the weather.' },
+            { type: 'cloze', sentence: 'The film was exciting, _____ it was quite long.', options: ['because', 'but', 'so', 'and'], correct: 1, explanation: '\'But\' shows a contrast. The film was exciting, yet it had a problem — length.' },
+            { type: 'cloze', sentence: 'She studied hard _____ she could pass the test.', options: ['unless', 'although', 'so that', 'while'], correct: 2, explanation: '\'So that\' shows purpose. She studied with the aim of passing the test.' },
+            { type: 'cloze', sentence: 'We can go to the park _____ you finish your chores first.', options: ['when', 'before', 'after', 'unless'], correct: 2, explanation: '\'After\' shows the order of events. First chores, then the park.' },
+            { type: 'cloze', sentence: 'I wanted to play football, _____ it was raining too hard.', options: ['so', 'or', 'yet', 'but'], correct: 3, explanation: '\'But\' shows a contrast between what she wanted and what stopped her.' },
+            { type: 'cloze', sentence: 'The house was dark _____ the power had gone out.', options: ['if', 'because', 'while', 'since'], correct: 1, explanation: '\'Because\' explains why the house was dark — the power cut was the reason.' },
+            { type: 'cloze', sentence: 'You can choose tea _____ coffee with your breakfast.', options: ['or', 'and', 'but', 'yet'], correct: 0, explanation: '\'Or\' shows a choice between two options.' },
+            { type: 'cloze', sentence: 'The game continued _____ the final whistle blew.', options: ['until', 'after', 'before', 'while'], correct: 0, explanation: '\'Until\' shows when the action will stop — at the final whistle.' },
+            { type: 'cloze', sentence: 'She laughed _____ cried when she heard the funny joke.', options: ['but', 'or', 'and', 'so'], correct: 2, explanation: '\'And\' joins two things she did at the same time.' },
+            { type: 'cloze', sentence: 'I brought an umbrella _____ I might get wet.', options: ['so that', 'in case', 'unless', 'while'], correct: 1, explanation: '\'In case\' means to be prepared for a possible situation — getting wet.' },
+            { type: 'cloze', sentence: 'The _____ lion rested under the tree.', options: ['generous', 'majestic', 'bitter', 'hollow'], correct: 1, explanation: '\'Majestic\' means grand and impressive — it fits a lion perfectly.' },
+            { type: 'cloze', sentence: 'She spoke in a _____ voice so everyone could hear her.', options: ['quiet', 'loud', 'gentle', 'soft'], correct: 1, explanation: '\'Loud\' means producing strong sound. She needed everyone to hear her.' },
+            { type: 'cloze', sentence: 'The water in the pool felt _____ on a hot day.', options: ['warm', 'freezing', 'refreshing', 'dusty'], correct: 2, explanation: '\'Refreshing\' means pleasant and cool — perfect for a hot day.' },
+            { type: 'cloze', sentence: 'He ran _____ to catch the bus before it left.', options: ['slowly', 'quickly', 'lazily', 'carefully'], correct: 1, explanation: '\'Quickly\' is an adverb showing fast movement, which helps catch a bus.' },
+            { type: 'cloze', sentence: 'The old house looked _____ and needed repairs.', options: ['modern', 'sturdy', 'dilapidated', 'spotless'], correct: 2, explanation: '\'Dilapidated\' means in poor condition and needing repair.' },
+            { type: 'cloze', sentence: 'She felt _____ after winning the competition.', options: ['disappointed', 'proud', 'confused', 'nervous'], correct: 1, explanation: '\'Proud\' is the right emotion after winning something.' },
+            { type: 'cloze', sentence: 'The joke was so _____ that everyone laughed.', options: ['sad', 'hilarious', 'scary', 'confusing'], correct: 1, explanation: '\'Hilarious\' means very funny, which is why everyone laughed.' },
+            { type: 'cloze', sentence: 'She walked _____ through the museum, looking at each painting.', options: ['carelessly', 'thoughtfully', 'cheerfully', 'angrily'], correct: 1, explanation: '\'Thoughtfully\' means carefully considering each painting.' },
+            { type: 'cloze', sentence: 'The journey was long but _____ interesting.', options: ['incredibly', 'rarely', 'hardly', 'scarcely'], correct: 0, explanation: '\'Incredibly\' is an adverb meaning very or extremely interesting.' },
+            { type: 'cloze', sentence: 'The sunset looked _____ with all the pink and orange colours.', options: ['dull', 'breathtaking', 'ordinary', 'dark'], correct: 1, explanation: '\'Breathtaking\' means stunningly beautiful, like a gorgeous sunset.' },
+            { type: 'cloze', sentence: 'The book is _____ the table.', options: ['under', 'above', 'beside', 'near'], correct: 0, explanation: '\'Under\' is a preposition showing position below something.' },
+            { type: 'cloze', sentence: 'She walked _____ the bridge to get to the other side.', options: ['through', 'across', 'beyond', 'along'], correct: 1, explanation: '\'Across\' means going from one side to the other.' },
+            { type: 'cloze', sentence: 'The cat jumped _____ the fence and ran away.', options: ['over', 'under', 'into', 'between'], correct: 0, explanation: '\'Over\' means going above and across something.' },
+            { type: 'cloze', sentence: 'We waited _____ the door for our friend to arrive.', options: ['at', 'on', 'by', 'in'], correct: 2, explanation: '\'By\' shows being close to something — near the door.' },
+            { type: 'cloze', sentence: 'The bird flew _____ the clouds in the sky.', options: ['below', 'between', 'around', 'through'], correct: 3, explanation: '\'Through\' means moving in one side and out the other of the clouds.' },
+            { type: 'cloze', sentence: 'He gave the present to _____ for her birthday.', options: ['she', 'her', 'hers', 'him'], correct: 1, explanation: '\'Her\' is the correct object pronoun after \'to\'.' },
+            { type: 'cloze', sentence: '_____ went to the shop and bought some sweets.', options: ['me', 'him', 'they', 'we'], correct: 2, explanation: '\'They\' is the subject pronoun used to start a sentence.' },
+            { type: 'cloze', sentence: 'The teacher gave _____ homework to complete.', options: ['us', 'we', 'our', 'ours'], correct: 0, explanation: '\'Us\' is the object pronoun. The teacher gave homework to us.' },
+            { type: 'cloze', sentence: 'Between you and _____, I think the film was boring.', options: ['I', 'me', 'myself', 'mine'], correct: 1, explanation: '\'Me\' is the correct pronoun after the preposition \'between\'.' },
+            { type: 'cloze', sentence: 'Sarah and _____ are best friends.', options: ['me', 'I', 'myself', 'mine'], correct: 1, explanation: '\'I\' is the subject pronoun. \'I\' am part of the pair doing the action.' },
+            { type: 'cloze', sentence: 'The _____ was very crowded with shoppers.', options: ['beach', 'supermarket', 'mountain', 'desert'], correct: 1, explanation: '\'Supermarket\' is a place that gets crowded with shoppers.' },
+            { type: 'cloze', sentence: 'She decided to _____ the job because it was too difficult.', options: ['accept', 'decline', 'complete', 'begin'], correct: 1, explanation: '\'Decline\' means to refuse or say no to something.' },
+            { type: 'cloze', sentence: 'The _____ between the two cities is about 50 miles.', options: ['width', 'distance', 'height', 'depth'], correct: 1, explanation: '\'Distance\' is how far apart two places are.' },
+            { type: 'cloze', sentence: 'He felt _____ when he got the job he wanted.', options: ['miserable', 'anxious', 'delighted', 'bored'], correct: 2, explanation: '\'Delighted\' means very pleased — the right feeling for getting a wanted job.' },
+            { type: 'cloze', sentence: 'The _____ ingredients made the cake taste delicious.', options: ['stale', 'fresh', 'raw', 'damaged'], correct: 1, explanation: '\'Fresh\' ingredients are new and good for baking.' },
+            { type: 'cloze', sentence: 'She made a _____ effort to tidy her room.', options: ['weak', 'tiny', 'determined', 'careless'], correct: 2, explanation: '\'Determined\' means she put real effort and intention into tidying.' },
+            { type: 'cloze', sentence: 'The _____ announced the winner of the competition.', options: ['audience', 'judge', 'player', 'coach'], correct: 1, explanation: '\'Judge\' is the person who decides the winner.' },
+            { type: 'cloze', sentence: 'It was a _____ day with blue skies and warm sunshine.', options: ['terrible', 'perfect', 'foggy', 'stormy'], correct: 1, explanation: '\'Perfect\' describes ideal weather with blue skies and sunshine.' },
+            { type: 'cloze', sentence: 'The _____ of the mountain was covered in snow.', options: ['base', 'peak', 'slope', 'valley'], correct: 1, explanation: '\'Peak\' is the highest point of a mountain.' },
+            { type: 'cloze', sentence: 'She wore a _____ scarf around her neck.', options: ['rough', 'soft', 'sharp', 'bitter'], correct: 1, explanation: '\'Soft\' describes something pleasant to touch, like a scarf.' },
+            { type: 'cloze', sentence: 'The _____ barked when someone knocked on the door.', options: ['cat', 'bird', 'dog', 'fish'], correct: 2, explanation: '\'Dog\' is the animal that barks.' },
+            { type: 'cloze', sentence: 'He _____ the letter carefully before sending it.', options: ['read', 'wrote', 'tore', 'lost'], correct: 0, explanation: '\'Read\' means to look at and understand written words.' },
+            { type: 'cloze', sentence: 'The children _____ in the shallow end of the swimming pool.', options: ['walked', 'played', 'swam', 'slept'], correct: 2, explanation: '\'Swam\' means moved through water using arms and legs.' },
+            { type: 'cloze', sentence: 'She felt _____ about her exam results.', options: ['angry', 'satisfied', 'bored', 'confused'], correct: 1, explanation: '\'Satisfied\' is a good feeling about getting good results.' },
+            { type: 'cloze', sentence: 'The _____ of the book was interesting and kept me reading.', options: ['cover', 'plot', 'size', 'colour'], correct: 1, explanation: '\'Plot\' is the story that keeps readers interested.' },
+            { type: 'cloze', sentence: 'It is _____ to wear a helmet when riding a bicycle.', options: ['dangerous', 'important', 'silly', 'impossible'], correct: 1, explanation: '\'Important\' means it\'s necessary for safety.' },
+            { type: 'cloze', sentence: 'The _____ was magnificent with lots of tall trees.', options: ['desert', 'forest', 'beach', 'city'], correct: 1, explanation: '\'Forest\' is a place with lots of trees.' },
+            { type: 'cloze', sentence: 'She gave me some _____ advice about my problem.', options: ['silly', 'useful', 'vague', 'confusing'], correct: 1, explanation: '\'Useful\' advice is helpful and practical.' },
+            { type: 'cloze', sentence: 'The _____ of the museum had many ancient artifacts.', options: ['gift shop', 'entrance', 'gallery', 'cafe'], correct: 2, explanation: '\'Gallery\' is the main room in a museum where things are displayed.' },
+            { type: 'cloze', sentence: 'He was _____ about the school trip.', options: ['sad', 'excited', 'tired', 'worried'], correct: 1, explanation: '\'Excited\' means feeling happy and eager about something fun.' }
+        ];
+
+        const SYNONYM_QUESTIONS = [
+            { type: 'synonym', word: 'happy', options: ['sad', 'joyful', 'angry', 'tired'], correct: 1, explanation: "'Happy' and 'joyful' both mean feeling pleased and cheerful." },
+            { type: 'synonym', word: 'angry', options: ['calm', 'furious', 'happy', 'bored'], correct: 1, explanation: "'Angry' and 'furious' both mean very upset or cross." },
+            { type: 'synonym', word: 'big', options: ['small', 'enormous', 'tiny', 'bright'], correct: 1, explanation: "'Big' and 'enormous' both mean very large in size." },
+            { type: 'synonym', word: 'scared', options: ['brave', 'frightened', 'excited', 'confused'], correct: 1, explanation: "'Scared' and 'frightened' both mean feeling afraid." },
+            { type: 'synonym', word: 'quiet', options: ['loud', 'silent', 'noisy', 'cheerful'], correct: 1, explanation: "'Quiet' and 'silent' both mean making little or no sound." },
+            { type: 'synonym', word: 'tired', options: ['energetic', 'sleepy', 'alert', 'curious'], correct: 1, explanation: "'Tired' and 'sleepy' both mean needing rest or sleep." },
+            { type: 'synonym', word: 'bright', options: ['dark', 'shiny', 'dull', 'cold'], correct: 1, explanation: "'Bright' and 'shiny' both mean reflecting light or giving light." },
+            { type: 'synonym', word: 'brave', options: ['courageous', 'shy', 'nervous', 'foolish'], correct: 0, explanation: "'Brave' and 'courageous' both mean facing danger without fear." },
+            { type: 'synonym', word: 'beautiful', options: ['lovely', 'ugly', 'strange', 'boring'], correct: 0, explanation: "'Beautiful' and 'lovely' both mean very pleasing to look at." },
+            { type: 'synonym', word: 'slow', options: ['quick', 'sluggish', 'speedy', 'hasty'], correct: 1, explanation: "'Slow' and 'sluggish' both mean moving or acting without speed." },
+            { type: 'synonym', word: 'clever', options: ['smart', 'foolish', 'clumsy', 'quiet'], correct: 0, explanation: "'Clever' and 'smart' both mean intelligent and quick-thinking." },
+            { type: 'synonym', word: 'kind', options: ['cruel', 'gentle', 'rude', 'wild'], correct: 1, explanation: "'Kind' and 'gentle' both mean caring and considerate." },
+            { type: 'synonym', word: 'wet', options: ['dry', 'damp', 'warm', 'smooth'], correct: 1, explanation: "'Wet' and 'damp' both mean covered or soaked with water." },
+            { type: 'synonym', word: 'dirty', options: ['clean', 'messy', 'spotless', 'tidy'], correct: 1, explanation: "'Dirty' and 'messy' both mean not clean or untidy." },
+            { type: 'synonym', word: 'strange', options: ['normal', 'odd', 'usual', 'familiar'], correct: 1, explanation: "'Strange' and 'odd' both mean unusual or surprising." },
+            { type: 'synonym', word: 'strong', options: ['weak', 'powerful', 'feeble', 'tiny'], correct: 1, explanation: "'Strong' and 'powerful' both mean having great force or strength." },
+            { type: 'synonym', word: 'hungry', options: ['full', 'famished', 'satisfied', 'content'], correct: 1, explanation: "'Hungry' and 'famished' both mean wanting food very much." },
+            { type: 'synonym', word: 'empty', options: ['full', 'vacant', 'crowded', 'busy'], correct: 1, explanation: "'Empty' and 'vacant' both mean having nothing inside." },
+            { type: 'synonym', word: 'difficult', options: ['easy', 'challenging', 'simple', 'clear'], correct: 1, explanation: "'Difficult' and 'challenging' both mean hard to do or understand." },
+            { type: 'synonym', word: 'delighted', options: ['miserable', 'angry', 'pleased', 'bored'], correct: 2, explanation: "'Delighted' and 'pleased' both mean very happy." }
+        ];
+
+        const ANTONYM_QUESTIONS = [
+            { type: 'antonym', word: 'happy', options: ['joyful', 'excited', 'sad', 'cheerful'], correct: 2, explanation: "'Happy' means pleased; 'sad' is the opposite — unhappy." },
+            { type: 'antonym', word: 'big', options: ['large', 'small', 'huge', 'wide'], correct: 1, explanation: "'Big' means of considerable size; 'small' is the opposite." },
+            { type: 'antonym', word: 'bright', options: ['shiny', 'dark', 'light', 'colorful'], correct: 1, explanation: "'Bright' means full of light; 'dark' is the opposite." },
+            { type: 'antonym', word: 'quiet', options: ['silent', 'loud', 'gentle', 'soft'], correct: 1, explanation: "'Quiet' means little sound; 'loud' is the opposite." },
+            { type: 'antonym', word: 'clean', options: ['spotless', 'dirty', 'neat', 'tidy'], correct: 1, explanation: "'Clean' means free from dirt; 'dirty' is the opposite." },
+            { type: 'antonym', word: 'brave', options: ['courageous', 'timid', 'bold', 'strong'], correct: 1, explanation: "'Brave' means facing danger without fear; 'timid' is the opposite." },
+            { type: 'antonym', word: 'wet', options: ['damp', 'dry', 'moist', 'soaked'], correct: 1, explanation: "'Wet' means covered with water; 'dry' is the opposite." },
+            { type: 'antonym', word: 'rich', options: ['wealthy', 'poor', 'happy', 'successful'], correct: 1, explanation: "'Rich' means having lots of money; 'poor' is the opposite." },
+            { type: 'antonym', word: 'strong', options: ['powerful', 'weak', 'mighty', 'tough'], correct: 1, explanation: "'Strong' means having great power; 'weak' is the opposite." },
+            { type: 'antonym', word: 'young', options: ['small', 'old', 'fresh', 'new'], correct: 1, explanation: "'Young' means early in life; 'old' is the opposite." },
+            { type: 'antonym', word: 'kind', options: ['gentle', 'cruel', 'caring', 'nice'], correct: 1, explanation: "'Kind' means caring; 'cruel' is the opposite." },
+            { type: 'antonym', word: 'slow', options: ['sluggish', 'quick', 'lazy', 'steady'], correct: 1, explanation: "'Slow' means without speed; 'quick' is the opposite." },
+            { type: 'antonym', word: 'beautiful', options: ['lovely', 'ugly', 'pretty', 'attractive'], correct: 1, explanation: "'Beautiful' means pleasing; 'ugly' is the opposite." },
+            { type: 'antonym', word: 'tired', options: ['sleepy', 'energetic', 'bored', 'weary'], correct: 1, explanation: "'Tired' means needing rest; 'energetic' is the opposite." },
+            { type: 'antonym', word: 'harsh', options: ['rough', 'gentle', 'severe', 'strict'], correct: 1, explanation: "'Harsh' means severe; 'gentle' is the opposite." },
+            { type: 'antonym', word: 'cheap', options: ['affordable', 'expensive', 'worthless', 'inexpensive'], correct: 1, explanation: "'Cheap' means low in price; 'expensive' is the opposite." },
+            { type: 'antonym', word: 'strange', options: ['unusual', 'normal', 'bizarre', 'odd'], correct: 1, explanation: "'Strange' means unusual; 'normal' is the opposite." },
+            { type: 'antonym', word: 'noisy', options: ['loud', 'quiet', 'rowdy', 'boisterous'], correct: 1, explanation: "'Noisy' means lots of sound; 'quiet' is the opposite." },
+            { type: 'antonym', word: 'sharp', options: ['keen', 'dull', 'pointed', 'cutting'], correct: 1, explanation: "'Sharp' means fine edge; 'dull' is the opposite." },
+            { type: 'antonym', word: 'victory', options: ['win', 'defeat', 'triumph', 'success'], correct: 1, explanation: "'Victory' means winning; 'defeat' is the opposite." }
+        ];
+
         // ===== UI CONTROLLER =====
         class UIController {
             constructor(engine) {
@@ -1173,7 +1353,9 @@
             setupEventListeners() {
                 document.querySelectorAll('.btn-mode').forEach(btn => {
                     btn.addEventListener('click', (e) => {
-                        this.startSession(parseInt(e.target.dataset.duration));
+                        const duration = parseInt(e.target.dataset.duration);
+                        const targetQuestions = e.target.dataset.questions ? parseInt(e.target.dataset.questions) : undefined;
+                        this.startSession(duration, targetQuestions);
                     });
                 });
 
@@ -1212,13 +1394,31 @@
 
                 const mastered = this.engine.getMasteredCount();
                 document.getElementById('masteredCounter').textContent = mastered + ' items mastered';
+
+                // Update topic breakdown
+                const accuracyByType = this.engine.getAccuracyByType();
+                const breakdownContent = document.getElementById('breakdownContent');
+                breakdownContent.innerHTML = '';
+
+                const types = ['vocab', 'spelling', 'punctuation', 'comprehension', 'cloze', 'synonym', 'antonym'];
+                types.forEach(type => {
+                    const item = document.createElement('span');
+                    item.className = 'breakdown-item';
+                    const accuracy = accuracyByType[type];
+                    const displayType = type.charAt(0).toUpperCase() + type.slice(1);
+                    item.textContent = displayType + ': ' + (accuracy !== null ? accuracy + '%' : '—');
+                    item.style.color = accuracy === null ? '#808090' : (accuracy >= 80 ? '#00b894' : accuracy >= 60 ? '#f39c12' : '#e17055');
+                    breakdownContent.appendChild(item);
+                });
             }
 
-            startSession(duration) {
+            startSession(duration, targetQuestions) {
                 this.sessionDuration = duration;
                 this.sessionStartTime = Date.now();
 
-                const targetQuestions = duration === 900 ? 20 : 40;
+                if (targetQuestions === undefined) {
+                    targetQuestions = duration === 900 ? 20 : 40;
+                }
 
                 this.sessionQueue = this.engine.buildSessionQueue(targetQuestions, 4);
 
@@ -1289,7 +1489,10 @@
                     ...VOCAB_QUESTIONS,
                     ...SPELLING_QUESTIONS,
                     ...PUNCTUATION_QUESTIONS,
-                    ...COMPREHENSION_QUESTIONS
+                    ...COMPREHENSION_QUESTIONS,
+                    ...CLOZE_QUESTIONS,
+                    ...SYNONYM_QUESTIONS,
+                    ...ANTONYM_QUESTIONS
                 ];
 
                 let typeIndex = 0;
@@ -1311,7 +1514,10 @@
                     ...VOCAB_QUESTIONS,
                     ...SPELLING_QUESTIONS,
                     ...PUNCTUATION_QUESTIONS,
-                    ...COMPREHENSION_QUESTIONS
+                    ...COMPREHENSION_QUESTIONS,
+                    ...CLOZE_QUESTIONS,
+                    ...SYNONYM_QUESTIONS,
+                    ...ANTONYM_QUESTIONS
                 ];
 
                 for (let q of allQuestions) {
@@ -1343,6 +1549,12 @@
                     this.renderPunctuationQuestion(container, question);
                 } else if (item.type === 'comprehension') {
                     this.renderComprehensionQuestion(container, question);
+                } else if (item.type === 'cloze') {
+                    this.renderClozeQuestion(container, question);
+                } else if (item.type === 'synonym') {
+                    this.renderSynonymQuestion(container, question);
+                } else if (item.type === 'antonym') {
+                    this.renderAntonymQuestion(container, question);
                 }
             }
 
@@ -1449,6 +1661,89 @@
                 questionText.className = 'question-text';
                 questionText.textContent = question.question;
                 container.appendChild(questionText);
+
+                const options = document.createElement('div');
+                options.className = 'options';
+
+                question.options.forEach((option, idx) => {
+                    const opt = document.createElement('div');
+                    opt.className = 'option';
+                    opt.innerHTML = '<span class="option-label">' + String.fromCharCode(65 + idx) + '.</span>' + option;
+                    opt.addEventListener('click', () => this.handleAnswer(idx, question.correct, question.explanation));
+                    options.appendChild(opt);
+                });
+
+                container.appendChild(options);
+            }
+
+            renderClozeQuestion(container, question) {
+                const sentence = document.createElement('div');
+                sentence.className = 'cloze-sentence';
+                const parts = question.sentence.split('_____');
+                sentence.appendChild(document.createTextNode(parts[0]));
+                const blank = document.createElement('span');
+                blank.className = 'cloze-blank';
+                blank.textContent = '_____';
+                sentence.appendChild(blank);
+                sentence.appendChild(document.createTextNode(parts[1]));
+                container.appendChild(sentence);
+
+                const questionText = document.createElement('div');
+                questionText.className = 'question-text';
+                questionText.textContent = 'Complete the sentence:';
+                container.appendChild(questionText);
+
+                const options = document.createElement('div');
+                options.className = 'options';
+
+                question.options.forEach((option, idx) => {
+                    const opt = document.createElement('div');
+                    opt.className = 'option';
+                    opt.innerHTML = '<span class="option-label">' + String.fromCharCode(65 + idx) + '.</span>' + option;
+                    opt.addEventListener('click', () => this.handleAnswer(idx, question.correct, question.explanation));
+                    options.appendChild(opt);
+                });
+
+                container.appendChild(options);
+            }
+
+            renderSynonymQuestion(container, question) {
+                const questionText = document.createElement('div');
+                questionText.className = 'question-text';
+                questionText.textContent = 'Which word is closest in meaning to:';
+                container.appendChild(questionText);
+
+                const word = document.createElement('div');
+                word.className = 'vocab-word';
+                word.style.cssText = 'background: rgba(108, 92, 231, 0.15); padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; text-align: center; font-size: 1.1em;';
+                word.textContent = question.word;
+                container.appendChild(word);
+
+                const options = document.createElement('div');
+                options.className = 'options';
+
+                question.options.forEach((option, idx) => {
+                    const opt = document.createElement('div');
+                    opt.className = 'option';
+                    opt.innerHTML = '<span class="option-label">' + String.fromCharCode(65 + idx) + '.</span>' + option;
+                    opt.addEventListener('click', () => this.handleAnswer(idx, question.correct, question.explanation));
+                    options.appendChild(opt);
+                });
+
+                container.appendChild(options);
+            }
+
+            renderAntonymQuestion(container, question) {
+                const questionText = document.createElement('div');
+                questionText.className = 'question-text';
+                questionText.textContent = 'Which word is opposite in meaning to:';
+                container.appendChild(questionText);
+
+                const word = document.createElement('div');
+                word.className = 'vocab-word';
+                word.style.cssText = 'background: rgba(108, 92, 231, 0.15); padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; text-align: center; font-size: 1.1em;';
+                word.textContent = question.word;
+                container.appendChild(word);
 
                 const options = document.createElement('div');
                 options.className = 'options';
