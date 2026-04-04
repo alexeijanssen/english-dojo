@@ -879,9 +879,10 @@
                     [newItems[i], newItems[j]] = [newItems[j], newItems[i]];
                 }
 
-                // If no items have been reviewed yet, allow more new items
-                const totalEncountered = Object.values(this.items).filter(it => it.encounters > 0).length;
-                const effectiveMaxNew = totalEncountered === 0 ? targetQuestions : maxNewItems;
+                // Allow enough new items to fill the session when due/lapsed items are scarce
+                const slotsUsed = lapsed.length + due.length;
+                const slotsRemaining = Math.max(0, targetQuestions - slotsUsed);
+                const effectiveMaxNew = Math.max(maxNewItems, slotsRemaining);
 
                 const queue = [];
 
