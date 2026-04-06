@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Walter's English Dojo</title>
+    <title>11 Plus Dojo</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -597,14 +597,243 @@
                 font-size: 0.95em;
             }
         }
+
+        /* Auth Screen */
+        #authScreen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .auth-container {
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .auth-logo {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .auth-tagline {
+            font-size: 1.1em;
+            color: #b0b0c0;
+            margin-bottom: 40px;
+        }
+
+        .btn-google {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: #fff;
+            color: #333;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 32px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .btn-google:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn-google img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .auth-loading {
+            color: #a29bfe;
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+
+        /* Subject Selection Screen */
+        #subjectScreen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .subject-greeting {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.6em;
+            color: #a29bfe;
+            margin-bottom: 8px;
+        }
+
+        .subject-prompt {
+            font-size: 1.1em;
+            color: #b0b0c0;
+            margin-bottom: 40px;
+        }
+
+        .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 600px;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        .subject-card {
+            background: rgba(108, 92, 231, 0.15);
+            border: 2px solid rgba(108, 92, 231, 0.4);
+            border-radius: 20px;
+            padding: 30px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .subject-card:hover {
+            background: rgba(108, 92, 231, 0.25);
+            border-color: rgba(108, 92, 231, 0.7);
+            transform: translateY(-4px);
+        }
+
+        .subject-card.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: rgba(108, 92, 231, 0.15);
+        }
+
+        .subject-card.disabled:hover {
+            transform: none;
+            background: rgba(108, 92, 231, 0.15);
+            border-color: rgba(108, 92, 231, 0.15);
+        }
+
+        .subject-icon {
+            font-size: 2.5em;
+            margin-bottom: 12px;
+        }
+
+        .subject-name {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #e0e0e0;
+        }
+
+        .subject-status {
+            font-size: 0.85em;
+            color: #9090a0;
+            margin-top: 6px;
+        }
+
+        .btn-signout {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #9090a0;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn-signout:hover {
+            border-color: rgba(255,255,255,0.4);
+            color: #e0e0e0;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+        }
+
+        .user-name {
+            color: #b0b0c0;
+            font-size: 0.95em;
+        }
+
+        .sync-status {
+            font-size: 0.8em;
+            color: #6c5ce7;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
     </style>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 </head>
 <body>
     <div class="container">
+        <!-- Auth Screen -->
+        <div id="authScreen" class="screen active">
+            <div class="auth-container">
+                <div class="auth-logo">11 Plus Dojo</div>
+                <div class="auth-tagline">Level up your exam skills</div>
+                <button class="btn-google" id="googleSignInBtn" onclick="signInWithGoogle()">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                    Sign in with Google
+                </button>
+                <div class="auth-loading" id="authLoading" style="display:none;">Signing in...</div>
+            </div>
+        </div>
+
+        <!-- Subject Selection Screen -->
+        <div id="subjectScreen" class="screen">
+            <div class="user-info">
+                <img class="user-avatar" id="userAvatar" src="" alt="">
+                <span class="user-name" id="userName"></span>
+            </div>
+            <div class="subject-greeting" id="subjectGreeting">Choose a subject</div>
+            <div class="subject-prompt">Pick what you want to practise today</div>
+            <div class="subject-grid">
+                <div class="subject-card" onclick="selectSubject('english')">
+                    <div class="subject-icon">📚</div>
+                    <div class="subject-name">English</div>
+                    <div class="subject-status">Ready to go!</div>
+                </div>
+                <div class="subject-card disabled" onclick="return false;">
+                    <div class="subject-icon">🔢</div>
+                    <div class="subject-name">Maths</div>
+                    <div class="subject-status">Coming soon</div>
+                </div>
+                <div class="subject-card disabled" onclick="return false;">
+                    <div class="subject-icon">🔬</div>
+                    <div class="subject-name">Science</div>
+                    <div class="subject-status">Coming soon</div>
+                </div>
+                <div class="subject-card disabled" onclick="return false;">
+                    <div class="subject-icon">🧠</div>
+                    <div class="subject-name">Verbal Reasoning</div>
+                    <div class="subject-status">Coming soon</div>
+                </div>
+            </div>
+            <button class="btn-signout" onclick="signOut()">Sign Out</button>
+            <div class="sync-status" id="syncStatus"></div>
+        </div>
+
         <!-- Start Screen -->
-        <div id="startScreen" class="screen active">
+        <div id="startScreen" class="screen">
             <div class="dojo-header">
-                <div class="dojo-title">Walter's English Dojo</div>
+                <div class="dojo-title">English Dojo</div>
                 <div class="dojo-subtitle">Level up your 11+ English skills</div>
             </div>
 
@@ -644,6 +873,7 @@
                 <button class="btn-mode" data-duration="1800">30 min</button>
                 <button class="btn-mode btn-mock" data-duration="1500" data-questions="25">Mock Exam</button>
             </div>
+            <button class="btn-signout" onclick="showScreen('subjectScreen')" style="margin-top:20px;">← Back to Subjects</button>
         </div>
 
         <!-- Session Screen -->
@@ -697,6 +927,122 @@
     </div>
 
     <script>
+        // ===== FIREBASE INITIALIZATION =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDjTMPDIX0HKRsFtnQ1vA_v21LAWLue60",
+            authDomain: "plus-dojo.firebaseapp.com",
+            databaseURL: "https://plus-dojo-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "plus-dojo",
+            storageBucket: "plus-dojo.firebasestorage.app",
+            messagingSenderId: "24647942079",
+            appId: "1:24647942079:web:b42128589b42fe31ec2b0a"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+        let currentUser = null;
+        let dbRef = null;
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        async function signInWithGoogle() {
+            const btn = document.getElementById('googleSignInBtn');
+            const loading = document.getElementById('authLoading');
+            btn.style.display = 'none';
+            loading.style.display = 'block';
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                await auth.signInWithPopup(provider);
+            } catch (err) {
+                console.error('Sign-in error:', err);
+                btn.style.display = 'inline-flex';
+                loading.style.display = 'none';
+            }
+        }
+
+        function signOut() {
+            auth.signOut();
+        }
+
+        function selectSubject(subject) {
+            if (subject === 'english') {
+                showScreen('startScreen');
+            }
+        }
+
+        // Listen for auth state changes
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                dbRef = db.ref('users/' + user.uid + '/english');
+
+                // Update UI
+                const avatar = document.getElementById('userAvatar');
+                const userName = document.getElementById('userName');
+                const greeting = document.getElementById('subjectGreeting');
+
+                avatar.src = user.photoURL || '';
+                avatar.style.display = user.photoURL ? 'block' : 'none';
+                userName.textContent = user.displayName || user.email;
+
+                const firstName = (user.displayName || 'there').split(' ')[0];
+                greeting.textContent = `Hey ${firstName}! Choose a subject`;
+
+                // Load cloud data then show subject screen
+                await loadFromCloud();
+                showScreen('subjectScreen');
+
+                // Update the English start screen stats
+                if (typeof ui !== 'undefined') {
+                    ui.updateStartScreen();
+                }
+            } else {
+                currentUser = null;
+                dbRef = null;
+                showScreen('authScreen');
+            }
+        });
+
+        async function loadFromCloud() {
+            if (!dbRef) return;
+            try {
+                const snapshot = await dbRef.once('value');
+                const data = snapshot.val();
+                if (data) {
+                    if (data.items) {
+                        localStorage.setItem(ITEMS_KEY, JSON.stringify(data.items));
+                    }
+                    if (data.stats) {
+                        localStorage.setItem(STATE_KEY, JSON.stringify(data.stats));
+                    }
+                }
+                document.getElementById('syncStatus').textContent = 'Synced from cloud ✓';
+                setTimeout(() => { document.getElementById('syncStatus').textContent = ''; }, 2000);
+            } catch (err) {
+                console.error('Cloud load error:', err);
+                document.getElementById('syncStatus').textContent = 'Using local data';
+            }
+        }
+
+        function saveToCloud() {
+            if (!dbRef) return;
+            try {
+                const items = localStorage.getItem(ITEMS_KEY);
+                const stats = localStorage.getItem(STATE_KEY);
+                const payload = {};
+                if (items) payload.items = JSON.parse(items);
+                if (stats) payload.stats = JSON.parse(stats);
+                payload.lastSync = Date.now();
+                dbRef.set(payload);
+            } catch (err) {
+                console.error('Cloud save error:', err);
+            }
+        }
+
         // ===== STATE MANAGEMENT =====
         const STATE_KEY = 'walterDojo';
         const ITEMS_KEY = 'walterDojoItems';
@@ -787,10 +1133,12 @@
 
             saveItems() {
                 localStorage.setItem(ITEMS_KEY, JSON.stringify(this.items));
+                saveToCloud();
             }
 
             saveGlobalStats() {
                 localStorage.setItem(STATE_KEY, JSON.stringify(this.globalStats));
+                saveToCloud();
             }
 
             calculateRecall(item) {
@@ -1375,7 +1723,7 @@
                 const restartBtn = document.querySelector('.btn-restart');
                 if (restartBtn) {
                     restartBtn.addEventListener('click', () => {
-                        this.goToStart();
+                        this.goToSubjects();
                     });
                 }
             }
@@ -1947,6 +2295,10 @@
 
             goToStart() {
                 this.showScreen('start');
+            }
+
+            goToSubjects() {
+                showScreen('subjectScreen');
             }
         }
 
