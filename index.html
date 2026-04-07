@@ -908,7 +908,7 @@
             </div>
             <div class="subject-greeting" id="subjectGreeting">Choose a subject</div>
             <div class="subject-prompt">Pick what you want to practise today</div>
-            <div id="globalVersion" style="font-size: 0.65em; color: #6c5ce7; opacity: 0.5; margin-top: 2px;">v1.3.0</div>
+            <div id="globalVersion" style="font-size: 0.65em; color: #6c5ce7; opacity: 0.5; margin-top: 2px;">v1.3.1</div>
             <div class="subject-grid">
                 <div class="subject-card" onclick="selectSubject('english')">
                     <div class="subject-icon">📚</div>
@@ -940,7 +940,7 @@
             <div class="dojo-header">
                 <div class="dojo-title">English Dojo</div>
                 <div class="dojo-subtitle">Level up your 11+ English skills</div>
-                <div class="app-version" id="appVersion" style="font-size: 0.75em; color: #6c5ce7; opacity: 0.6; margin-top: 4px;">v1.3.0</div>
+                <div class="app-version" id="appVersion" style="font-size: 0.75em; color: #6c5ce7; opacity: 0.6; margin-top: 4px;">v1.3.1</div>
             </div>
 
             <div class="stats-container" id="statsContainer">
@@ -1439,10 +1439,17 @@
                     }
                 });
 
-                // Sort review items by urgency (lowest recall = most urgent)
-                lapsed.sort((a, b) => a[2] - b[2]);
-                fragiledue.sort((a, b) => a[2] - b[2]);
-                fluent_due.sort((a, b) => a[2] - b[2]);
+                // Shuffle review items (add randomness so sessions aren't identical)
+                const shuffle = arr => {
+                    for (let i = arr.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [arr[i], arr[j]] = [arr[j], arr[i]];
+                    }
+                    return arr;
+                };
+                shuffle(lapsed);
+                shuffle(fragiledue);
+                shuffle(fluent_due);
 
                 // Phase 2: Batch introduction gating
                 // Count "in-progress" items (fragile + teaching + lapsed — items actively being learned)
@@ -1502,6 +1509,10 @@
                     });
                 }
 
+                console.log('[Queue] Built:', queue.length, 'items | Review:', Math.min(queue.length, reviewCap),
+                    '(lapsed:', lapsed.length, 'teaching:', teaching.length, 'fragile-due:', fragiledue.length, 'fluent-due:', fluent_due.length, ')',
+                    '| New:', queue.filter(id => this.items[id].state === 'unknown').length,
+                    '| Unknown pool:', unknown.length);
                 return this.interleaveTypes(queue);
             }
 
