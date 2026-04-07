@@ -305,11 +305,23 @@
         }
 
         .spelling-section {
-            display: inline;
-            padding: 0 4px;
-            margin: 0 2px;
-            border-radius: 4px;
+            display: inline-block;
+            padding: 12px 16px;
+            margin: 0 8px 25px 0;
+            border-radius: 8px;
             transition: all 0.2s ease;
+            border: 2px solid rgba(108, 92, 231, 0.3);
+            min-width: 80px;
+            text-align: center;
+            position: relative;
+        }
+
+        .spelling-section-label {
+            display: block;
+            font-weight: 700;
+            color: #6c5ce7;
+            font-size: 0.85em;
+            margin-top: 8px;
         }
 
         .passage {
@@ -1066,6 +1078,17 @@
                                 existing[id] = fresh[id];
                             }
                         }
+                        // Backward compatibility: add 5-state fields to items that lack them
+                        for (const id of Object.keys(existing)) {
+                            const item = existing[id];
+                            if (!item.consecutiveCorrect) item.consecutiveCorrect = 0;
+                            if (!item.consecutiveErrors) item.consecutiveErrors = 0;
+                            if (!item.promotionSessions) item.promotionSessions = [];
+                            if (!item.state) {
+                                // Infer state from existing continuous data
+                                item.state = this.inferState(item);
+                            }
+                        }
                         return existing;
                     } catch (e) {
                         console.error('Failed to load items:', e);
@@ -1073,6 +1096,15 @@
                     }
                 }
                 return this.initializeItems();
+            }
+
+            inferState(item) {
+                // For backward compatibility: derive discrete state from continuous FSRS data
+                if (item.encounters === 0) return 'unknown';
+                if (item.lapseCount > 0 && item.recall !== null && item.recall < 0.3) return 'lapsed';
+                if (item.recall !== null && item.recall > 0.85 && item.stability > 7 && item.correctCount >= 3) return 'fluent';
+                if (item.encounters > 0) return 'fragile';
+                return 'unknown';
             }
 
             initializeItems() {
@@ -1084,7 +1116,9 @@
                     ...COMPREHENSION_QUESTIONS,
                     ...CLOZE_QUESTIONS,
                     ...SYNONYM_QUESTIONS,
-                    ...ANTONYM_QUESTIONS
+                    ...ANTONYM_QUESTIONS,
+                    ...CONTEXT_CLUES_QUESTIONS,
+                    ...HOMOPHONE_QUESTIONS
                 ];
 
                 allQuestions.forEach((q, idx) => {
@@ -1092,6 +1126,7 @@
                     items[id] = {
                         id,
                         type: q.type,
+                        state: 'unknown',          // 5-state model: unknown/teaching/fragile/fluent/lapsed
                         recall: null,
                         stability: 0.5,
                         difficulty: 0.5,
@@ -1100,6 +1135,9 @@
                         encounters: 0,
                         correctCount: 0,
                         avgLatency: 0,
+                        consecutiveCorrect: 0,      // For fragile→fluent promotion
+                        consecutiveErrors: 0,        // For fragile→teaching demotion
+                        promotionSessions: [],       // Session timestamps where correct (for cross-session tracking)
                         tags: [q.type]
                     };
                 });
@@ -1170,9 +1208,15 @@
             }
 
             getMasteredCount() {
-                return Object.values(this.items).filter(item => {
-                    return item.recall !== null && item.recall > 0.85 && item.stability > 7;
-                }).length;
+                return Object.values(this.items).filter(item => item.state === 'fluent').length;
+            }
+
+            getStateCounts() {
+                const counts = { unknown: 0, teaching: 0, fragile: 0, fluent: 0, lapsed: 0 };
+                Object.values(this.items).forEach(item => {
+                    counts[item.state] = (counts[item.state] || 0) + 1;
+                });
+                return counts;
             }
 
             getOverallAccuracy() {
@@ -1186,7 +1230,7 @@
 
             getAccuracyByType() {
                 const typeAccuracy = {};
-                const types = ['vocab', 'spelling', 'punctuation', 'comprehension', 'cloze', 'synonym', 'antonym'];
+                const types = ['vocab', 'spelling', 'punctuation', 'comprehension', 'cloze', 'synonym', 'antonym', 'context-clues', 'homophone'];
 
                 types.forEach(type => {
                     const typeItems = Object.values(this.items).filter(item => item.type === type && item.encounters > 0);
@@ -1202,57 +1246,107 @@
                 return typeAccuracy;
             }
 
-            buildSessionQueue(targetQuestions, maxNewItems = 4) {
+            buildSessionQueue(targetQuestions, maxNewItems = 5) {
                 this.recalculateAllRecalls();
 
-                const lapsed = [];
-                const due = [];
-                const newItems = [];
+                // Phase 1: Categorise items by state (Section 4.1 of framework)
+                const lapsed = [];       // Highest priority: previously known, now failed
+                const fragiledue = [];   // Fragile items due for review (recall dropping)
+                const fluent_due = [];   // Fluent items due for review (mixed review pool)
+                const teaching = [];     // Items in teaching state (need re-teaching)
+                const unknown = [];      // Never encountered
 
                 Object.entries(this.items).forEach(([id, item]) => {
-                    if (item.lapseCount > 0 && item.recall < 0.3) {
-                        lapsed.push([id, item, item.recall]);
-                    } else if (item.recall !== null && item.recall < 0.7) {
-                        due.push([id, item, item.recall]);
-                    } else if (item.encounters === 0) {
-                        newItems.push([id, item]);
+                    switch (item.state) {
+                        case 'lapsed':
+                            lapsed.push([id, item, item.recall || 0]);
+                            break;
+                        case 'teaching':
+                            teaching.push([id, item, item.recall || 0]);
+                            break;
+                        case 'fragile':
+                            if (item.recall !== null && item.recall < 0.7) {
+                                fragiledue.push([id, item, item.recall]);
+                            } else if (item.recall !== null) {
+                                // Fragile but not yet due — still include for focused practice
+                                fragiledue.push([id, item, item.recall]);
+                            }
+                            break;
+                        case 'fluent':
+                            if (item.recall !== null && item.recall < 0.7) {
+                                fluent_due.push([id, item, item.recall]);
+                            }
+                            break;
+                        case 'unknown':
+                            unknown.push([id, item]);
+                            break;
                     }
                 });
 
-                due.sort((a, b) => a[2] - b[2]);
+                // Sort review items by urgency (lowest recall = most urgent)
+                lapsed.sort((a, b) => a[2] - b[2]);
+                fragiledue.sort((a, b) => a[2] - b[2]);
+                fluent_due.sort((a, b) => a[2] - b[2]);
 
-                // Shuffle new items so we get variety across types
-                for (let i = newItems.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [newItems[i], newItems[j]] = [newItems[j], newItems[i]];
+                // Phase 2: Batch introduction gating
+                // Count "in-progress" items (fragile + teaching + lapsed — items actively being learned)
+                const inProgressCount = fragiledue.length + teaching.length + lapsed.length;
+                // How many in-progress items have reached fragile-with-good-recall or fluent?
+                const stableCount = fragiledue.filter(([, item]) => item.recall !== null && item.recall > 0.7).length;
+                const batchThresholdMet = inProgressCount === 0 || (inProgressCount > 0 && stableCount / inProgressCount >= 0.8);
+                // Determine how many new items to introduce
+                let newItemsToIntroduce = 0;
+                if (batchThresholdMet || inProgressCount < 5) {
+                    // Introduce a new batch of up to 5 items
+                    newItemsToIntroduce = Math.min(maxNewItems, unknown.length);
                 }
 
-                // Allow enough new items to fill the session when due/lapsed items are scarce
-                const slotsUsed = lapsed.length + due.length;
-                const slotsRemaining = Math.max(0, targetQuestions - slotsUsed);
-                const effectiveMaxNew = Math.max(maxNewItems, slotsRemaining);
+                // Shuffle unknown items for type variety before selecting batch
+                for (let i = unknown.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [unknown[i], unknown[j]] = [unknown[j], unknown[i]];
+                }
 
+                // Phase 3: Build queue in priority order (Section 4.1)
                 const queue = [];
 
-                lapsed.forEach(([id, item]) => {
-                    if (queue.length < targetQuestions) {
+                // 3a. Lapsed recovery (highest priority)
+                lapsed.forEach(([id]) => {
+                    if (queue.length < targetQuestions) queue.push(id);
+                });
+
+                // 3b. Teaching items (need attention)
+                teaching.forEach(([id]) => {
+                    if (queue.length < targetQuestions) queue.push(id);
+                });
+
+                // 3c. Fragile items due for review (focused practice)
+                fragiledue.forEach(([id]) => {
+                    if (queue.length < targetQuestions) queue.push(id);
+                });
+
+                // 3d. Fluent items due for review (mixed review)
+                fluent_due.forEach(([id]) => {
+                    if (queue.length < targetQuestions) queue.push(id);
+                });
+
+                // 3e. New material (gated by batch introduction)
+                let introduced = 0;
+                unknown.forEach(([id]) => {
+                    if (queue.length < targetQuestions && introduced < newItemsToIntroduce) {
                         queue.push(id);
+                        introduced++;
                     }
                 });
 
-                due.forEach(([id, item]) => {
-                    if (queue.length < targetQuestions) {
-                        queue.push(id);
-                    }
-                });
-
-                let usedNewItems = 0;
-                newItems.forEach(([id, item]) => {
-                    if (queue.length < targetQuestions && usedNewItems < effectiveMaxNew) {
-                        queue.push(id);
-                        usedNewItems++;
-                    }
-                });
+                // If we still have empty slots (very early use), allow more unknowns
+                if (queue.length < targetQuestions && queue.length < 5) {
+                    unknown.forEach(([id]) => {
+                        if (queue.length < targetQuestions && !queue.includes(id)) {
+                            queue.push(id);
+                        }
+                    });
+                }
 
                 return this.interleaveTypes(queue);
             }
@@ -1281,6 +1375,64 @@
                     }
                     round++;
                 }
+
+                // Apply 3:1 comfort-to-challenge ratio (Section 8.1):
+                // After every challenging item, insert up to 3 comfortable items.
+                // "Challenging" = new (encounters === 0) or lapsed or low recall.
+                // "Comfortable" = high recall, previously correct.
+                return this.applyComfortRatio(result);
+            }
+
+            applyComfortRatio(queue) {
+                // Classify items using 5-state model
+                const comfortable = [];
+                const challenging = [];
+                const other = [];
+
+                queue.forEach(id => {
+                    const item = this.items[id];
+                    if (item.state === 'unknown' || item.state === 'lapsed' || item.state === 'teaching') {
+                        challenging.push(id);
+                    } else if (item.state === 'fluent' || (item.state === 'fragile' && item.recall !== null && item.recall > 0.7)) {
+                        comfortable.push(id);
+                    } else {
+                        other.push(id);
+                    }
+                });
+
+                // If there aren't enough comfortable items to maintain ratio, just return original
+                if (comfortable.length === 0 || challenging.length === 0) {
+                    return queue;
+                }
+
+                // Build a new queue: for every challenging item, try to precede it with
+                // comfortable items to maintain ~3:1 ratio
+                const result = [];
+                let comfortIdx = 0;
+                let otherIdx = 0;
+
+                challenging.forEach(challengeId => {
+                    // Insert up to 3 comfortable/other items before each challenging one
+                    let inserted = 0;
+                    while (inserted < 3 && comfortIdx < comfortable.length) {
+                        result.push(comfortable[comfortIdx++]);
+                        inserted++;
+                    }
+                    while (inserted < 3 && otherIdx < other.length) {
+                        result.push(other[otherIdx++]);
+                        inserted++;
+                    }
+                    result.push(challengeId);
+                });
+
+                // Append any remaining comfortable/other items
+                while (comfortIdx < comfortable.length) {
+                    result.push(comfortable[comfortIdx++]);
+                }
+                while (otherIdx < other.length) {
+                    result.push(other[otherIdx++]);
+                }
+
                 return result;
             }
 
@@ -1306,12 +1458,15 @@
                     comprehension: { fluent: 20000, slow: 40000 },
                     cloze: { fluent: 8000, slow: 15000 },
                     synonym: { fluent: 6000, slow: 12000 },
-                    antonym: { fluent: 6000, slow: 12000 }
+                    antonym: { fluent: 6000, slow: 12000 },
+                    'context-clues': { fluent: 15000, slow: 30000 },
+                    homophone: { fluent: 8000, slow: 15000 }
                 };
 
                 const threshold = thresholds[item.type] || { fluent: 10000, slow: 20000 };
                 const isFast = latency < threshold.fluent;
 
+                // --- FSRS scheduling updates (unchanged) ---
                 if (item.lastReview === null) {
                     item.recall = isCorrect ? 0.8 : 0.2;
                     item.stability = 0.5;
@@ -1335,7 +1490,85 @@
                     item.lastReview = Date.now();
                 }
 
+                // --- 5-State transitions ---
+                this.updateItemState(item, isCorrect, isFast);
+
                 this.saveItems();
+            }
+
+            updateItemState(item, isCorrect, isFast) {
+                const now = Date.now();
+                const sessionId = Math.floor(now / (1000 * 60 * 60));  // Unique per hour (proxy for "session")
+
+                if (isCorrect) {
+                    item.consecutiveCorrect += 1;
+                    item.consecutiveErrors = 0;
+                } else {
+                    item.consecutiveErrors += 1;
+                    item.consecutiveCorrect = 0;
+                }
+
+                switch (item.state) {
+                    case 'unknown':
+                        // Unknown → Fragile: first encounter (no teaching phase yet)
+                        // When teaching sequences are built, this will go unknown→teaching→fragile
+                        item.state = 'fragile';
+                        item.promotionSessions = [sessionId];
+                        break;
+
+                    case 'teaching':
+                        // Teaching → Fragile: confirmed with ≥75% accuracy
+                        // For now, any correct answer moves to fragile (teaching phase not yet built)
+                        if (isCorrect) {
+                            item.state = 'fragile';
+                            item.promotionSessions = [sessionId];
+                        }
+                        // Stays in teaching if wrong — will get re-explained when teaching is built
+                        break;
+
+                    case 'fragile':
+                        if (isCorrect && isFast) {
+                            // Track distinct sessions with correct answers
+                            if (!item.promotionSessions.includes(sessionId)) {
+                                item.promotionSessions.push(sessionId);
+                            }
+                            // Fragile → Fluent: 3+ consecutive correct across 2+ distinct sessions, with fast latency
+                            if (item.consecutiveCorrect >= 3 && item.promotionSessions.length >= 2) {
+                                item.state = 'fluent';
+                                item.promotionSessions = [];
+                            }
+                        } else if (!isCorrect) {
+                            // Fragile → Teaching: 3 consecutive errors (needs re-teaching)
+                            // Until teaching is built, stays fragile but resets promotion progress
+                            if (item.consecutiveErrors >= 3) {
+                                item.state = 'teaching';  // Will fall back to fragile on next correct
+                                item.promotionSessions = [];
+                            }
+                        }
+                        break;
+
+                    case 'fluent':
+                        if (!isCorrect) {
+                            // Fluent → Lapsed: single incorrect answer (immediate, unconditional)
+                            item.state = 'lapsed';
+                            item.promotionSessions = [];
+                        } else if (!isFast) {
+                            // Correct but slow (>2x fluency threshold) → Lapsed
+                            // The FSRS update already handled the stability reduction for slow answers
+                            item.state = 'lapsed';
+                            item.promotionSessions = [];
+                        }
+                        break;
+
+                    case 'lapsed':
+                        if (isCorrect) {
+                            // Lapsed → Fragile: one correct answer (knowledge was once there)
+                            // Shorter path back to fluent since it was previously known
+                            item.state = 'fragile';
+                            item.promotionSessions = [sessionId];
+                        }
+                        break;
+                }
             }
         }
 
@@ -1412,69 +1645,69 @@
         ];
 
         const SPELLING_QUESTIONS = [
-            { type: 'spelling', sections: ['The malicious actions of the perpetrator', 'shattered the innocense', 'of the small town.'], correct: 1, misspelled: 'innocense', correction: 'innocence', explanation: "ends in '-ence' not '-ense'" },
-            { type: 'spelling', sections: ['Although the report was partial,', 'the information included was crutial', 'for making decisions.'], correct: 1, misspelled: 'crutial', correction: 'crucial', explanation: "'cruc-ial', not 'crut-ial'." },
-            { type: 'spelling', sections: ['Sarah tried awkwardly', 'to conceel her uncontrollable', 'laughter during the serious meeting.'], correct: 1, misspelled: 'conceel', correction: 'conceal', explanation: "'ea' not 'ee'." },
-            { type: 'spelling', sections: ['The company\'s strict new dress code', 'aimed to curb flambouyant', 'attire in the workplace.'], correct: 1, misspelled: 'flambouyant', correction: 'flamboyant', explanation: 'flam-BOY-ant.' },
-            { type: 'spelling', sections: ['The restarant was fully booked', 'during February as couples', 'celebrated Valentine\'s Day.'], correct: 0, misspelled: 'restarant', correction: 'restaurant', explanation: 'rest-AU-rant.' },
-            { type: 'spelling', sections: ['It is more hygenic', 'to cough and sneeze', 'into your elbow during flu season.'], correct: 0, misspelled: 'hygenic', correction: 'hygienic', explanation: 'hyg-I-enic.' },
-            { type: 'spelling', sections: ['She was warry of the steep', 'descent, unsure of how much', 'she could endure.'], correct: 0, misspelled: 'warry', correction: 'wary', explanation: "just one 'r'." },
-            { type: 'spelling', sections: ['The official inaugural ceremony', 'marked the begining of a new era', 'for the organisation.'], correct: 1, misspelled: 'begining', correction: 'beginning', explanation: "double 'n': begiNNing." },
-            { type: 'spelling', sections: ['Residents of the borough', 'percieved the rough roads', 'as a persistent issue.'], correct: 1, misspelled: 'percieved', correction: 'perceived', explanation: "'i before e, except after c'." },
-            { type: 'spelling', sections: ['Her hesitation was infectious,', 'spreading through the group', 'as they deliberated there next move.'], correct: 2, misspelled: 'there', correction: 'their', explanation: "'Their' = belonging to them." },
-            { type: 'spelling', sections: ['As the winds swept across the island,', 'they brought with them seeds', 'of the thissle plant.'], correct: 2, misspelled: 'thissle', correction: 'thistle', explanation: 'No double \'s\'.' },
-            { type: 'spelling', sections: ['The doctor\'s handwriting was', 'so illegible that it rendered', 'the prescription invalid.'], correct: -1, misspelled: null, correction: null, explanation: 'No spelling mistakes!' },
-            { type: 'spelling', sections: ['The principal expressed', 'her gratitude to the students', 'for their dedication.'], correct: -1, misspelled: null, correction: null, explanation: 'No mistakes here!' },
-            { type: 'spelling', sections: ['The ancient libary', 'contained manuscripts that were', 'centuries old.'], correct: 0, misspelled: 'libary', correction: 'library', explanation: 'lib-R-ary!' },
-            { type: 'spelling', sections: ['The accomodation was', 'surprisingly comfortable despite', 'the affordable price.'], correct: 0, misspelled: 'accomodation', correction: 'accommodation', explanation: 'double C and double M.' },
-            { type: 'spelling', sections: ['The neighbours were', 'extremly concerned about', 'the mysterious noise.'], correct: 1, misspelled: 'extremly', correction: 'extremely', explanation: 'extreme + ly.' },
-            { type: 'spelling', sections: ['Her impeccably obedient', 'dog\'s unexpected antics in public', 'caused her embarressment.'], correct: 2, misspelled: 'embarressment', correction: 'embarrassment', explanation: "two R's and two S's." },
-            { type: 'spelling', sections: ['The goverment announced', 'new measures to protect', 'endangered wildlife species.'], correct: 0, misspelled: 'goverment', correction: 'government', explanation: "goverNment." },
-            { type: 'spelling', sections: ['She had the currage', 'to speak her mind', 'even when afraid'], correct: 0, misspelled: 'currage', correction: 'courage', explanation: '"ou" makes the vowel sound; remember "cour-age"' },
-            { type: 'spelling', sections: ['The mountains were', 'absolutly breathtaking', 'in the evening light'], correct: 1, misspelled: 'absolutly', correction: 'absolutely', explanation: '"absolute" + "ly" = "absolutely"' },
-            { type: 'spelling', sections: ['The misterious', 'stranger arrived at', 'midnight without warning'], correct: 0, misspelled: 'misterious', correction: 'mysterious', explanation: 'From "mystery"; the vowel pattern uses "y" not "i"' },
-            { type: 'spelling', sections: ['She felt very', 'nervious about the', 'audition tomorrow'], correct: 1, misspelled: 'nervious', correction: 'nervous', explanation: '"Nervous" from "nerve"; no "i" before "ous"' },
-            { type: 'spelling', sections: ['The recipe called for', 'four cups of flour', 'and one egg'], correct: -1, misspelled: null, correction: null, explanation: 'No spelling mistakes!' },
-            { type: 'spelling', sections: ['His handwriting was', 'ilegible and hard', 'to read properly'], correct: 1, misspelled: 'ilegible', correction: 'illegible', explanation: 'Double "l" at the start: il-legible' },
-            { type: 'spelling', sections: ['The childern played', 'happily in the park', 'all afternoon'], correct: 0, misspelled: 'childern', correction: 'children', explanation: '"Children" is an irregular plural — memorise it' },
-            { type: 'spelling', sections: ['We seperate the', 'recycling into', 'different coloured bins'], correct: 0, misspelled: 'seperate', correction: 'separate', explanation: 'There\'s "a rat" in "separate"' },
-            { type: 'spelling', sections: ['The occured incident', 'was discussed in', 'the staff meeting'], correct: 0, misspelled: 'occured', correction: 'occurred', explanation: 'Double the "r" before "-ed": occurred' },
-            { type: 'spelling', sections: ['She showed exeptional', 'talent in mathematics', 'and science classes'], correct: 0, misspelled: 'exeptional', correction: 'exceptional', explanation: '"Exception" becomes "exceptional" — uses "c" not "p"' },
-            { type: 'spelling', sections: ['The performance was', 'brillient and the', 'audience applauded loudly'], correct: 1, misspelled: 'brillient', correction: 'brilliant', explanation: 'Ends in "-iant" not "-ient"' },
-            { type: 'spelling', sections: ['Their success was', 'due to persistance', 'and hard work'], correct: 1, misspelled: 'persistance', correction: 'persistence', explanation: '"-ence" not "-ance"' },
-            { type: 'spelling', sections: ['We will definately', 'attend the concert', 'next month'], correct: 0, misspelled: 'definately', correction: 'definitely', explanation: '"Definite" + "-ly"; remember the "i" in the middle' },
-            { type: 'spelling', sections: ['No spelling mistakes', 'appear in this', 'sentence at all'], correct: -1, misspelled: null, correction: null, explanation: 'No spelling mistakes!' },
-            { type: 'spelling', sections: ['The athlete\'s achevement', 'was recognised by', 'the entire school'], correct: 0, misspelled: 'achevement', correction: 'achievement', explanation: '"Achieve" + "-ment"' },
-            { type: 'spelling', sections: ['She gave a powerfull', 'speech about', 'climate change'], correct: 0, misspelled: 'powerfull', correction: 'powerful', explanation: 'Adjectives ending in "-ful" use single "l"' },
-            { type: 'spelling', sections: ['He showed great', 'bravry when facing', 'the difficult challenge'], correct: 1, misspelled: 'bravry', correction: 'bravery', explanation: '"Brave" becomes "bravery"' },
-            { type: 'spelling', sections: ['The recieve of', 'the package was', 'confirmed yesterday'], correct: 0, misspelled: 'recieve', correction: 'receive', explanation: '"i before e except after c" — receive' },
-            { type: 'spelling', sections: ['The painting was', 'originaly created', 'in the 1920s'], correct: 1, misspelled: 'originaly', correction: 'originally', explanation: '"Original" + "-ly" = "originally"' },
-            { type: 'spelling', sections: ['The witness gave', 'a truthfull account', 'of what happened'], correct: 1, misspelled: 'truthfull', correction: 'truthful', explanation: '"-ful" uses only one "l"' },
-            { type: 'spelling', sections: ['All the students', 'gathered for the', 'assembly this morning'], correct: -1, misspelled: null, correction: null, explanation: 'No spelling mistakes!' },
-            { type: 'spelling', sections: ['The intresting book', 'was about explorers', 'and ancient civilisations'], correct: 0, misspelled: 'intresting', correction: 'interesting', explanation: '"Interest" + "-ing"' },
-            { type: 'spelling', sections: ['The atmosfere in', 'the classroom was', 'very positive today'], correct: 0, misspelled: 'atmosfere', correction: 'atmosphere', explanation: 'Ends in "-sphere" not "-fere"' },
-            { type: 'spelling', sections: ['The artist showed', 'excelent control', 'over the medium'], correct: 1, misspelled: 'excelent', correction: 'excellent', explanation: 'Double "l": excel-lent' },
-            { type: 'spelling', sections: ['We must follow', 'the prefered route', 'through the forest'], correct: 1, misspelled: 'prefered', correction: 'preferred', explanation: 'Double the "r" before "-ed"' },
-            { type: 'spelling', sections: ['The autor of the', 'book signed copies', 'at the bookstore'], correct: 0, misspelled: 'autor', correction: 'author', explanation: '"Author" has a silent "th"' },
-            { type: 'spelling', sections: ['The building showed', 'excelence in design', 'and construction'], correct: 1, misspelled: 'excelence', correction: 'excellence', explanation: 'Double "l": excellence' },
-            { type: 'spelling', sections: ['The theif stole', 'valuables from', 'the museum exhibit'], correct: 0, misspelled: 'theif', correction: 'thief', explanation: '"i before e except after c" — thief' },
-            { type: 'spelling', sections: ['She showed great', 'perseverence in her', 'efforts to improve'], correct: 1, misspelled: 'perseverence', correction: 'perseverance', explanation: '"-ance" not "-ence"' },
-            { type: 'spelling', sections: ['The manager made', 'an anouncement about', 'the new policy'], correct: 1, misspelled: 'anouncement', correction: 'announcement', explanation: '"Announce" + "-ment" = "announcement"' },
-            { type: 'spelling', sections: ['The beautiful', 'garden was filled', 'with colourful flowers'], correct: -1, misspelled: null, correction: null, explanation: 'No spelling mistakes!' },
-            { type: 'spelling', sections: ['He felt nervous', 'about the appearence', 'of his new shoes'], correct: 1, misspelled: 'appearence', correction: 'appearance', explanation: '"Appear" + "-ance"' },
-            { type: 'spelling', sections: ['The reknown artist', 'created masterpieces', 'admired worldwide'], correct: 0, misspelled: 'reknown', correction: 'renowned', explanation: '"Renowned" means famous' },
-            { type: 'spelling', sections: ['The questionaire asked', 'about favourite subjects', 'and hobbies'], correct: 0, misspelled: 'questionaire', correction: 'questionnaire', explanation: 'Double "n" and ends in "-aire"' },
-            { type: 'spelling', sections: ['The existance of', 'aliens remains', 'scientifically unclear'], correct: 0, misspelled: 'existance', correction: 'existence', explanation: '"-ence" not "-ance"' },
-            { type: 'spelling', sections: ['The foriegn visitors', 'enjoyed exploring', 'the local museums'], correct: 0, misspelled: 'foriegn', correction: 'foreign', explanation: '"eig" not "ieg" — foreign' },
-            { type: 'spelling', sections: ['The confidance of', 'the team impressed', 'the coach greatly'], correct: 0, misspelled: 'confidance', correction: 'confidence', explanation: '"-ence" not "-ance"' },
-            { type: 'spelling', sections: ['The weather was', 'pleasant and mild', 'throughout the week'], correct: -1, misspelled: null, correction: null, explanation: 'No spelling mistakes!' },
-            { type: 'spelling', sections: ['The diferent cultures', 'enriched our understanding', 'of the world'], correct: 0, misspelled: 'diferent', correction: 'different', explanation: 'Double "f": different' },
-            { type: 'spelling', sections: ['The restaurant served', 'delisious food that', 'delighted all guests'], correct: 1, misspelled: 'delisious', correction: 'delicious', explanation: '"Delicious" — no "i" after "l"' },
-            { type: 'spelling', sections: ['The weather remained', 'consistant throughout', 'the summer season'], correct: 1, misspelled: 'consistant', correction: 'consistent', explanation: '"-ent" not "-ant"' },
-            { type: 'spelling', sections: ['They decided to', 'reccomend the new', 'film to their friends'], correct: 1, misspelled: 'reccomend', correction: 'recommend', explanation: 'One "c", double "m": recommend' },
-            { type: 'spelling', sections: ['The environment around', 'us should be', 'protected carefully'], correct: -1, misspelled: null, correction: null, explanation: 'No spelling mistakes!' },
-            { type: 'spelling', sections: ['The scienific discovery', 'was announced at', 'the research conference'], correct: 0, misspelled: 'scienific', correction: 'scientific', explanation: '"Science" becomes "scientific"' },
-            { type: 'spelling', sections: ['She showed', 'competance in all', 'areas of study'], correct: 1, misspelled: 'competance', correction: 'competence', explanation: '"-ence" not "-ance"' }
+            { type: 'spelling', sections: ['The malicious', 'actions of the', 'perpetrator shattered the', 'innocense of the small town.'], correct: 3, misspelled: 'innocense', correction: 'innocence', explanation: "ends in '-ence' not '-ense'" },
+            { type: 'spelling', sections: ['Although the', 'report was partial, the', 'information included was', 'crutial for making decisions.'], correct: 3, misspelled: 'crutial', correction: 'crucial', explanation: "'cruc-ial', not 'crut-ial'." },
+            { type: 'spelling', sections: ['Sarah tried', 'awkwardly to conceel her', 'uncontrollable laughter during', 'the serious meeting.'], correct: 1, misspelled: 'conceel', correction: 'conceal', explanation: "'ea' not 'ee'." },
+            { type: 'spelling', sections: ['The company\'s strict', 'new dress code aimed to', 'curb flambouyant attire', 'in the workplace.'], correct: 2, misspelled: 'flambouyant', correction: 'flamboyant', explanation: 'flam-BOY-ant.' },
+            { type: 'spelling', sections: ['The restarant was', 'fully booked during', 'February as couples', 'celebrated Valentine\'s Day.'], correct: 0, misspelled: 'restarant', correction: 'restaurant', explanation: 'rest-AU-rant.' },
+            { type: 'spelling', sections: ['It is more', 'hygenic to cough and', 'sneeze into your elbow', 'during flu season.'], correct: 1, misspelled: 'hygenic', correction: 'hygienic', explanation: 'hyg-I-enic.' },
+            { type: 'spelling', sections: ['She was warry', 'of the steep descent,', 'unsure of how much she', 'could endure.'], correct: 0, misspelled: 'warry', correction: 'wary', explanation: "just one 'r'." },
+            { type: 'spelling', sections: ['The official', 'inaugural ceremony marked the', 'begining of a new era', 'for the organisation.'], correct: 2, misspelled: 'begining', correction: 'beginning', explanation: "double 'n': begiNNing." },
+            { type: 'spelling', sections: ['Residents of the', 'borough percieved the rough', 'roads as a', 'persistent issue.'], correct: 1, misspelled: 'percieved', correction: 'perceived', explanation: "'i before e, except after c'." },
+            { type: 'spelling', sections: ['Her hesitation was', 'infectious, spreading through the', 'group as they deliberated', 'there next move.'], correct: 3, misspelled: 'there', correction: 'their', explanation: "'Their' = belonging to them." },
+            { type: 'spelling', sections: ['As the winds swept', 'across the island, they', 'brought with them seeds of', 'the thissle plant.'], correct: 3, misspelled: 'thissle', correction: 'thistle', explanation: 'No double \'s\'.' },
+            { type: 'spelling', sections: ['The doctor\'s', 'handwriting was so illegible', 'that it rendered the', 'prescription invalid.'], correct: -1, misspelled: null, correction: null, explanation: 'No spelling mistakes!' },
+            { type: 'spelling', sections: ['The principal', 'expressed her gratitude to the', 'students for their', 'dedication.'], correct: -1, misspelled: null, correction: null, explanation: 'No mistakes here!' },
+            { type: 'spelling', sections: ['The ancient libary', 'contained manuscripts that', 'were centuries', 'old.'], correct: 0, misspelled: 'libary', correction: 'library', explanation: 'lib-R-ary!' },
+            { type: 'spelling', sections: ['The accomodation', 'was surprisingly comfortable', 'despite the affordable', 'price.'], correct: 0, misspelled: 'accomodation', correction: 'accommodation', explanation: 'double C and double M.' },
+            { type: 'spelling', sections: ['The neighbours', 'were extremly concerned about', 'the mysterious', 'noise.'], correct: 1, misspelled: 'extremly', correction: 'extremely', explanation: 'extreme + ly.' },
+            { type: 'spelling', sections: ['Her impeccably', 'obedient dog\'s unexpected antics', 'in public caused her', 'embarressment.'], correct: 3, misspelled: 'embarressment', correction: 'embarrassment', explanation: "two R's and two S's." },
+            { type: 'spelling', sections: ['The goverment', 'announced new measures to', 'protect endangered wildlife', 'species.'], correct: 0, misspelled: 'goverment', correction: 'government', explanation: "goverNment." },
+            { type: 'spelling', sections: ['She had the', 'currage to speak her', 'mind even when', 'afraid'], correct: 1, misspelled: 'currage', correction: 'courage', explanation: '"ou" makes the vowel sound; remember "cour-age"' },
+            { type: 'spelling', sections: ['The mountains', 'were absolutly breathtaking', 'in the evening', 'light'], correct: 1, misspelled: 'absolutly', correction: 'absolutely', explanation: '"absolute" + "ly" = "absolutely"' },
+            { type: 'spelling', sections: ['The misterious stranger', 'arrived at midnight', 'without', 'warning'], correct: 0, misspelled: 'misterious', correction: 'mysterious', explanation: 'From "mystery"; the vowel pattern uses "y" not "i"' },
+            { type: 'spelling', sections: ['She felt', 'very nervious about the', 'audition', 'tomorrow'], correct: 1, misspelled: 'nervious', correction: 'nervous', explanation: '"Nervous" from "nerve"; no "i" before "ous"' },
+            { type: 'spelling', sections: ['The recipe', 'called for four cups of', 'flour and', 'one egg'], correct: -1, misspelled: null, correction: null, explanation: 'No spelling mistakes!' },
+            { type: 'spelling', sections: ['His handwriting', 'was ilegible and hard to', 'read', 'properly'], correct: 1, misspelled: 'ilegible', correction: 'illegible', explanation: 'Double "l" at the start: il-legible' },
+            { type: 'spelling', sections: ['The childern', 'played happily in the park', 'all', 'afternoon'], correct: 0, misspelled: 'childern', correction: 'children', explanation: '"Children" is an irregular plural — memorise it' },
+            { type: 'spelling', sections: ['We seperate', 'the recycling into different', 'coloured', 'bins'], correct: 0, misspelled: 'seperate', correction: 'separate', explanation: 'There\'s "a rat" in "separate"' },
+            { type: 'spelling', sections: ['The occured', 'incident was discussed in the', 'staff', 'meeting'], correct: 0, misspelled: 'occured', correction: 'occurred', explanation: 'Double the "r" before "-ed": occurred' },
+            { type: 'spelling', sections: ['She showed', 'exeptional talent in mathematics', 'and science', 'classes'], correct: 1, misspelled: 'exeptional', correction: 'exceptional', explanation: '"Exception" becomes "exceptional" — uses "c" not "p"' },
+            { type: 'spelling', sections: ['The performance', 'was brillient and the', 'audience applauded', 'loudly'], correct: 1, misspelled: 'brillient', correction: 'brilliant', explanation: 'Ends in "-iant" not "-ient"' },
+            { type: 'spelling', sections: ['Their success was', 'due to persistance and', 'hard', 'work'], correct: 2, misspelled: 'persistance', correction: 'persistence', explanation: '"-ence" not "-ance"' },
+            { type: 'spelling', sections: ['We will definately', 'attend the concert next', 'month.'], correct: 0, misspelled: 'definately', correction: 'definitely', explanation: '"Definite" + "-ly"; remember the "i" in the middle' },
+            { type: 'spelling', sections: ['No spelling', 'mistakes appear in this', 'sentence at', 'all'], correct: -1, misspelled: null, correction: null, explanation: 'No spelling mistakes!' },
+            { type: 'spelling', sections: ['The athlete\'s', 'achevement was recognised by the', 'entire', 'school'], correct: 1, misspelled: 'achevement', correction: 'achievement', explanation: '"Achieve" + "-ment"' },
+            { type: 'spelling', sections: ['She gave a', 'powerfull speech about', 'climate', 'change'], correct: 1, misspelled: 'powerfull', correction: 'powerful', explanation: 'Adjectives ending in "-ful" use single "l"' },
+            { type: 'spelling', sections: ['He showed', 'great bravry when facing the', 'difficult', 'challenge'], correct: 1, misspelled: 'bravry', correction: 'bravery', explanation: '"Brave" becomes "bravery"' },
+            { type: 'spelling', sections: ['The recieve of the', 'package was confirmed', 'yesterday.'], correct: 0, misspelled: 'recieve', correction: 'receive', explanation: '"i before e except after c" — receive' },
+            { type: 'spelling', sections: ['The painting was', 'originaly created in the', '1920s.'], correct: 1, misspelled: 'originaly', correction: 'originally', explanation: '"Original" + "-ly" = "originally"' },
+            { type: 'spelling', sections: ['The witness gave a', 'truthfull account of what', 'happened.'], correct: 1, misspelled: 'truthfull', correction: 'truthful', explanation: '"-ful" uses only one "l"' },
+            { type: 'spelling', sections: ['All the students', 'gathered for the assembly this', 'morning.'], correct: 1, misspelled: null, correction: null, explanation: 'No spelling mistakes!' },
+            { type: 'spelling', sections: ['The intresting book', 'was about explorers and ancient', 'civilisations.'], correct: 0, misspelled: 'intresting', correction: 'interesting', explanation: '"Interest" + "-ing"' },
+            { type: 'spelling', sections: ['The atmosfere in the', 'classroom was very', 'positive today'], correct: 0, misspelled: 'atmosfere', correction: 'atmosphere', explanation: 'Ends in "-sphere" not "-fere"' },
+            { type: 'spelling', sections: ['The artist', 'showed excelent control over the', 'medium.'], correct: 1, misspelled: 'excelent', correction: 'excellent', explanation: 'Double "l": excel-lent' },
+            { type: 'spelling', sections: ['We must follow the', 'prefered route through the', 'forest.'], correct: 1, misspelled: 'prefered', correction: 'preferred', explanation: 'Double the "r" before "-ed"' },
+            { type: 'spelling', sections: ['The autor of the book', 'signed copies at the', 'bookstore.'], correct: 0, misspelled: 'autor', correction: 'author', explanation: '"Author" has a silent "th"' },
+            { type: 'spelling', sections: ['The building showed', 'excelence in design and', 'construction.'], correct: 1, misspelled: 'excelence', correction: 'excellence', explanation: 'Double "l": excellence' },
+            { type: 'spelling', sections: ['The theif stole valuables', 'from the museum', 'exhibit.'], correct: 0, misspelled: 'theif', correction: 'thief', explanation: '"i before e except after c" — thief' },
+            { type: 'spelling', sections: ['She showed great', 'perseverence in her efforts to', 'improve.'], correct: 1, misspelled: 'perseverence', correction: 'perseverance', explanation: '"-ance" not "-ence"' },
+            { type: 'spelling', sections: ['The manager made an', 'anouncement about the new', 'policy.'], correct: 1, misspelled: 'anouncement', correction: 'announcement', explanation: '"Announce" + "-ment" = "announcement"' },
+            { type: 'spelling', sections: ['The beautiful garden was', 'filled with colourful', 'flowers.'], correct: -1, misspelled: null, correction: null, explanation: 'No spelling mistakes!' },
+            { type: 'spelling', sections: ['He felt nervous about', 'the appearence of his new', 'shoes.'], correct: 1, misspelled: 'appearence', correction: 'appearance', explanation: '"Appear" + "-ance"' },
+            { type: 'spelling', sections: ['The reknown artist created', 'masterpieces admired', 'worldwide.'], correct: 0, misspelled: 'reknown', correction: 'renowned', explanation: '"Renowned" means famous' },
+            { type: 'spelling', sections: ['The questionaire asked about', 'favourite subjects and', 'hobbies.'], correct: 0, misspelled: 'questionaire', correction: 'questionnaire', explanation: 'Double "n" and ends in "-aire"' },
+            { type: 'spelling', sections: ['The existance of aliens', 'remains scientifically', 'unclear.'], correct: 0, misspelled: 'existance', correction: 'existence', explanation: '"-ence" not "-ance"' },
+            { type: 'spelling', sections: ['The foriegn visitors enjoyed', 'exploring the local', 'museums.'], correct: 0, misspelled: 'foriegn', correction: 'foreign', explanation: '"eig" not "ieg" — foreign' },
+            { type: 'spelling', sections: ['The confidance of the team', 'impressed the coach', 'greatly.'], correct: 0, misspelled: 'confidance', correction: 'confidence', explanation: '"-ence" not "-ance"' },
+            { type: 'spelling', sections: ['The weather was pleasant and', 'mild throughout the', 'week.'], correct: -1, misspelled: null, correction: null, explanation: 'No spelling mistakes!' },
+            { type: 'spelling', sections: ['The diferent cultures enriched', 'our understanding of the', 'world.'], correct: 0, misspelled: 'diferent', correction: 'different', explanation: 'Double "f": different' },
+            { type: 'spelling', sections: ['The restaurant served delisious', 'food that delighted all', 'guests.'], correct: 1, misspelled: 'delisious', correction: 'delicious', explanation: '"Delicious" — no "i" after "l"' },
+            { type: 'spelling', sections: ['The weather remained consistant', 'throughout the summer', 'season.'], correct: 1, misspelled: 'consistant', correction: 'consistent', explanation: '"-ent" not "-ant"' },
+            { type: 'spelling', sections: ['They decided to reccomend the', 'new film to their', 'friends.'], correct: 1, misspelled: 'reccomend', correction: 'recommend', explanation: 'One "c", double "m": recommend' },
+            { type: 'spelling', sections: ['The environment around us should', 'be protected', 'carefully.'], correct: -1, misspelled: null, correction: null, explanation: 'No spelling mistakes!' },
+            { type: 'spelling', sections: ['The scienific discovery was', 'announced at the research', 'conference.'], correct: 0, misspelled: 'scienific', correction: 'scientific', explanation: '"Science" becomes "scientific"' },
+            { type: 'spelling', sections: ['She showed competance in all', 'areas of', 'study.'], correct: 1, misspelled: 'competance', correction: 'competence', explanation: '"-ence" not "-ance"' }
 
         ];
 
@@ -1690,6 +1923,61 @@
             { type: 'antonym', word: 'victory', options: ['win', 'defeat', 'triumph', 'success'], correct: 1, explanation: "'Victory' means winning; 'defeat' is the opposite." }
         ];
 
+        // ===== CONTEXT CLUES QUESTIONS =====
+        // These test the ability to work out a word's meaning from context — key GL skill
+        const CONTEXT_CLUES_QUESTIONS = [
+            { type: 'context-clues', passage: 'The parched earth cracked under the blazing sun. No rain had fallen for weeks, and the river had dried to a trickle.', targetWord: 'parched', question: 'What does "parched" most likely mean?', options: ['Wet and muddy', 'Extremely dry', 'Frozen solid', 'Soft and fertile'], correct: 1, explanation: 'The context tells us there has been no rain and the river dried up — so "parched" means extremely dry.' },
+            { type: 'context-clues', passage: 'Unlike her gregarious sister who loved parties, Emma preferred solitude — a quiet room, a good book, and no interruptions.', targetWord: 'solitude', question: 'What does "solitude" mean here?', options: ['Being alone', 'Being in a crowd', 'Being asleep', 'Being outdoors'], correct: 0, explanation: '"Unlike her gregarious sister who loved parties" sets up a contrast. Solitude is the opposite — being alone.' },
+            { type: 'context-clues', passage: 'The teacher commended James for his excellent essay, praising his use of vivid language and clear arguments.', targetWord: 'commended', question: 'What does "commended" mean?', options: ['Criticised', 'Praised', 'Ignored', 'Punished'], correct: 1, explanation: 'The word "praising" right after tells us "commended" means praised.' },
+            { type: 'context-clues', passage: 'The dilapidated house had broken windows, a sagging roof, and paint peeling from every wall. Nobody had lived there for years.', targetWord: 'dilapidated', question: 'What does "dilapidated" mean?', options: ['Newly built', 'In a state of disrepair', 'Very large', 'Beautifully decorated'], correct: 1, explanation: 'Broken windows, sagging roof, peeling paint — all describe something in poor condition, so "dilapidated" means in disrepair.' },
+            { type: 'context-clues', passage: 'Despite the chaos around her, Sarah remained composed. She spoke calmly, made clear decisions, and reassured everyone that things would be fine.', targetWord: 'composed', question: 'What does "composed" mean in this context?', options: ['Musical', 'Calm and controlled', 'Confused', 'Angry'], correct: 1, explanation: '"Despite the chaos" contrasts with Sarah\'s behaviour — speaking calmly and reassuring people. "Composed" means calm and controlled.' },
+            { type: 'context-clues', passage: 'The frugal old man mended his clothes rather than buying new ones, and he never wasted a single crumb of food.', targetWord: 'frugal', question: 'What does "frugal" most likely mean?', options: ['Generous', 'Wasteful', 'Careful with money', 'Lazy'], correct: 2, explanation: 'Mending clothes instead of buying new ones and never wasting food shows someone who is careful with money — frugal.' },
+            { type: 'context-clues', passage: 'After days of grey skies and rain, the sun finally emerged from behind the clouds, bathing the town in golden light.', targetWord: 'emerged', question: 'What does "emerged" mean?', options: ['Disappeared', 'Came out', 'Exploded', 'Faded away'], correct: 1, explanation: 'The sun was hidden behind clouds and then appeared — "emerged" means came out.' },
+            { type: 'context-clues', passage: 'The acrid smoke from the burning tyres stung their eyes and made them cough. They had to cover their faces with cloth.', targetWord: 'acrid', question: 'What does "acrid" mean?', options: ['Pleasant and sweet', 'Sharp and unpleasant', 'Invisible', 'Cold'], correct: 1, explanation: 'The smoke stung their eyes and made them cough — "acrid" means sharp and unpleasant.' },
+            { type: 'context-clues', passage: 'The copious rainfall flooded streets, overflowed rivers, and turned gardens into lakes. It was the wettest week in recorded history.', targetWord: 'copious', question: 'What does "copious" mean?', options: ['Very little', 'Abundant, a great amount', 'Gentle', 'Freezing'], correct: 1, explanation: 'Flooding streets, overflowing rivers, and the wettest week — "copious" means abundant or a huge amount.' },
+            { type: 'context-clues', passage: 'While most students rushed through the test, Priya was methodical — she read each question twice, checked her working, and only moved on when she was certain.', targetWord: 'methodical', question: 'What does "methodical" mean?', options: ['Careless', 'Systematic and careful', 'Fast', 'Confused'], correct: 1, explanation: 'Reading twice, checking working, and being certain — all describe someone who is systematic and careful.' },
+            { type: 'context-clues', passage: 'The ambassador tried to placate the angry crowd by promising immediate action and personally apologising for the delay.', targetWord: 'placate', question: 'What does "placate" mean?', options: ['Anger further', 'Calm down', 'Ignore', 'Arrest'], correct: 1, explanation: 'Promising action and apologising are ways to calm an angry crowd — "placate" means to calm down or soothe.' },
+            { type: 'context-clues', passage: 'His trepidation grew as he approached the dark cave. His hands trembled, his mouth went dry, and every rustle made him jump.', targetWord: 'trepidation', question: 'What does "trepidation" mean?', options: ['Excitement', 'Fear and anxiety', 'Happiness', 'Boredom'], correct: 1, explanation: 'Trembling hands, dry mouth, jumping at sounds — all signs of fear. "Trepidation" means fear and anxiety.' },
+            { type: 'context-clues', passage: 'The verbose speaker used fifty words where ten would have done. By the end of the hour, half the audience had fallen asleep.', targetWord: 'verbose', question: 'What does "verbose" mean?', options: ['Using too many words', 'Very funny', 'Extremely quiet', 'Knowledgeable'], correct: 0, explanation: 'Using fifty words where ten would do — "verbose" means using more words than necessary.' },
+            { type: 'context-clues', passage: 'The abandoned village was eerily tranquil. No birds sang, no dogs barked, and the only sound was the wind whispering through empty streets.', targetWord: 'tranquil', question: 'What does "tranquil" mean?', options: ['Noisy and chaotic', 'Peaceful and quiet', 'Frightening', 'Crowded'], correct: 1, explanation: 'No birds, no dogs, only wind — the village is silent and still. "Tranquil" means peaceful and quiet.' },
+            { type: 'context-clues', passage: 'The children were jubilant when they heard school was cancelled. They cheered, danced around the kitchen, and made plans for the unexpected free day.', targetWord: 'jubilant', question: 'What does "jubilant" mean?', options: ['Disappointed', 'Overjoyed', 'Confused', 'Scared'], correct: 1, explanation: 'Cheering and dancing show extreme happiness — "jubilant" means overjoyed or extremely happy.' },
+            { type: 'context-clues', passage: 'The tenacious reporter refused to give up on the story. Despite threats and obstacles, she kept investigating until the truth was revealed.', targetWord: 'tenacious', question: 'What does "tenacious" mean?', options: ['Timid', 'Persistent and determined', 'Dishonest', 'Lazy'], correct: 1, explanation: 'Refusing to give up despite threats — "tenacious" means persistent and determined.' },
+            { type: 'context-clues', passage: 'The culprit was easy to identify — he was the only one with paint on his hands, a guilty look on his face, and an empty spray can in his pocket.', targetWord: 'culprit', question: 'What does "culprit" mean?', options: ['A witness', 'The person responsible', 'A teacher', 'A victim'], correct: 1, explanation: 'Paint on hands, guilty look, spray can — this is clearly the person who did it. "Culprit" means the person responsible.' },
+            { type: 'context-clues', passage: 'The ancient artefact was so fragile that the archaeologist handled it with extreme caution, barely touching it with her gloved fingertips.', targetWord: 'fragile', question: 'What does "fragile" mean?', options: ['Strong and sturdy', 'Heavy', 'Easily broken or damaged', 'Worthless'], correct: 2, explanation: 'Extreme caution and barely touching it — "fragile" means easily broken or damaged.' },
+            { type: 'context-clues', passage: 'The weather was so unpredictable that people carried umbrellas and sunglasses at the same time, never knowing whether it would rain or shine.', targetWord: 'unpredictable', question: 'What does "unpredictable" mean?', options: ['Always sunny', 'Impossible to know in advance', 'Very cold', 'Unchanging'], correct: 1, explanation: 'Carrying both umbrellas and sunglasses because they don\'t know what will happen — "unpredictable" means impossible to know in advance.' },
+            { type: 'context-clues', passage: 'Rather than squander his prize money on things he didn\'t need, Oliver saved it carefully in a bank account for his future education.', targetWord: 'squander', question: 'What does "squander" mean?', options: ['Save carefully', 'Waste recklessly', 'Invest wisely', 'Donate'], correct: 1, explanation: '"Rather than squander... Oliver saved carefully" — the contrast tells us "squander" means waste recklessly.' }
+        ];
+
+        // ===== HOMOPHONE QUESTIONS =====
+        // These test commonly confused words — key GL spelling spotter skill
+        const HOMOPHONE_QUESTIONS = [
+            { type: 'homophone', sentence: 'The children went over _____ to play in the park.', options: ['there', 'their', 'they\'re'], correct: 0, explanation: '"There" refers to a place. "Their" means belonging to them. "They\'re" means "they are".' },
+            { type: 'homophone', sentence: '_____ going to be late for school if they don\'t hurry.', options: ['There', 'Their', 'They\'re'], correct: 2, explanation: '"They\'re" = "they are". "They are going to be late."' },
+            { type: 'homophone', sentence: 'The dog wagged _____ tail happily.', options: ['it\'s', 'its'], correct: 1, explanation: '"Its" (no apostrophe) shows possession. "It\'s" means "it is".' },
+            { type: 'homophone', sentence: '_____ a beautiful day outside.', options: ['It\'s', 'Its'], correct: 0, explanation: '"It\'s" = "it is". "It is a beautiful day."' },
+            { type: 'homophone', sentence: 'She could hear the waves crashing on the _____.', options: ['beech', 'beach'], correct: 1, explanation: '"Beach" is the sandy shore. "Beech" is a type of tree.' },
+            { type: 'homophone', sentence: 'The knight wore a suit of _____ into battle.', options: ['steal', 'steel'], correct: 1, explanation: '"Steel" is the metal. "Steal" means to take something that isn\'t yours.' },
+            { type: 'homophone', sentence: 'We need to buy some _____ for the sandwiches.', options: ['bred', 'bread'], correct: 1, explanation: '"Bread" is the food. "Bred" is past tense of "breed".' },
+            { type: 'homophone', sentence: 'The _____ was very important to the success of the project.', options: ['role', 'roll'], correct: 0, explanation: '"Role" means a part or function someone plays. "Roll" means to turn over or a bread roll.' },
+            { type: 'homophone', sentence: 'She _____ the letter and posted it immediately.', options: ['wrote', 'rote'], correct: 0, explanation: '"Wrote" is past tense of "write". "Rote" means learning by repetition.' },
+            { type: 'homophone', sentence: 'The ship set _____ across the ocean at dawn.', options: ['sale', 'sail'], correct: 1, explanation: '"Sail" is what a ship does. "Sale" is when items are sold cheaply.' },
+            { type: 'homophone', sentence: '_____ coat is hanging by the door.', options: ['Who\'s', 'Whose'], correct: 1, explanation: '"Whose" shows possession (belonging to whom). "Who\'s" means "who is".' },
+            { type: 'homophone', sentence: '_____ coming to the party tonight?', options: ['Who\'s', 'Whose'], correct: 0, explanation: '"Who\'s" = "who is". "Who is coming to the party?"' },
+            { type: 'homophone', sentence: 'The hikers walked along the narrow _____ through the forest.', options: ['path', 'past'], correct: 0, explanation: '"Path" is a track or walkway. "Past" refers to time gone by or going beyond something.' },
+            { type: 'homophone', sentence: 'He didn\'t know _____ to wear the blue or red shirt.', options: ['weather', 'whether'], correct: 1, explanation: '"Whether" introduces a choice between options. "Weather" refers to rain, sun, etc.' },
+            { type: 'homophone', sentence: 'The _____ of the poem was very moving.', options: ['piece', 'peace'], correct: 0, explanation: '"Piece" means a part of something. "Peace" means calm or the absence of war.' },
+            { type: 'homophone', sentence: 'After the war ended, the country was finally at _____.', options: ['piece', 'peace'], correct: 1, explanation: '"Peace" means calm or the absence of conflict. "Piece" means a part of something.' },
+            { type: 'homophone', sentence: 'The _____ reason he failed was lack of practice.', options: ['principle', 'principal'], correct: 1, explanation: '"Principal" means main or most important (also the head of a school). "Principle" means a rule or belief.' },
+            { type: 'homophone', sentence: 'She has strong _____ about honesty and fairness.', options: ['principles', 'principals'], correct: 0, explanation: '"Principles" are rules or beliefs. "Principals" are heads of schools.' },
+            { type: 'homophone', sentence: 'The medicine had a positive _____ on his health.', options: ['affect', 'effect'], correct: 1, explanation: '"Effect" (noun) = a result or outcome. "Affect" (verb) = to influence.' },
+            { type: 'homophone', sentence: 'The cold weather will _____ the crops.', options: ['affect', 'effect'], correct: 0, explanation: '"Affect" (verb) = to influence or have an impact on. "Effect" (noun) = a result.' },
+            { type: 'homophone', sentence: 'She received a lovely _____ from her grandmother.', options: ['presence', 'presents'], correct: 1, explanation: '"Presents" means gifts. "Presence" means being somewhere (your presence in the room).' },
+            { type: 'homophone', sentence: 'He walked _____ the school on his way home.', options: ['past', 'passed'], correct: 0, explanation: '"Past" (preposition) = beyond. "Passed" (verb) = went by. Here it\'s a preposition.' },
+            { type: 'homophone', sentence: 'She _____ the exam with flying colours.', options: ['past', 'passed'], correct: 1, explanation: '"Passed" (verb) = succeeded in. "Past" (preposition/noun) = beyond or a previous time.' },
+            { type: 'homophone', sentence: 'The teacher asked the students to sit in _____ seats quietly.', options: ['there', 'their', 'they\'re'], correct: 1, explanation: '"Their" shows possession — the seats belonging to them.' },
+            { type: 'homophone', sentence: 'You need to _____ your coat; it\'s cold outside.', options: ['where', 'wear', 'were'], correct: 1, explanation: '"Wear" means to have clothing on. "Where" asks about a place. "Were" is past tense of "are".' }
+        ];
+
         // ===== UI CONTROLLER =====
         class UIController {
             constructor(engine) {
@@ -1750,19 +2038,26 @@
                 document.getElementById('readinessFill').style.width = (avgRecall * 100) + '%';
 
                 const mastered = this.engine.getMasteredCount();
-                document.getElementById('masteredCounter').textContent = mastered + ' items mastered';
+                const states = this.engine.getStateCounts();
+                const learning = states.fragile + states.teaching + states.lapsed;
+                document.getElementById('masteredCounter').textContent = mastered + ' fluent · ' + learning + ' learning · ' + states.unknown + ' to go';
 
                 // Update topic breakdown
                 const accuracyByType = this.engine.getAccuracyByType();
                 const breakdownContent = document.getElementById('breakdownContent');
                 breakdownContent.innerHTML = '';
 
-                const types = ['vocab', 'spelling', 'punctuation', 'comprehension', 'cloze', 'synonym', 'antonym'];
+                const types = ['vocab', 'spelling', 'punctuation', 'comprehension', 'cloze', 'synonym', 'antonym', 'context-clues', 'homophone'];
+                const typeDisplayNames = {
+                    'vocab': 'Vocab', 'spelling': 'Spelling', 'punctuation': 'Punctuation',
+                    'comprehension': 'Comprehension', 'cloze': 'Cloze', 'synonym': 'Synonyms',
+                    'antonym': 'Antonyms', 'context-clues': 'Context Clues', 'homophone': 'Homophones'
+                };
                 types.forEach(type => {
                     const item = document.createElement('span');
                     item.className = 'breakdown-item';
                     const accuracy = accuracyByType[type];
-                    const displayType = type.charAt(0).toUpperCase() + type.slice(1);
+                    const displayType = typeDisplayNames[type] || type.charAt(0).toUpperCase() + type.slice(1);
                     item.textContent = displayType + ': ' + (accuracy !== null ? accuracy + '%' : '—');
                     item.style.color = accuracy === null ? '#808090' : (accuracy >= 80 ? '#00b894' : accuracy >= 60 ? '#f39c12' : '#e17055');
                     breakdownContent.appendChild(item);
@@ -1788,6 +2083,8 @@
                 };
 
                 this.sessionCurrentIndex = 0;
+                this.lastAnswerWasCorrect = true;
+                this.timerExpired = false;
                 this.showScreen('session');
                 this.startTimer();
                 this.displayNextQuestion();
@@ -1807,7 +2104,24 @@
 
                     if (timeRemaining <= 0) {
                         clearInterval(this.timerInterval);
-                        this.finishSession();
+                        // "Never end on failure": if last answer was wrong, flag that
+                        // we need one more easy question before finishing
+                        if (this.lastAnswerWasCorrect === false && !this.answered) {
+                            // If currently mid-question, let them finish it first
+                            this.timerExpired = true;
+                        } else if (this.lastAnswerWasCorrect === false) {
+                            // Last answer was wrong, inject an easy question
+                            const easyItem = this.findEasyItem();
+                            if (easyItem) {
+                                this.sessionQueue.splice(this.sessionCurrentIndex, 0, easyItem);
+                                this.timerExpired = true;
+                                // Don't finish yet — let the easy question play out
+                            } else {
+                                this.finishSession();
+                            }
+                        } else {
+                            this.finishSession();
+                        }
                     }
                 }, 1000);
             }
@@ -1815,6 +2129,11 @@
             displayNextQuestion() {
                 this.answered = false;
                 if (this.sessionCurrentIndex >= this.sessionQueue.length) {
+                    // If timer expired and we just finished the bonus easy question, finish now
+                    if (this.timerExpired) {
+                        this.finishSession();
+                        return;
+                    }
                     this.finishSession();
                     return;
                 }
@@ -1849,7 +2168,9 @@
                     ...COMPREHENSION_QUESTIONS,
                     ...CLOZE_QUESTIONS,
                     ...SYNONYM_QUESTIONS,
-                    ...ANTONYM_QUESTIONS
+                    ...ANTONYM_QUESTIONS,
+                    ...CONTEXT_CLUES_QUESTIONS,
+                    ...HOMOPHONE_QUESTIONS
                 ];
 
                 let typeIndex = 0;
@@ -1874,7 +2195,9 @@
                     ...COMPREHENSION_QUESTIONS,
                     ...CLOZE_QUESTIONS,
                     ...SYNONYM_QUESTIONS,
-                    ...ANTONYM_QUESTIONS
+                    ...ANTONYM_QUESTIONS,
+                    ...CONTEXT_CLUES_QUESTIONS,
+                    ...HOMOPHONE_QUESTIONS
                 ];
 
                 for (let q of allQuestions) {
@@ -1895,8 +2218,16 @@
 
                 const typeLabel = document.createElement('div');
                 typeLabel.className = 'question-type';
-                typeLabel.textContent = item.type.toUpperCase();
+                const typeDisplayNames = {
+                    'cloze': 'SENTENCE COMPLETION',
+                    'context-clues': 'CONTEXT CLUES'
+                };
+                typeLabel.textContent = typeDisplayNames[item.type] || item.type.toUpperCase().replace('-', ' ');
                 container.appendChild(typeLabel);
+
+                // Store current question data for feedback context
+                this.currentQuestion = question;
+                this.currentItemType = item.type;
 
                 if (item.type === 'vocab') {
                     this.renderVocabQuestion(container, question);
@@ -1912,6 +2243,10 @@
                     this.renderSynonymQuestion(container, question);
                 } else if (item.type === 'antonym') {
                     this.renderAntonymQuestion(container, question);
+                } else if (item.type === 'context-clues') {
+                    this.renderContextCluesQuestion(container, question);
+                } else if (item.type === 'homophone') {
+                    this.renderHomophoneQuestion(container, question);
                 }
             }
 
@@ -1950,15 +2285,32 @@
                 const sentence = document.createElement('div');
                 sentence.className = 'spelling-sentence';
 
+                const colors = [
+                    'rgba(108, 92, 231, 0.2)',
+                    'rgba(162, 155, 254, 0.2)',
+                    'rgba(108, 92, 231, 0.15)',
+                    'rgba(162, 155, 254, 0.15)'
+                ];
+                const labels = ['A', 'B', 'C', 'D'];
+
                 question.sections.forEach((section, idx) => {
-                    const span = document.createElement('span');
+                    const sectionWrapper = document.createElement('div');
+                    sectionWrapper.style.display = 'inline-block';
+                    sectionWrapper.style.marginRight = '12px';
+                    sectionWrapper.style.marginBottom = '30px';
+
+                    const span = document.createElement('div');
                     span.className = 'spelling-section';
-                    if (idx === 0) span.style.backgroundColor = 'rgba(108, 92, 231, 0.2)';
-                    if (idx === 1) span.style.backgroundColor = 'rgba(162, 155, 254, 0.2)';
-                    if (idx === 2) span.style.backgroundColor = 'rgba(108, 92, 231, 0.15)';
+                    span.style.backgroundColor = colors[idx];
                     span.textContent = section;
-                    sentence.appendChild(span);
-                    sentence.appendChild(document.createTextNode(' '));
+                    sectionWrapper.appendChild(span);
+
+                    const label = document.createElement('div');
+                    label.className = 'spelling-section-label';
+                    label.textContent = labels[idx];
+                    sectionWrapper.appendChild(label);
+
+                    sentence.appendChild(sectionWrapper);
                 });
 
                 container.appendChild(sentence);
@@ -1971,11 +2323,11 @@
                 const options = document.createElement('div');
                 options.className = 'options';
 
-                const labels = ['A', 'B', 'C', 'No error'];
-                [0, 1, 2, -1].forEach((idx, i) => {
+                const optionLabels = ['A', 'B', 'C', 'D', 'N'];
+                [0, 1, 2, 3, -1].forEach((idx, i) => {
                     const opt = document.createElement('div');
                     opt.className = 'option';
-                    opt.innerHTML = '<span class="option-label">' + labels[i] + '.</span>' + (idx === -1 ? 'No error' : 'Section ' + labels[i]);
+                    opt.innerHTML = '<span class="option-label">' + optionLabels[i] + '.</span>' + (idx === -1 ? 'No error' : 'Section ' + optionLabels[i]);
                     opt.addEventListener('click', () => this.handleAnswer(idx, question.correct, question.explanation));
                     options.appendChild(opt);
                 });
@@ -2116,19 +2468,81 @@
                 container.appendChild(options);
             }
 
+            renderContextCluesQuestion(container, question) {
+                const passage = document.createElement('div');
+                passage.className = 'passage';
+                // Highlight the target word in the passage
+                const parts = question.passage.split(question.targetWord);
+                if (parts.length > 1) {
+                    passage.innerHTML = parts[0] + '<span class="vocab-word" style="font-weight:bold;color:#a29bfe;">' + question.targetWord + '</span>' + parts.slice(1).join(question.targetWord);
+                } else {
+                    passage.textContent = question.passage;
+                }
+                container.appendChild(passage);
+
+                const questionText = document.createElement('div');
+                questionText.className = 'question-text';
+                questionText.textContent = question.question;
+                container.appendChild(questionText);
+
+                const options = document.createElement('div');
+                options.className = 'options';
+
+                question.options.forEach((option, idx) => {
+                    const opt = document.createElement('div');
+                    opt.className = 'option';
+                    opt.innerHTML = '<span class="option-label">' + String.fromCharCode(65 + idx) + '.</span>' + option;
+                    opt.addEventListener('click', () => this.handleAnswer(idx, question.correct, question.explanation));
+                    options.appendChild(opt);
+                });
+
+                container.appendChild(options);
+            }
+
+            renderHomophoneQuestion(container, question) {
+                const questionText = document.createElement('div');
+                questionText.className = 'question-text';
+                questionText.textContent = 'Choose the correct word to complete the sentence:';
+                container.appendChild(questionText);
+
+                const sentence = document.createElement('div');
+                sentence.className = 'vocab-sentence';
+                sentence.textContent = question.sentence;
+                container.appendChild(sentence);
+
+                const options = document.createElement('div');
+                options.className = 'options';
+
+                question.options.forEach((option, idx) => {
+                    const opt = document.createElement('div');
+                    opt.className = 'option';
+                    opt.innerHTML = '<span class="option-label">' + String.fromCharCode(65 + idx) + '.</span>' + option;
+                    opt.addEventListener('click', () => this.handleAnswer(idx, question.correct, question.explanation));
+                    options.appendChild(opt);
+                });
+
+                container.appendChild(options);
+            }
+
             handleAnswer(selectedIdx, correctIdx, explanation) {
                 if (this.answered) return;
                 this.answered = true;
                 const latency = Date.now() - this.questionStartTime;
                 const isCorrect = selectedIdx === correctIdx;
+                this.lastAnswerWasCorrect = isCorrect;
 
                 // Highlight correct and wrong options
+                // For spelling/punctuation, option values are [0,1,2,3,-1] but DOM indices are [0,1,2,3,4]
+                // We need to map answer values back to DOM indices
                 const allOptions = document.querySelectorAll('.option');
-                allOptions.forEach((opt, idx) => {
-                    if (idx === correctIdx) {
+                const optionValues = this.currentItemType === 'spelling'
+                    ? [0, 1, 2, 3, -1] : null;
+                allOptions.forEach((opt, domIdx) => {
+                    const optVal = optionValues ? optionValues[domIdx] : domIdx;
+                    if (optVal === correctIdx) {
                         opt.style.borderColor = '#00b894';
                         opt.style.background = 'rgba(0,184,148,0.15)';
-                    } else if (idx === selectedIdx && !isCorrect) {
+                    } else if (optVal === selectedIdx && !isCorrect) {
                         opt.style.borderColor = '#e17055';
                         opt.style.background = 'rgba(225,112,85,0.15)';
                     }
@@ -2188,9 +2602,48 @@
                 label.textContent = isCorrect ? 'Correct!' : 'Incorrect';
                 feedback.appendChild(label);
 
+                // Special handling for spelling questions with visual diff
+                if (this.currentItemType === 'spelling' && !isCorrect && this.currentQuestion && this.currentQuestion.misspelled) {
+                    const diffDiv = document.createElement('div');
+                    diffDiv.style.marginBottom = '12px';
+                    diffDiv.style.fontWeight = '600';
+
+                    const wrongSpan = document.createElement('span');
+                    wrongSpan.style.color = '#ff6b6b';
+                    wrongSpan.style.textDecoration = 'line-through';
+                    wrongSpan.textContent = this.currentQuestion.misspelled;
+
+                    const correctSpan = document.createElement('span');
+                    correctSpan.style.color = '#33d9b2';
+                    correctSpan.style.marginLeft = '8px';
+                    correctSpan.textContent = this.currentQuestion.correction;
+
+                    diffDiv.appendChild(document.createTextNode('Change '));
+                    diffDiv.appendChild(wrongSpan);
+                    diffDiv.appendChild(document.createTextNode(' to '));
+                    diffDiv.appendChild(correctSpan);
+
+                    feedback.appendChild(diffDiv);
+                }
+
                 const text = document.createElement('div');
                 text.textContent = explanation;
                 feedback.appendChild(text);
+
+                // Add context for antonym/synonym questions (always, for reinforcement)
+                if (this.currentQuestion && this.currentItemType === 'antonym') {
+                    const contextDiv = document.createElement('div');
+                    contextDiv.style.marginTop = '10px';
+                    contextDiv.style.fontStyle = 'italic';
+                    contextDiv.textContent = 'So the antonym of \'' + this.currentQuestion.word + '\' is \'' + this.currentQuestion.options[this.currentQuestion.correct] + '\'.';
+                    feedback.appendChild(contextDiv);
+                } else if (this.currentQuestion && this.currentItemType === 'synonym') {
+                    const contextDiv = document.createElement('div');
+                    contextDiv.style.marginTop = '10px';
+                    contextDiv.style.fontStyle = 'italic';
+                    contextDiv.textContent = 'So the synonym of \'' + this.currentQuestion.word + '\' is \'' + this.currentQuestion.options[this.currentQuestion.correct] + '\'.';
+                    feedback.appendChild(contextDiv);
+                }
 
                 container.appendChild(feedback);
             }
@@ -2225,7 +2678,41 @@
             }
 
             handleNextQuestion() {
+                // "Never end on failure" rule (Section 8.1 of adaptive_learning_framework):
+                // If we're at the end of the queue and the last answer was wrong,
+                // inject one easy question the child is likely to get right.
+                if (this.sessionCurrentIndex >= this.sessionQueue.length && this.lastAnswerWasCorrect === false) {
+                    const easyItem = this.findEasyItem();
+                    if (easyItem) {
+                        this.sessionQueue.push(easyItem);
+                    }
+                }
                 this.displayNextQuestion();
+            }
+
+            findEasyItem() {
+                // Find a Fluent or strong Fragile item to end on a win.
+                // Prefer fluent items first, then fragile with high recall.
+                let bestId = null;
+                let bestScore = -1;
+
+                Object.entries(this.engine.items).forEach(([id, item]) => {
+                    if (item.encounters > 0 && item.correctCount > 0) {
+                        const accuracy = item.correctCount / item.encounters;
+                        const recency = item.recall || 0;
+                        // Fluent items get a bonus — they're the safest bet for a correct answer
+                        const stateBonus = item.state === 'fluent' ? 0.3 : (item.state === 'fragile' ? 0.1 : 0);
+                        const score = accuracy * 0.5 + recency * 0.3 + stateBonus;
+                        // Exclude items already in the current session queue (last 5) to avoid repetition
+                        const recentQueue = this.sessionQueue.slice(-5);
+                        if (score > bestScore && !recentQueue.includes(id)) {
+                            bestScore = score;
+                            bestId = id;
+                        }
+                    }
+                });
+
+                return bestId;
             }
 
             finishSession() {
