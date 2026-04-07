@@ -939,7 +939,7 @@
             <div class="dojo-header">
                 <div class="dojo-title">English Dojo</div>
                 <div class="dojo-subtitle">Level up your 11+ English skills</div>
-                <div class="app-version" id="appVersion" style="font-size: 0.75em; color: #6c5ce7; opacity: 0.6; margin-top: 4px;">v1.1.0</div>
+                <div class="app-version" id="appVersion" style="font-size: 0.75em; color: #6c5ce7; opacity: 0.6; margin-top: 4px;">v1.2.0</div>
             </div>
 
             <div class="stats-container" id="statsContainer">
@@ -1496,8 +1496,9 @@
                     }
                 });
 
-                // If we still have empty slots (very early use), allow more unknowns
-                if (queue.length < targetQuestions && queue.length < 5) {
+                // If we still have empty slots, fill with more unknowns
+                // Early use: don't leave the session half-empty just because batch gating is strict
+                if (queue.length < targetQuestions) {
                     unknown.forEach(([id]) => {
                         if (queue.length < targetQuestions && !queue.includes(id)) {
                             queue.push(id);
