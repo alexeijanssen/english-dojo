@@ -1109,6 +1109,13 @@
 
                 // Load cloud data then show subject screen
                 await loadFromCloud();
+
+                // Reload engine items from localStorage (which loadFromCloud may have updated)
+                if (typeof engine !== 'undefined') {
+                    engine.items = engine.loadItems();
+                    engine.globalStats = engine.loadGlobalStats();
+                }
+
                 showScreen('subjectScreen');
 
                 // Update the English start screen stats
@@ -1128,34 +1135,80 @@
             try {
                 const snapshot = await dbRef.once('value');
                 const data = snapshot.val();
-                if (data) {
-                    if (data.items) {
+                if (data && data.items) {
+                    // Check if cloud data is stale (all zeros) vs localStorage has real progress
+                    const cloudEncounters = Object.values(data.items).reduce((sum, item) => sum + (item.encounters || 0), 0);
+                    const localRaw = localStorage.getItem(ITEMS_KEY);
+                    let localEncounters = 0;
+                    if (localRaw) {
+                        try {
+                            const localItems = JSON.parse(localRaw);
+                            localEncounters = Object.values(localItems).reduce((sum, item) => sum + (item.encounters || 0), 0);
+                        } catch(e) {}
+                    }
+
+                    console.log('[Cloud] Cloud encounters:', cloudEncounters, '| Local encounters:', localEncounters);
+
+                    if (cloudEncounters >= localEncounters) {
+                        // Cloud has more/equal progress — use it
                         localStorage.setItem(ITEMS_KEY, JSON.stringify(data.items));
+                        if (data.stats) {
+                            localStorage.setItem(STATE_KEY, JSON.stringify(data.stats));
+                        }
+                        document.getElementById('syncStatus').textContent = 'Synced from cloud ✓';
+                        console.log('[Cloud] Loaded cloud data (cloud has more progress)');
+                    } else {
+                        // Local has more progress — push local to cloud instead
+                        console.warn('[Cloud] Local data has MORE progress than cloud (' + localEncounters + ' vs ' + cloudEncounters + '). Keeping local and pushing to cloud.');
+                        document.getElementById('syncStatus').textContent = 'Local data newer — syncing up ↑';
+                        saveToCloud();
                     }
-                    if (data.stats) {
-                        localStorage.setItem(STATE_KEY, JSON.stringify(data.stats));
-                    }
+                } else if (!data) {
+                    // No cloud data at all — push local data up
+                    console.log('[Cloud] No cloud data found. Pushing local data.');
+                    document.getElementById('syncStatus').textContent = 'First sync ↑';
+                    saveToCloud();
                 }
-                document.getElementById('syncStatus').textContent = 'Synced from cloud ✓';
                 setTimeout(() => { document.getElementById('syncStatus').textContent = ''; }, 2000);
             } catch (err) {
-                console.error('Cloud load error:', err);
+                console.error('[Cloud] Load error:', err);
                 document.getElementById('syncStatus').textContent = 'Using local data';
             }
         }
 
+        let cloudSyncOk = true;
+        let lastSyncAttempt = 0;
+
         function saveToCloud() {
             if (!dbRef) return;
+            const now = Date.now();
+            // Throttle: don't sync more than once every 3 seconds
+            if (now - lastSyncAttempt < 3000) return;
+            lastSyncAttempt = now;
+
             try {
                 const items = localStorage.getItem(ITEMS_KEY);
                 const stats = localStorage.getItem(STATE_KEY);
                 const payload = {};
                 if (items) payload.items = JSON.parse(items);
                 if (stats) payload.stats = JSON.parse(stats);
-                payload.lastSync = Date.now();
-                dbRef.set(payload);
+                payload.lastSync = now;
+
+                dbRef.set(payload).then(() => {
+                    cloudSyncOk = true;
+                    console.log('[Cloud] Sync OK — ' + Object.keys(payload.items || {}).length + ' items saved');
+                    const el = document.getElementById('syncStatus');
+                    if (el) { el.textContent = 'Saved ✓'; el.style.color = '#00b894'; }
+                    setTimeout(() => { if (el) el.textContent = ''; }, 2000);
+                }).catch(err => {
+                    cloudSyncOk = false;
+                    console.error('[Cloud] Sync FAILED:', err.code, err.message);
+                    const el = document.getElementById('syncStatus');
+                    if (el) { el.textContent = 'Sync failed ✗'; el.style.color = '#ff5050'; }
+                });
             } catch (err) {
-                console.error('Cloud save error:', err);
+                cloudSyncOk = false;
+                console.error('[Cloud] Save error:', err);
             }
         }
 
@@ -2978,6 +3031,30 @@
         // ===== INITIALIZATION =====
         const engine = new AdaptiveEngine();
         const ui = new UIController(engine);
+
+        // Background sync safety net: retry every 60s if last sync failed
+        setInterval(() => {
+            if (!cloudSyncOk && dbRef) {
+                console.log('[Cloud] Retry sync (previous failed)...');
+                saveToCloud();
+            }
+        }, 60000);
+
+        // Also sync before page unload
+        window.addEventListener('beforeunload', () => {
+            if (dbRef) {
+                const items = localStorage.getItem(ITEMS_KEY);
+                const stats = localStorage.getItem(STATE_KEY);
+                const payload = {};
+                if (items) payload.items = JSON.parse(items);
+                if (stats) payload.stats = JSON.parse(stats);
+                payload.lastSync = Date.now();
+                // Use navigator.sendBeacon for reliable unload sync
+                const url = dbRef.toString() + '.json?auth=' + (currentUser ? currentUser.getIdToken && '' : '');
+                // Fallback: synchronous set (may not complete but worth trying)
+                try { dbRef.set(payload); } catch(e) {}
+            }
+        });
     </script>
 </body>
 </html>
