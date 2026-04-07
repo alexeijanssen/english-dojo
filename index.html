@@ -908,6 +908,7 @@
             </div>
             <div class="subject-greeting" id="subjectGreeting">Choose a subject</div>
             <div class="subject-prompt">Pick what you want to practise today</div>
+            <div id="globalVersion" style="font-size: 0.65em; color: #6c5ce7; opacity: 0.5; margin-top: 2px;">v1.3.0</div>
             <div class="subject-grid">
                 <div class="subject-card" onclick="selectSubject('english')">
                     <div class="subject-icon">📚</div>
@@ -939,7 +940,7 @@
             <div class="dojo-header">
                 <div class="dojo-title">English Dojo</div>
                 <div class="dojo-subtitle">Level up your 11+ English skills</div>
-                <div class="app-version" id="appVersion" style="font-size: 0.75em; color: #6c5ce7; opacity: 0.6; margin-top: 4px;">v1.2.0</div>
+                <div class="app-version" id="appVersion" style="font-size: 0.75em; color: #6c5ce7; opacity: 0.6; margin-top: 4px;">v1.3.0</div>
             </div>
 
             <div class="stats-container" id="statsContainer">
@@ -1424,10 +1425,8 @@
                         case 'fragile':
                             if (item.recall !== null && item.recall < 0.7) {
                                 fragiledue.push([id, item, item.recall]);
-                            } else if (item.recall !== null) {
-                                // Fragile but not yet due — still include for focused practice
-                                fragiledue.push([id, item, item.recall]);
                             }
+                            // Fragile with recall >= 0.7: NOT due for review, skip until recall drops
                             break;
                         case 'fluent':
                             if (item.recall !== null && item.recall < 0.7) {
@@ -1465,44 +1464,41 @@
                 }
 
                 // Phase 3: Build queue in priority order (Section 4.1)
+                // Reserve at least 30% of session for new material to avoid review-loop trap
+                const reviewCap = Math.floor(targetQuestions * 0.7);
                 const queue = [];
 
                 // 3a. Lapsed recovery (highest priority)
                 lapsed.forEach(([id]) => {
-                    if (queue.length < targetQuestions) queue.push(id);
+                    if (queue.length < reviewCap) queue.push(id);
                 });
 
                 // 3b. Teaching items (need attention)
                 teaching.forEach(([id]) => {
-                    if (queue.length < targetQuestions) queue.push(id);
+                    if (queue.length < reviewCap) queue.push(id);
                 });
 
-                // 3c. Fragile items due for review (focused practice)
+                // 3c. Fragile items due for review (recall < 0.7 only)
                 fragiledue.forEach(([id]) => {
-                    if (queue.length < targetQuestions) queue.push(id);
+                    if (queue.length < reviewCap) queue.push(id);
                 });
 
                 // 3d. Fluent items due for review (mixed review)
                 fluent_due.forEach(([id]) => {
-                    if (queue.length < targetQuestions) queue.push(id);
+                    if (queue.length < reviewCap) queue.push(id);
                 });
 
-                // 3e. New material (gated by batch introduction)
-                let introduced = 0;
+                // 3e. New material — fill remaining slots (at least 30% of session)
                 unknown.forEach(([id]) => {
-                    if (queue.length < targetQuestions && introduced < newItemsToIntroduce) {
+                    if (queue.length < targetQuestions && !queue.includes(id)) {
                         queue.push(id);
-                        introduced++;
                     }
                 });
 
-                // If we still have empty slots, fill with more unknowns
-                // Early use: don't leave the session half-empty just because batch gating is strict
+                // If STILL not full (ran out of unknowns), backfill with more review items
                 if (queue.length < targetQuestions) {
-                    unknown.forEach(([id]) => {
-                        if (queue.length < targetQuestions && !queue.includes(id)) {
-                            queue.push(id);
-                        }
+                    fragiledue.forEach(([id]) => {
+                        if (queue.length < targetQuestions && !queue.includes(id)) queue.push(id);
                     });
                 }
 
