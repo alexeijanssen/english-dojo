@@ -610,6 +610,97 @@
             }
         }
 
+        /* Developer Feedback Bar */
+        .dev-feedback-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 15, 26, 0.95);
+            border-top: 2px solid rgba(255, 165, 0, 0.4);
+            padding: 8px 16px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .dev-feedback-bar.active {
+            display: flex;
+        }
+
+        .dev-feedback-bar .dev-label {
+            font-size: 0.7em;
+            color: #ffa500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .dev-feedback-bar .dev-context {
+            font-size: 0.7em;
+            color: #9090a0;
+            white-space: nowrap;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dev-feedback-bar input {
+            flex: 1;
+            background: rgba(108, 92, 231, 0.1);
+            border: 1px solid rgba(108, 92, 231, 0.3);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #e0e0e0;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85em;
+        }
+
+        .dev-feedback-bar input::placeholder {
+            color: #6060708a;
+        }
+
+        .dev-feedback-bar input:focus {
+            outline: none;
+            border-color: #ffa500;
+        }
+
+        .dev-feedback-bar .dev-send {
+            background: rgba(255, 165, 0, 0.2);
+            border: 1px solid rgba(255, 165, 0, 0.4);
+            color: #ffa500;
+            border-radius: 8px;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-size: 0.8em;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .dev-feedback-bar .dev-send:hover {
+            background: rgba(255, 165, 0, 0.35);
+        }
+
+        .dev-feedback-bar .dev-toast {
+            position: absolute;
+            top: -30px;
+            right: 16px;
+            background: rgba(0, 184, 148, 0.9);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75em;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .dev-feedback-bar .dev-toast.show {
+            opacity: 1;
+        }
+
         /* Auth Screen */
         #authScreen {
             justify-content: center;
@@ -847,6 +938,7 @@
             <div class="dojo-header">
                 <div class="dojo-title">English Dojo</div>
                 <div class="dojo-subtitle">Level up your 11+ English skills</div>
+                <div class="app-version" id="appVersion" style="font-size: 0.75em; color: #6c5ce7; opacity: 0.6; margin-top: 4px;">v1.1.0</div>
             </div>
 
             <div class="stats-container" id="statsContainer">
@@ -938,6 +1030,15 @@
         </div>
     </div>
 
+    <!-- Developer Feedback Bar (only visible when dev account logged in) -->
+    <div class="dev-feedback-bar" id="devFeedbackBar">
+        <span class="dev-label">DEV</span>
+        <span class="dev-context" id="devContext"></span>
+        <input type="text" id="devFeedbackInput" placeholder="Type feedback on this question, hit Enter..." autocomplete="off">
+        <button class="dev-send" id="devSendBtn">Send</button>
+        <div class="dev-toast" id="devToast">Saved</div>
+    </div>
+
     <script>
         // ===== FIREBASE INITIALIZATION =====
         const firebaseConfig = {
@@ -991,6 +1092,7 @@
             if (user) {
                 currentUser = user;
                 dbRef = db.ref('users/' + user.uid + '/english');
+                checkDevMode(user);
 
                 // Update UI
                 const avatar = document.getElementById('userAvatar');
@@ -1015,6 +1117,7 @@
             } else {
                 currentUser = null;
                 dbRef = null;
+                checkDevMode(null);
                 showScreen('authScreen');
             }
         });
@@ -2156,6 +2259,9 @@
                 }
 
                 this.renderQuestion(item, question);
+                this.currentItemId = itemId;
+                this.currentItemType = item.type;
+                updateDevContext(itemId, item.type);
 
                 this.questionStartTime = Date.now();
             }
@@ -2788,6 +2894,75 @@
                 showScreen('subjectScreen');
             }
         }
+
+        // ===== DEVELOPER MODE =====
+        const DEV_EMAILS = ['me@alexei.co.uk'];
+        let isDevMode = false;
+        let devCurrentItemId = null;
+        let devCurrentQuestionType = null;
+
+        function checkDevMode(user) {
+            if (user && DEV_EMAILS.includes(user.email)) {
+                isDevMode = true;
+                document.getElementById('devFeedbackBar').classList.add('active');
+                // Add bottom padding to container so feedback bar doesn't cover content
+                document.querySelector('.container').style.paddingBottom = '70px';
+            } else {
+                isDevMode = false;
+                document.getElementById('devFeedbackBar').classList.remove('active');
+                document.querySelector('.container').style.paddingBottom = '20px';
+            }
+        }
+
+        function updateDevContext(itemId, questionType) {
+            if (!isDevMode) return;
+            devCurrentItemId = itemId;
+            devCurrentQuestionType = questionType;
+            const ctx = document.getElementById('devContext');
+            ctx.textContent = itemId || '';
+            document.getElementById('devFeedbackInput').value = '';
+        }
+
+        function submitDevFeedback() {
+            if (!isDevMode || !dbRef) return;
+            const input = document.getElementById('devFeedbackInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const feedbackEntry = {
+                itemId: devCurrentItemId || 'general',
+                questionType: devCurrentQuestionType || 'unknown',
+                text: text,
+                timestamp: Date.now(),
+                date: new Date().toISOString()
+            };
+
+            // Save to Firebase under devFeedback
+            const feedbackRef = db.ref('devFeedback').push();
+            feedbackRef.set(feedbackEntry).then(() => {
+                // Flash toast
+                const toast = document.getElementById('devToast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 1200);
+            }).catch(err => {
+                console.error('Dev feedback save error:', err);
+            });
+
+            input.value = '';
+            input.placeholder = 'Saved — type more or keep going...';
+            setTimeout(() => {
+                input.placeholder = 'Type feedback on this question, hit Enter...';
+            }, 2000);
+        }
+
+        // Wire up feedback bar
+        document.getElementById('devFeedbackInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                submitDevFeedback();
+            }
+        });
+        document.getElementById('devSendBtn').addEventListener('click', submitDevFeedback);
 
         // ===== INITIALIZATION =====
         const engine = new AdaptiveEngine();
