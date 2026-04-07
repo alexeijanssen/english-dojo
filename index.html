@@ -2938,8 +2938,8 @@
                 date: new Date().toISOString()
             };
 
-            // Save to Firebase under devFeedback
-            const feedbackRef = db.ref('devFeedback').push();
+            // Save to Firebase under user's own path (respects security rules)
+            const feedbackRef = dbRef.child('devFeedback').push();
             feedbackRef.set(feedbackEntry).then(() => {
                 // Flash toast
                 const toast = document.getElementById('devToast');
@@ -2947,6 +2947,16 @@
                 setTimeout(() => toast.classList.remove('show'), 1200);
             }).catch(err => {
                 console.error('Dev feedback save error:', err);
+                // Show error visually so feedback isn't silently lost
+                const toast = document.getElementById('devToast');
+                toast.textContent = 'FAILED';
+                toast.style.background = 'rgba(255,50,50,0.9)';
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    toast.textContent = 'Saved';
+                    toast.style.background = '';
+                }, 2000);
             });
 
             input.value = '';
