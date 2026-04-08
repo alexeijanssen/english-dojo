@@ -1414,41 +1414,29 @@
             buildSessionQueue(targetQuestions, maxNewItems = 5) {
                 this.recalculateAllRecalls();
 
-                // Phase 1: Categorise items by state (Section 4.1 of framework)
-                const lapsed = [];       // Highest priority: previously known, now failed
-                const fragiledue = [];   // Fragile items due for review (recall dropping)
-                const fragileall = [];   // ALL fragile items (for batch gating count)
-                const fluent_due = [];   // Fluent items due for review (mixed review pool)
-                const teaching = [];     // Items in teaching state (need re-teaching)
-                const unknown = [];      // Never encountered
+                // === COVERAGE-FIRST QUEUE BUILDER ===
+                // Core principle: never repeat a concept until all others have been shown.
+                // Sort all items by encounters (fewest first), then by lastReview (oldest first).
+                // This naturally cycles through the entire question pool before repeating anything.
 
-                Object.entries(this.items).forEach(([id, item]) => {
-                    switch (item.state) {
-                        case 'lapsed':
-                            lapsed.push([id, item, item.recall || 0]);
-                            break;
-                        case 'teaching':
-                            teaching.push([id, item, item.recall || 0]);
-                            break;
-                        case 'fragile':
-                            fragileall.push([id, item, item.recall]);
-                            if (item.recall !== null && item.recall < 0.7) {
-                                fragiledue.push([id, item, item.recall]);
-                            }
-                            // Fragile with recall >= 0.7: NOT due for review, skip until recall drops
-                            break;
-                        case 'fluent':
-                            if (item.recall !== null && item.recall < 0.7) {
-                                fluent_due.push([id, item, item.recall]);
-                            }
-                            break;
-                        case 'unknown':
-                            unknown.push([id, item]);
-                            break;
-                    }
+                const allItems = Object.entries(this.items).map(([id, item]) => [id, item]);
+
+                // Separate never-seen items from seen items
+                const unseen = allItems.filter(([, item]) => item.encounters === 0);
+                const seen = allItems.filter(([, item]) => item.encounters > 0);
+
+                // Sort seen items: fewest encounters first, then oldest lastReview first
+                // This ensures maximum variety — least-seen concepts come up first
+                seen.sort((a, b) => {
+                    const encDiff = a[1].encounters - b[1].encounters;
+                    if (encDiff !== 0) return encDiff;
+                    // Same encounter count: show the one reviewed longest ago first
+                    const aLast = a[1].lastReview || 0;
+                    const bLast = b[1].lastReview || 0;
+                    return aLast - bLast;
                 });
 
-                // Shuffle review items (add randomness so sessions aren't identical)
+                // Shuffle unseen items for type variety
                 const shuffle = arr => {
                     for (let i = arr.length - 1; i > 0; i--) {
                         const j = Math.floor(Math.random() * (i + 1));
@@ -1456,90 +1444,43 @@
                     }
                     return arr;
                 };
-                shuffle(lapsed);
-                shuffle(fragiledue);
-                shuffle(fluent_due);
+                shuffle(unseen);
 
-                // Phase 2: Batch introduction gating
-                // Count ALL in-progress items (all fragile + teaching + lapsed — everything being learned)
-                const inProgressCount = fragileall.length + teaching.length + lapsed.length;
-                // How many in-progress items have stabilised? (fragile with good recall >= 0.7)
-                const stableCount = fragileall.filter(([, item]) => item.recall !== null && item.recall >= 0.7).length;
-                const batchThresholdMet = inProgressCount === 0 || (inProgressCount > 0 && stableCount / inProgressCount >= 0.8);
-                // Determine how many new items to introduce
-                let newItemsToIntroduce = 0;
-                if (batchThresholdMet || inProgressCount < 5) {
-                    // Introduce a new batch of up to 5 items
-                    newItemsToIntroduce = Math.min(maxNewItems, unknown.length);
-                }
-
-                // Shuffle unknown items for type variety before selecting batch
-                for (let i = unknown.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [unknown[i], unknown[j]] = [unknown[j], unknown[i]];
-                }
-
-                // Phase 3: Build queue in priority order (Section 4.1)
-                // Reserve at least 30% of session for new material to avoid review-loop trap
-                const reviewCap = Math.floor(targetQuestions * 0.7);
+                // Build the queue: alternate between unseen and least-seen for variety
                 const queue = [];
+                let unseenIdx = 0;
+                let seenIdx = 0;
 
-                // Separate persistent-failure items (3+ lapses) — these need a fundamentally
-                // different approach. Limit to 1 per session to avoid frustration buildup.
-                const persistentFailure = [];
-                const lapsedNormal = lapsed.filter(([id, item]) => {
-                    if ((item.lapseCount || 0) >= 3) { persistentFailure.push([id, item]); return false; }
-                    return true;
-                });
-                const teachingNormal = teaching.filter(([id, item]) => {
-                    if ((item.lapseCount || 0) >= 3) { persistentFailure.push([id, item]); return false; }
-                    return true;
-                });
+                // Target: ~40% new material when available, rest is least-recently-seen reviews
+                const newTarget = Math.min(Math.ceil(targetQuestions * 0.4), unseen.length);
 
-                // 3a. Lapsed recovery (highest priority, excluding persistent failures)
-                lapsedNormal.forEach(([id]) => {
-                    if (queue.length < reviewCap) queue.push(id);
-                });
-
-                // 3b. Teaching items (need attention, excluding persistent failures)
-                teachingNormal.forEach(([id]) => {
-                    if (queue.length < reviewCap) queue.push(id);
-                });
-
-                // 3b-ii. Allow at most 1 persistent-failure item per session (spaced out, not hammered)
-                if (persistentFailure.length > 0 && queue.length < reviewCap) {
-                    queue.push(persistentFailure[0][0]);
-                    console.log('[Queue] Persistent-failure item included (1 of ' + persistentFailure.length + '):', persistentFailure[0][0]);
+                // Add unseen items first (spread across the queue later via interleave)
+                while (unseenIdx < newTarget && queue.length < targetQuestions) {
+                    queue.push(unseen[unseenIdx][0]);
+                    unseenIdx++;
                 }
 
-                // 3c. Fragile items due for review (recall < 0.7 only)
-                fragiledue.forEach(([id]) => {
-                    if (queue.length < reviewCap) queue.push(id);
-                });
-
-                // 3d. Fluent items due for review (mixed review)
-                fluent_due.forEach(([id]) => {
-                    if (queue.length < reviewCap) queue.push(id);
-                });
-
-                // 3e. New material — fill remaining slots (at least 30% of session)
-                unknown.forEach(([id]) => {
-                    if (queue.length < targetQuestions && !queue.includes(id)) {
+                // Fill remaining slots with least-seen items (coverage-first ordering)
+                while (seenIdx < seen.length && queue.length < targetQuestions) {
+                    const id = seen[seenIdx][0];
+                    if (!queue.includes(id)) {
                         queue.push(id);
                     }
-                });
-
-                // If STILL not full (ran out of unknowns), backfill with more review items
-                if (queue.length < targetQuestions) {
-                    fragiledue.forEach(([id]) => {
-                        if (queue.length < targetQuestions && !queue.includes(id)) queue.push(id);
-                    });
+                    seenIdx++;
                 }
 
-                console.log('[Queue] Built:', queue.length, 'items | Review:', Math.min(queue.length, reviewCap),
-                    '(lapsed:', lapsed.length, 'teaching:', teaching.length, 'fragile-due:', fragiledue.length, 'fluent-due:', fluent_due.length, ')',
-                    '| New:', queue.filter(id => this.items[id].state === 'unknown').length,
-                    '| Unknown pool:', unknown.length);
+                // If still not full (unlikely unless very few items), add more unseen
+                while (unseenIdx < unseen.length && queue.length < targetQuestions) {
+                    queue.push(unseen[unseenIdx][0]);
+                    unseenIdx++;
+                }
+
+                const newCount = queue.filter(id => this.items[id].encounters === 0).length;
+                const reviewCount = queue.length - newCount;
+                console.log('[Queue] Coverage-first built:', queue.length, 'items |',
+                    'New:', newCount, '| Review (least-seen):', reviewCount,
+                    '| Unseen pool:', unseen.length, '| Total concepts:', allItems.length);
+
                 return this.interleaveTypes(queue);
             }
 
