@@ -1051,7 +1051,7 @@
             </div>
             <div class="subject-greeting" id="subjectGreeting">Choose a subject</div>
             <div class="subject-prompt">Pick what you want to practise today</div>
-            <div id="globalVersion" style="font-size: 0.65em; color: #6c5ce7; opacity: 0.5; margin-top: 2px;">v1.4.0</div>
+            <div id="globalVersion" style="font-size: 0.65em; color: #6c5ce7; opacity: 0.5; margin-top: 2px;"></div>
             <div class="subject-grid">
                 <div class="subject-card" onclick="selectSubject('english')">
                     <div class="subject-icon">📚</div>
@@ -1083,7 +1083,7 @@
             <div class="dojo-header">
                 <div class="dojo-title">English Dojo</div>
                 <div class="dojo-subtitle">Level up your 11+ English skills</div>
-                <div class="app-version" id="appVersion" style="font-size: 0.75em; color: #6c5ce7; opacity: 0.6; margin-top: 4px;">v1.4.0</div>
+                <div class="app-version" id="appVersion" style="font-size: 0.75em; color: #6c5ce7; opacity: 0.6; margin-top: 4px;"></div>
             </div>
 
             <div class="stats-container" id="statsContainer">
@@ -1185,6 +1185,11 @@
     </div>
 
     <script>
+        // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
+        const APP_VERSION = 'v1.4.1';
+        document.getElementById('globalVersion').textContent = APP_VERSION;
+        document.getElementById('appVersion').textContent = APP_VERSION;
+
         // ===== FIREBASE INITIALIZATION =====
         const firebaseConfig = {
             apiKey: "AIzaSyDDjTMPDIX0HKRsFtnQ1vA_v21LAWLue60",
