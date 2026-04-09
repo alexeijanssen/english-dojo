@@ -702,6 +702,116 @@
             opacity: 1;
         }
 
+        /* Teaching Card */
+        .teaching-card {
+            background: linear-gradient(135deg, rgba(253, 203, 110, 0.12) 0%, rgba(108, 92, 231, 0.08) 100%);
+            border: 2px solid rgba(253, 203, 110, 0.4);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 0;
+            animation: teachingSlideIn 0.4s ease-out;
+        }
+
+        @keyframes teachingSlideIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .teaching-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .teaching-icon {
+            font-size: 1.6em;
+        }
+
+        .teaching-badge {
+            font-size: 0.8em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #fdcb6e;
+        }
+
+        .teaching-concept {
+            font-size: 1.25em;
+            font-weight: 600;
+            color: #e0e0e0;
+            margin-bottom: 14px;
+            line-height: 1.5;
+        }
+
+        .teaching-explanation {
+            font-size: 1.05em;
+            color: #c0c0d0;
+            line-height: 1.7;
+            margin-bottom: 10px;
+            padding: 14px 16px;
+            background: rgba(108, 92, 231, 0.1);
+            border-left: 3px solid #fdcb6e;
+            border-radius: 6px;
+        }
+
+        .teaching-tip {
+            font-size: 0.9em;
+            color: #a0a0b0;
+            font-style: italic;
+            margin-bottom: 22px;
+        }
+
+        .btn-try {
+            display: block;
+            width: 100%;
+            padding: 16px 32px;
+            font-size: 1.15em;
+            font-weight: 700;
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #fdcb6e 0%, #f0932b 100%);
+            color: #1a0f2e;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-try:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 20px rgba(253, 203, 110, 0.3);
+        }
+
+        .btn-try:active {
+            transform: scale(0.98);
+        }
+
+        .teaching-feedback-extra {
+            margin-top: 12px;
+            padding: 12px 14px;
+            background: rgba(253, 203, 110, 0.1);
+            border-radius: 8px;
+            font-size: 0.95em;
+            color: #fdcb6e;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 480px) {
+            .teaching-card {
+                padding: 20px;
+            }
+
+            .teaching-concept {
+                font-size: 1.1em;
+            }
+
+            .btn-try {
+                padding: 14px 24px;
+                font-size: 1.05em;
+            }
+        }
+
         /* Auth Screen */
         #authScreen {
             justify-content: center;
@@ -908,7 +1018,7 @@
             </div>
             <div class="subject-greeting" id="subjectGreeting">Choose a subject</div>
             <div class="subject-prompt">Pick what you want to practise today</div>
-            <div id="globalVersion" style="font-size: 0.65em; color: #6c5ce7; opacity: 0.5; margin-top: 2px;">v1.3.1</div>
+            <div id="globalVersion" style="font-size: 0.65em; color: #6c5ce7; opacity: 0.5; margin-top: 2px;">v1.4.0</div>
             <div class="subject-grid">
                 <div class="subject-card" onclick="selectSubject('english')">
                     <div class="subject-icon">📚</div>
@@ -940,7 +1050,7 @@
             <div class="dojo-header">
                 <div class="dojo-title">English Dojo</div>
                 <div class="dojo-subtitle">Level up your 11+ English skills</div>
-                <div class="app-version" id="appVersion" style="font-size: 0.75em; color: #6c5ce7; opacity: 0.6; margin-top: 4px;">v1.3.1</div>
+                <div class="app-version" id="appVersion" style="font-size: 0.75em; color: #6c5ce7; opacity: 0.6; margin-top: 4px;">v1.4.0</div>
             </div>
 
             <div class="stats-container" id="statsContainer">
@@ -1656,13 +1766,14 @@
                         break;
 
                     case 'teaching':
-                        // Teaching → Fragile: confirmed with ≥75% accuracy
-                        // For now, any correct answer moves to fragile (teaching phase not yet built)
+                        // Teaching → Fragile: correct answer after seeing teaching card
+                        // The teaching card shows explanation before the question, so a correct
+                        // answer here means the student understood the lesson
                         if (isCorrect) {
                             item.state = 'fragile';
                             item.promotionSessions = [sessionId];
                         }
-                        // Stays in teaching if wrong — will get re-explained when teaching is built
+                        // Stays in teaching if wrong — will show teaching card again next time
                         break;
 
                     case 'fragile':
@@ -1678,9 +1789,9 @@
                             }
                         } else if (!isCorrect) {
                             // Fragile → Teaching: 3 consecutive errors (needs re-teaching)
-                            // Until teaching is built, stays fragile but resets promotion progress
+                            // Teaching card will show explanation before next question
                             if (item.consecutiveErrors >= 3) {
-                                item.state = 'teaching';  // Will fall back to fragile on next correct
+                                item.state = 'teaching';  // Will show teaching card, then promote to fragile on correct
                                 item.promotionSessions = [];
                             }
                         }
@@ -3379,12 +3490,113 @@
                     feedback.remove();
                 }
 
-                this.renderQuestion(item, question);
                 this.currentItemId = itemId;
                 this.currentItemType = item.type;
                 updateDevContext(itemId, item.type);
 
-                this.questionStartTime = Date.now();
+                // Teaching phase: show a mini-lesson before the question for items in teaching state
+                if (item.state === 'teaching') {
+                    this.showTeachingCard(item, question, () => {
+                        this.renderQuestion(item, question);
+                        this.questionStartTime = Date.now();
+                    });
+                } else {
+                    this.renderQuestion(item, question);
+                    this.questionStartTime = Date.now();
+                }
+            }
+
+            showTeachingCard(item, question, onReady) {
+                const container = document.getElementById('questionContainer');
+                container.innerHTML = '';
+
+                const typeLabel = document.createElement('div');
+                typeLabel.className = 'question-type';
+                const typeDisplayNames = {
+                    'cloze': 'SENTENCE COMPLETION',
+                    'context-clues': 'CONTEXT CLUES'
+                };
+                typeLabel.textContent = typeDisplayNames[item.type] || item.type.toUpperCase().replace('-', ' ');
+                container.appendChild(typeLabel);
+
+                const card = document.createElement('div');
+                card.className = 'teaching-card';
+
+                // Header with lightbulb
+                const header = document.createElement('div');
+                header.className = 'teaching-header';
+                const icon = document.createElement('span');
+                icon.className = 'teaching-icon';
+                icon.textContent = '\uD83D\uDCA1'; // lightbulb
+                header.appendChild(icon);
+                const badge = document.createElement('span');
+                badge.className = 'teaching-badge';
+                badge.textContent = 'Let\u2019s Learn This';
+                header.appendChild(badge);
+                card.appendChild(header);
+
+                // Build concept title based on question type
+                const conceptTitle = document.createElement('div');
+                conceptTitle.className = 'teaching-concept';
+                if (item.type === 'vocab' && question.word) {
+                    conceptTitle.textContent = 'The word \u201C' + question.word + '\u201D';
+                } else if (item.type === 'spelling' && question.correction) {
+                    conceptTitle.textContent = 'How to spell \u201C' + question.correction + '\u201D';
+                } else if (item.type === 'synonym' && question.word) {
+                    conceptTitle.textContent = 'Synonym for \u201C' + question.word + '\u201D';
+                } else if (item.type === 'antonym' && question.word) {
+                    conceptTitle.textContent = 'Antonym for \u201C' + question.word + '\u201D';
+                } else if (item.type === 'homophone' && question.homophones) {
+                    conceptTitle.textContent = 'Homophones: ' + question.homophones.join(' vs ');
+                } else if (item.type === 'punctuation') {
+                    conceptTitle.textContent = 'Punctuation Rule';
+                } else if (item.type === 'cloze') {
+                    conceptTitle.textContent = 'Sentence Completion';
+                } else if (item.type === 'comprehension') {
+                    conceptTitle.textContent = 'Reading Comprehension';
+                } else if (item.type === 'context-clues') {
+                    conceptTitle.textContent = 'Working Out Word Meanings';
+                } else {
+                    conceptTitle.textContent = 'Let\u2019s review this concept';
+                }
+                card.appendChild(conceptTitle);
+
+                // Explanation
+                const explanation = document.createElement('div');
+                explanation.className = 'teaching-explanation';
+                explanation.textContent = question.explanation || 'Read carefully and think about the answer before choosing.';
+                card.appendChild(explanation);
+
+                // Encouraging tip
+                const tip = document.createElement('div');
+                tip.className = 'teaching-tip';
+                const tips = [
+                    'You got this wrong last time \u2014 no worries! Read the explanation, then have another go.',
+                    'Everyone makes mistakes \u2014 that\u2019s how we learn. Take a moment to understand, then try again.',
+                    'This one tripped you up before. Study the explanation above, then show what you\u2019ve learned!',
+                    'Take your time with this one. Understanding WHY is more important than getting it right quickly.',
+                    'Remember: getting it wrong just means your brain is working on learning it!'
+                ];
+                tip.textContent = tips[Math.floor(Math.random() * tips.length)];
+                card.appendChild(tip);
+
+                // "Let me try!" button
+                const tryBtn = document.createElement('button');
+                tryBtn.className = 'btn-try';
+                tryBtn.textContent = 'I\u2019ve got it \u2014 let me try!';
+                tryBtn.addEventListener('click', () => {
+                    card.style.animation = 'none';
+                    card.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        container.innerHTML = '';
+                        onReady();
+                    }, 250);
+                });
+                card.appendChild(tryBtn);
+
+                container.appendChild(card);
             }
 
             getQuestionData(item) {
@@ -3870,6 +4082,31 @@
                     contextDiv.style.fontStyle = 'italic';
                     contextDiv.textContent = 'So the synonym of \'' + this.currentQuestion.word + '\' is \'' + this.currentQuestion.options[this.currentQuestion.correct] + '\'.';
                     feedback.appendChild(contextDiv);
+                }
+
+                // Teaching-phase-specific encouragement
+                const itemId = this.currentItemId;
+                const currentItem = itemId ? this.engine.items[itemId] : null;
+                if (currentItem && (currentItem.state === 'fragile' || currentItem.state === 'teaching') && currentItem.lapseCount > 0) {
+                    const extraDiv = document.createElement('div');
+                    extraDiv.className = 'teaching-feedback-extra';
+                    if (isCorrect) {
+                        const encouragements = [
+                            'Brilliant! You remembered after learning it. That\u2019s real progress!',
+                            'See? The lesson helped! Keep building on this.',
+                            'Well done \u2014 you\u2019ve turned a mistake into knowledge!',
+                            'That\u2019s the power of learning from mistakes. You\u2019ve got this!'
+                        ];
+                        extraDiv.textContent = '\uD83C\uDF1F ' + encouragements[Math.floor(Math.random() * encouragements.length)];
+                    } else {
+                        const retryMessages = [
+                            'Don\u2019t worry \u2014 this one needs a bit more practice. You\u2019ll see it again soon.',
+                            'Tricky one! Your brain is still working on it. Next time you\u2019ll be closer.',
+                            'Keep going \u2014 every attempt makes the connection stronger in your brain.'
+                        ];
+                        extraDiv.textContent = '\uD83D\uDCAA ' + retryMessages[Math.floor(Math.random() * retryMessages.length)];
+                    }
+                    feedback.appendChild(extraDiv);
                 }
 
                 container.appendChild(feedback);
