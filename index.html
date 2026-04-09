@@ -296,33 +296,66 @@
             color: #a29bfe;
         }
 
-        .spelling-sentence {
-            background: rgba(108, 92, 231, 0.15);
-            padding: 20px;
-            border-radius: 8px;
+        /* GL-style spelling spotter layout */
+        .spelling-container {
+            margin-bottom: 24px;
+        }
+
+        .spelling-sentence-text {
             font-size: 1.1em;
-            line-height: 1.8;
-            margin-bottom: 20px;
+            line-height: 1.6;
+            color: #e0e0e0;
+            margin-bottom: 6px;
+            padding: 0 4px;
         }
 
-        .spelling-section {
-            display: inline-block;
-            padding: 12px 16px;
-            margin: 0 8px 25px 0;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            border: 2px solid rgba(108, 92, 231, 0.3);
-            min-width: 80px;
-            text-align: center;
+        .spelling-brackets {
+            display: flex;
+            gap: 0;
+            padding: 0 4px;
+        }
+
+        .spelling-bracket {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             position: relative;
+            height: 26px;
+            border-top: 2px solid rgba(108, 92, 231, 0.5);
         }
 
-        .spelling-section-label {
-            display: block;
+        /* Upward arrow at left edge of each bracket */
+        .spelling-bracket::before {
+            content: '';
+            position: absolute;
+            top: -7px;
+            left: -1px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 6px solid rgba(108, 92, 231, 0.5);
+        }
+
+        /* Upward arrow at right edge of last bracket */
+        .spelling-bracket:last-child::after {
+            content: '';
+            position: absolute;
+            top: -7px;
+            right: -1px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 6px solid rgba(108, 92, 231, 0.5);
+        }
+
+        .spelling-bracket-label {
             font-weight: 700;
             color: #6c5ce7;
-            font-size: 0.85em;
-            margin-top: 8px;
+            font-size: 0.9em;
+            letter-spacing: 1px;
         }
 
         .passage {
@@ -2068,25 +2101,32 @@
                 { sentence: 'The vivacious dance performance captivated the entire audience.', options: ['Slow', 'Lively and energetic', 'Sad', 'Boring'], correct: 1 }
             ] },
             { type: 'vocab', word: 'plenitude', explanation: 'Plenitude means fullness, abundance, or a great quantity.', variants: [
-                { sentence: 'The plenitude of choices at the restaurant made it hard to decide what to order.', options: ['fullness and abundance', 'lack and scarcity', 'confusion and disorder', 'simplicity and plainness'], correct: 0 }
+                { sentence: 'The plenitude of choices at the restaurant made it hard to decide what to order.', options: ['fullness and abundance', 'lack and scarcity', 'confusion and disorder', 'simplicity and plainness'], correct: 0 },
+                { sentence: 'The garden offered a plenitude of colourful flowers in every direction.', options: ['a great abundance', 'a small number', 'a single type', 'an empty space'], correct: 0 }
             ] },
             { type: 'vocab', word: 'loquacious', explanation: 'Loquacious means very talkative; fond of talking.', variants: [
-                { sentence: 'The loquacious guest talked continuously throughout the entire dinner party.', options: ['very talkative and chatty', 'quiet and shy', 'rude and offensive', 'sad and gloomy'], correct: 0 }
+                { sentence: 'The loquacious guest talked continuously throughout the entire dinner party.', options: ['very talkative and chatty', 'quiet and shy', 'rude and offensive', 'sad and gloomy'], correct: 0 },
+                { sentence: 'The loquacious parrot repeated every word it heard without stopping.', options: ['brightly coloured', 'extremely talkative', 'very hungry', 'quite frightened'], correct: 1 }
             ] },
             { type: 'vocab', word: 'indefatigable', explanation: 'Indefatigable means tireless, not getting worn out by work or effort.', variants: [
-                { sentence: 'The indefatigable worker never seemed to get tired no matter how much she worked.', options: ['tireless and never getting worn out', 'lazy and unmotivated', 'young and inexperienced', 'sad and depressed'], correct: 0 }
+                { sentence: 'The indefatigable worker never seemed to get tired no matter how much she worked.', options: ['tireless and never getting worn out', 'lazy and unmotivated', 'young and inexperienced', 'sad and depressed'], correct: 0 },
+                { sentence: 'The indefatigable explorer continued his journey through the mountains despite the harsh weather.', options: ['easily frightened', 'wealthy and generous', 'tireless and persistent', 'careless and foolish'], correct: 2 }
             ] },
             { type: 'vocab', word: 'aesthetic', explanation: 'Aesthetic relates to beauty, art, and visual appearance.', variants: [
-                { sentence: 'She chose the blue paint because she preferred its aesthetic appeal over the yellow.', options: ['relating to beauty and artistic appreciation', 'practical and useful', 'cheap and low-quality', 'dull and boring'], correct: 0 }
+                { sentence: 'She chose the blue paint because she preferred its aesthetic appeal over the yellow.', options: ['relating to beauty and artistic appreciation', 'practical and useful', 'cheap and low-quality', 'dull and boring'], correct: 0 },
+                { sentence: 'The architect designed the building with great aesthetic care, ensuring every detail was beautiful.', options: ['financial and economic', 'concerned with beauty and appearance', 'technical and scientific', 'fast and efficient'], correct: 1 }
             ] },
             { type: 'vocab', word: 'staid', explanation: 'Staid means sedate, serious, and respectable; not exciting.', variants: [
-                { sentence: 'The staid businessman wore the same grey suit every single day.', options: ['serious and sedate', 'exciting and colourful', 'messy and disorganized', 'young and playful'], correct: 0 }
+                { sentence: 'The staid businessman wore the same grey suit every single day.', options: ['serious and sedate', 'exciting and colourful', 'messy and disorganized', 'young and playful'], correct: 0 },
+                { sentence: 'The staid ceremony proceeded in complete silence, with no laughter or celebration.', options: ['wild and exciting', 'long and boring', 'serious and unadventurous', 'noisy and chaotic'], correct: 2 }
             ] },
             { type: 'vocab', word: 'nascent', explanation: 'Nascent means just beginning to exist or develop.', variants: [
-                { sentence: 'The nascent technology was still being developed and refined.', options: ['beginning to develop', 'ancient and old', 'fully mature and advanced', 'broken and useless'], correct: 0 }
+                { sentence: 'The nascent technology was still being developed and refined.', options: ['beginning to develop', 'ancient and old', 'fully mature and advanced', 'broken and useless'], correct: 0 },
+                { sentence: 'Her nascent talent for painting was just starting to show in her early sketches.', options: ['disappearing gradually', 'just beginning to emerge', 'extremely impressive', 'completely hidden'], correct: 1 }
             ] },
             { type: 'vocab', word: 'temerity', explanation: 'Temerity means excessive boldness or audacity.', variants: [
-                { sentence: 'It took great temerity to challenge the king\'s authority so boldly.', options: ['excessive confidence or boldness', 'wisdom and caution', 'intelligence and learning', 'fear and hesitation'], correct: 0 }
+                { sentence: 'It took great temerity to challenge the king\'s authority so boldly.', options: ['excessive confidence or boldness', 'wisdom and caution', 'intelligence and learning', 'fear and hesitation'], correct: 0 },
+                { sentence: 'She had the temerity to tell the headmaster he was wrong in front of the whole school.', options: ['politeness and respect', 'sadness and grief', 'boldness bordering on rudeness', 'intelligence and wit'], correct: 2 }
             ] }
         ];
 
@@ -2113,7 +2153,7 @@
             ] },
             { type: 'spelling', misspelled: 'hygenic', correction: 'hygienic', explanation: 'hyg-I-enic.', variants: [
                 { sections: ['It is more', 'hygenic to cough and', 'sneeze into your elbow', 'during flu season.'], correct: 1 },
-                { sections: ['The kitchen must be kept', 'hygenic to prevent harmful', 'bacteria from spreading to', 'food.'], correct: 2 }
+                { sections: ['The kitchen must be kept', 'hygenic to prevent harmful', 'bacteria from spreading to', 'food.'], correct: 1 }
             ] },
             { type: 'spelling', misspelled: 'warry', correction: 'wary', explanation: 'just one \'r\'.', variants: [
                 { sections: ['She was warry', 'of the steep descent,', 'unsure of how much she', 'could endure.'], correct: 0 },
@@ -2133,207 +2173,171 @@
             ] },
             { type: 'spelling', misspelled: 'thissle', correction: 'thistle', explanation: 'No double \'s\'.', variants: [
                 { sections: ['As the winds swept', 'across the island, they', 'brought with them seeds of', 'the thissle plant.'], correct: 3 },
-                { sections: ['The purple thissle flowers', 'grew wild in the field and', 'attracted many colourful', 'butterflies.'], correct: 1 }
+                { sections: ['The purple thissle flowers', 'grew wild in the field and', 'attracted many colourful', 'butterflies.'], correct: 0 }
             ] },
             { type: 'spelling', explanation: 'No spelling mistakes!', variants: [
-                { sections: ['The doctor\'s', 'handwriting was so illegible', 'that it rendered the', 'prescription invalid.'], correct: -1 },
-                { sections: ['After school, I went to the', 'libary to borrow books for my', 'history', 'project.'], correct: 2 }
+                { sections: ['The doctor\'s', 'handwriting was so illegible', 'that it rendered the', 'prescription invalid.'], correct: -1 }
             ] },
             { type: 'spelling', explanation: 'No mistakes here!', variants: [
-                { sections: ['The principal', 'expressed her gratitude to the', 'students for their', 'dedication.'], correct: -1 },
-                { sections: ['The hotel provided excellent', 'accomodation with comfortable beds', 'and a delicious breakfast', 'buffet.'], correct: 1 }
+                { sections: ['The principal', 'expressed her gratitude to the', 'students for their', 'dedication.'], correct: -1 }
             ] },
             { type: 'spelling', misspelled: 'libary', correction: 'library', explanation: 'lib-R-ary!', variants: [
-                { sections: ['The ancient libary', 'contained manuscripts that', 'were centuries', 'old.'], correct: 0 },
-                { sections: ['The exam was', 'extremly difficult, making many students', 'feel stressed and', 'worried.'], correct: 1 }
+                { sections: ['The ancient libary', 'contained manuscripts that', 'were centuries', 'old.'], correct: 0 }
             ] },
             { type: 'spelling', misspelled: 'accomodation', correction: 'accommodation', explanation: 'double C and double M.', variants: [
-                { sections: ['The accomodation', 'was surprisingly comfortable', 'despite the affordable', 'price.'], correct: 0 },
-                { sections: ['He felt terrible', 'embarressment when he tripped in front', 'of the whole', 'class.'], correct: 1 }
+                { sections: ['The accomodation', 'was surprisingly comfortable', 'despite the affordable', 'price.'], correct: 0 }
             ] },
             { type: 'spelling', misspelled: 'extremly', correction: 'extremely', explanation: 'extreme + ly.', variants: [
-                { sections: ['The neighbours', 'were extremly concerned about', 'the mysterious', 'noise.'], correct: 1 },
-                { sections: ['Local goverment officials met', 'to discuss plans for improving the', 'town\'s roads and', 'services.'], correct: 1 }
+                { sections: ['The neighbours', 'were extremly concerned about', 'the mysterious', 'noise.'], correct: 1 }
             ] },
             { type: 'spelling', misspelled: 'embarressment', correction: 'embarrassment', explanation: 'two R\'s and two S\'s.', variants: [
-                { sections: ['Her impeccably', 'obedient dog\'s unexpected antics', 'in public caused her', 'embarressment.'], correct: 3 },
-                { sections: ['It took great currage', 'to stand up to the bullies and', 'defend the smaller', 'child.'], correct: 1 }
+                { sections: ['Her impeccably', 'obedient dog\'s unexpected antics', 'in public caused her', 'embarressment.'], correct: 3 }
             ] },
             { type: 'spelling', misspelled: 'goverment', correction: 'government', explanation: 'goverNment.', variants: [
-                { sections: ['The goverment', 'announced new measures to', 'protect endangered wildlife', 'species.'], correct: 0 },
-                { sections: ['This chocolate cake is', 'absolutly delicious and my favourite', 'dessert in the whole', 'world.'], correct: 1 }
+                { sections: ['The goverment', 'announced new measures to', 'protect endangered wildlife', 'species.'], correct: 0 }
             ] },
             { type: 'spelling', misspelled: 'currage', correction: 'courage', explanation: '"ou" makes the vowel sound; remember "cour-age"', variants: [
-                { sections: ['She had the', 'currage to speak her', 'mind even when', 'afraid'], correct: 1 },
-                { sections: ['The old house had a', 'misterious aura about it that', 'frightened the local', 'children.'], correct: 1 }
+                { sections: ['She had the', 'currage to speak her', 'mind even when', 'afraid'], correct: 1 }
             ] },
             { type: 'spelling', misspelled: 'absolutly', correction: 'absolutely', explanation: '"absolute" + "ly" = "absolutely"', variants: [
-                { sections: ['The mountains', 'were absolutly breathtaking', 'in the evening', 'light'], correct: 1 },
-                { sections: ['The horse grew nervious when', 'loud thunder crashed across the', 'dark stormy', 'sky.'], correct: 1 }
+                { sections: ['The mountains', 'were absolutly breathtaking', 'in the evening', 'light'], correct: 1 }
             ] },
             { type: 'spelling', misspelled: 'misterious', correction: 'mysterious', explanation: 'From "mystery"; the vowel pattern uses "y" not "i"', variants: [
-                { sections: ['The misterious stranger', 'arrived at midnight', 'without', 'warning'], correct: 0 },
-                { sections: ['The doctor\'s prescription was', 'ilegible so the pharmacist had to phone', 'to ask what', 'medicine.'], correct: 1 }
+                { sections: ['The misterious stranger', 'arrived at midnight', 'without', 'warning'], correct: 0 }
             ] },
             { type: 'spelling', misspelled: 'nervious', correction: 'nervous', explanation: '"Nervous" from "nerve"; no "i" before "ous"', variants: [
-                { sections: ['She felt', 'very nervious about the', 'audition', 'tomorrow'], correct: 1 },
-                { sections: ['Many childern enjoy playing games', 'and sports during lunch time at', 'their local', 'school.'], correct: 0 }
+                { sections: ['She felt', 'very nervious about the', 'audition', 'tomorrow'], correct: 1 }
             ] },
             { type: 'spelling', explanation: 'No spelling mistakes!', variants: [
-                { sections: ['The recipe', 'called for four cups of', 'flour and', 'one egg'], correct: -1 },
-                { sections: ['The teacher decided to seperate the', 'two friends so they would stop talking', 'and focus on their', 'work.'], correct: 1 }
+                { sections: ['The recipe', 'called for four cups of', 'flour and', 'one egg'], correct: -1 }
             ] },
             { type: 'spelling', misspelled: 'ilegible', correction: 'illegible', explanation: 'Double "l" at the start: il-legible', variants: [
-                { sections: ['His handwriting', 'was ilegible and hard to', 'read', 'properly'], correct: 1 },
-                { sections: ['A terrible accident occured on the', 'motorway causing traffic to stop for', 'several', 'hours.'], correct: 1 }
+                { sections: ['His handwriting', 'was ilegible and hard to', 'read', 'properly'], correct: 1 }
             ] },
             { type: 'spelling', misspelled: 'childern', correction: 'children', explanation: '"Children" is an irregular plural — memorise it', variants: [
-                { sections: ['The childern', 'played happily in the park', 'all', 'afternoon'], correct: 0 },
-                { sections: ['The swimmer\'s exeptional performance earned', 'her a place on the national team to', 'compete in the world', 'championships.'], correct: 0 }
+                { sections: ['The childern', 'played happily in the park', 'all', 'afternoon'], correct: 0 }
             ] },
             { type: 'spelling', misspelled: 'seperate', correction: 'separate', explanation: 'There\'s "a rat" in "separate"', variants: [
-                { sections: ['We seperate', 'the recycling into different', 'coloured', 'bins'], correct: 0 },
-                { sections: ['His brillient idea for the science', 'project impressed the judges and won', 'first prize at the school', 'fair.'], correct: 0 }
+                { sections: ['We seperate', 'the recycling into different', 'coloured', 'bins'], correct: 0 }
             ] },
             { type: 'spelling', misspelled: 'occured', correction: 'occurred', explanation: 'Double the "r" before "-ed": occurred', variants: [
-                { sections: ['The occured', 'incident was discussed in the', 'staff', 'meeting'], correct: 0 },
-                { sections: ['Through persistance and dedication, she finally', 'achieved her dream of becoming a professional', 'tennis', 'player.'], correct: 0 }
+                { sections: ['The occured', 'incident was discussed in the', 'staff', 'meeting'], correct: 0 }
             ] },
             { type: 'spelling', misspelled: 'exeptional', correction: 'exceptional', explanation: '"Exception" becomes "exceptional" — uses "c" not "p"', variants: [
-                { sections: ['She showed', 'exeptional talent in mathematics', 'and science', 'classes'], correct: 1 },
-                { sections: ['That will definately be the best birthday', 'party ever with your friends', 'and family', 'there.'], correct: 0 }
+                { sections: ['She showed', 'exeptional talent in mathematics', 'and science', 'classes'], correct: 1 }
             ] },
             { type: 'spelling', misspelled: 'brillient', correction: 'brilliant', explanation: 'Ends in "-iant" not "-ient"', variants: [
-                { sections: ['The performance', 'was brillient and the', 'audience applauded', 'loudly'], correct: 1 },
-                { sections: ['Learning to read fluently was a great', 'achevement for the young child who had', 'struggled with', 'literacy.'], correct: 1 }
+                { sections: ['The performance', 'was brillient and the', 'audience applauded', 'loudly'], correct: 1 }
             ] },
             { type: 'spelling', misspelled: 'persistance', correction: 'persistence', explanation: '"-ence" not "-ance"', variants: [
-                { sections: ['Their success was', 'due to persistance and', 'hard', 'work'], correct: 2 },
-                { sections: ['The hurricane was incredibly', 'powerfull and destroyed homes and trees', 'across the entire', 'region.'], correct: 1 }
+                { sections: ['She showed', 'great persistance in', 'her efforts', 'to improve.'], correct: 1 }
             ] },
             { type: 'spelling', misspelled: 'definately', correction: 'definitely', explanation: '"Definite" + "-ly"; remember the "i" in the middle', variants: [
-                { sections: ['We will definately', 'attend the concert next', 'month.'], correct: 0 },
-                { sections: ['The firefighters displayed remarkable', 'bravry when rescuing people from the burning', 'office', 'building.'], correct: 1 }
+                { sections: ['We will', 'definately attend', 'the concert', 'next month.'], correct: 1 }
             ] },
             { type: 'spelling', explanation: 'No spelling mistakes!', variants: [
-                { sections: ['No spelling', 'mistakes appear in this', 'sentence at', 'all'], correct: -1 },
-                { sections: ['I hope to recieve birthday', 'presents from my family members on my special', 'day next', 'month.'], correct: 0 }
+                { sections: ['No spelling', 'mistakes appear in this', 'sentence at', 'all'], correct: -1 }
             ] },
             { type: 'spelling', misspelled: 'achevement', correction: 'achievement', explanation: '"Achieve" + "-ment"', variants: [
-                { sections: ['The athlete\'s', 'achevement was recognised by the', 'entire', 'school'], correct: 1 },
-                { sections: ['The film was originaly set in France but they', 'changed it to Germany for the final', 'version of the', 'movie.'], correct: 0 }
+                { sections: ['The athlete\'s', 'achevement was recognised by the', 'entire', 'school'], correct: 1 }
             ] },
             { type: 'spelling', misspelled: 'powerfull', correction: 'powerful', explanation: 'Adjectives ending in "-ful" use single "l"', variants: [
-                { sections: ['She gave a', 'powerfull speech about', 'climate', 'change'], correct: 1 },
-                { sections: ['Always be truthfull with your parents because', 'honesty is more important than avoiding getting', 'into', 'trouble.'], correct: 1 }
+                { sections: ['She gave a', 'powerfull speech about', 'climate', 'change'], correct: 1 }
             ] },
             { type: 'spelling', misspelled: 'bravry', correction: 'bravery', explanation: '"Brave" becomes "bravery"', variants: [
-                { sections: ['He showed', 'great bravry when facing the', 'difficult', 'challenge'], correct: 1 },
-                { sections: ['The museum had an intresting display about dinosaurs', 'that fascinated all the', 'children.'], correct: 0 }
+                { sections: ['He showed', 'great bravry when facing the', 'difficult', 'challenge'], correct: 1 }
             ] },
             { type: 'spelling', misspelled: 'recieve', correction: 'receive', explanation: '"i before e except after c" — receive', variants: [
-                { sections: ['The recieve of the', 'package was confirmed', 'yesterday.'], correct: 0 },
-                { sections: ['The atmosfere at the concert was electric as thousands', 'of excited fans cheered for their favourite', 'musical', 'artist.'], correct: 0 }
+                { sections: ['The recieve', 'of the', 'package was', 'confirmed yesterday.'], correct: 0 }
             ] },
             { type: 'spelling', misspelled: 'originaly', correction: 'originally', explanation: '"Original" + "-ly" = "originally"', variants: [
-                { sections: ['The painting was', 'originaly created in the', '1920s.'], correct: 1 },
-                { sections: ['She received an excelent mark on her', 'assignment because her work was detailed and', 'very well', 'researched.'], correct: 1 }
+                { sections: ['The painting', 'was originaly', 'created in', 'the 1920s.'], correct: 1 }
             ] },
             { type: 'spelling', misspelled: 'truthfull', correction: 'truthful', explanation: '"-ful" uses only one "l"', variants: [
-                { sections: ['The witness gave a', 'truthfull account of what', 'happened.'], correct: 1 },
-                { sections: ['She prefered chocolate ice cream over vanilla so much that', 'she always chose it for', 'dessert.'], correct: 0 }
+                { sections: ['The witness', 'gave a truthfull', 'account of', 'what happened.'], correct: 1 }
             ] },
             { type: 'spelling', explanation: 'No spelling mistakes!', variants: [
-                { sections: ['All the students', 'gathered for the assembly this', 'morning.'], correct: 1 },
-                { sections: ['My favourite autor wrote exciting adventure stories that', 'made me want to read every single one of her', 'amazing', 'books.'], correct: 0 }
+                { sections: ['All the students', 'gathered together for', 'the assembly this', 'morning.'], correct: -1 }
             ] },
             { type: 'spelling', misspelled: 'intresting', correction: 'interesting', explanation: '"Interest" + "-ing"', variants: [
-                { sections: ['The intresting book', 'was about explorers and ancient', 'civilisations.'], correct: 0 },
-                { sections: ['The school is known for its excelence in sports and', 'academics which makes many parents choose to send their children', 'there.'], correct: 1 }
+                { sections: ['The intresting', 'book was about', 'explorers and', 'ancient civilisations.'], correct: 0 }
             ] },
             { type: 'spelling', misspelled: 'atmosfere', correction: 'atmosphere', explanation: 'Ends in "-sphere" not "-fere"', variants: [
-                { sections: ['The atmosfere in the', 'classroom was very', 'positive today'], correct: 0 },
-                { sections: ['A clever theif broke into the shop at night and', 'stole expensive jewellery from the display', 'window.'], correct: 0 }
+                { sections: ['The atmosfere', 'in the classroom', 'was very', 'positive today'], correct: 0 }
             ] },
             { type: 'spelling', misspelled: 'excelent', correction: 'excellent', explanation: 'Double "l": excel-lent', variants: [
-                { sections: ['The artist', 'showed excelent control over the', 'medium.'], correct: 1 },
-                { sections: ['Through hard work and perseverence, he finally', 'became a professional musician after years of', 'daily', 'practice.'], correct: 1 }
+                { sections: ['The artist', 'showed excelent', 'control over', 'the medium.'], correct: 1 }
             ] },
             { type: 'spelling', misspelled: 'prefered', correction: 'preferred', explanation: 'Double the "r" before "-ed"', variants: [
-                { sections: ['We must follow the', 'prefered route through the', 'forest.'], correct: 1 },
-                { sections: ['The anouncement about the school trip was made during assembly this', 'morning to all the', 'students.'], correct: 0 }
+                { sections: ['We must', 'follow the prefered', 'route through', 'the forest.'], correct: 1 }
             ] },
             { type: 'spelling', misspelled: 'autor', correction: 'author', explanation: '"Author" has a silent "th"', variants: [
-                { sections: ['The autor of the book', 'signed copies at the', 'bookstore.'], correct: 0 },
-                { sections: ['The sudden appearence of the celebrity at the shops', 'caused all the shoppers to gather around', 'excitedly.'], correct: 0 }
+                { sections: ['The autor of', 'the book', 'signed copies at', 'the bookstore.'], correct: 0 }
             ] },
             { type: 'spelling', misspelled: 'excelence', correction: 'excellence', explanation: 'Double "l": excellence', variants: [
-                { sections: ['The building showed', 'excelence in design and', 'construction.'], correct: 1 },
-                { sections: ['The reknown chef opened a restaurant with an excellent', 'menu featuring dishes from many different countries around the', 'world.'], correct: 0 }
+                { sections: ['The building', 'showed excelence', 'in design', 'and construction.'], correct: 1 }
             ] },
             { type: 'spelling', misspelled: 'theif', correction: 'thief', explanation: '"i before e except after c" — thief', variants: [
-                { sections: ['The theif stole valuables', 'from the museum', 'exhibit.'], correct: 0 },
-                { sections: ['The questionaire about customer satisfaction was handed out at the', 'supermarket to gather feedback about', 'the services.'], correct: 0 }
+                { sections: ['The theif', 'stole valuables', 'from the', 'museum exhibit.'], correct: 0 }
             ] },
             { type: 'spelling', misspelled: 'perseverence', correction: 'perseverance', explanation: '"-ance" not "-ence"', variants: [
-                { sections: ['She showed great', 'perseverence in her efforts to', 'improve.'], correct: 1 },
-                { sections: ['Scientists debate the existance of undiscovered species living in the', 'deepest parts of the ocean far from human', 'observation.'], correct: 1 }
+                { sections: ['She showed', 'great perseverence in', 'her efforts', 'to improve.'], correct: 1 }
             ] },
             { type: 'spelling', misspelled: 'anouncement', correction: 'announcement', explanation: '"Announce" + "-ment" = "announcement"', variants: [
-                { sections: ['The manager made an', 'anouncement about the new', 'policy.'], correct: 1 },
-                { sections: ['She learned to speak foriegn languages including French, German and', 'Spanish during her travels across Europe last', 'summer.'], correct: 1 }
+                { sections: ['The manager', 'made an anouncement', 'about the', 'new policy.'], correct: 1 }
             ] },
             { type: 'spelling', explanation: 'No spelling mistakes!', variants: [
-                { sections: ['The beautiful garden was', 'filled with colourful', 'flowers.'], correct: -1 },
-                { sections: ['Her confidance in her abilities made her perform brilliantly in the', 'school play and everyone in the audience loved her', 'performance.'], correct: 0 }
+                { sections: ['The beautiful', 'garden was', 'filled with', 'colourful flowers.'], correct: -1 }
             ] },
             { type: 'spelling', misspelled: 'appearence', correction: 'appearance', explanation: '"Appear" + "-ance"', variants: [
-                { sections: ['He felt nervous about', 'the appearence of his new', 'shoes.'], correct: 1 },
-                { sections: ['Each painting looked diferent because the artist used unique colours', 'and styles to create individual pieces of art for the', 'gallery.'], correct: 1 }
+                { sections: ['He felt nervous', 'about the', 'appearence of his', 'new shoes.'], correct: 2 }
             ] },
             { type: 'spelling', misspelled: 'reknown', correction: 'renowned', explanation: '"Renowned" means famous', variants: [
-                { sections: ['The reknown artist created', 'masterpieces admired', 'worldwide.'], correct: 0 },
-                { sections: ['The baker made delisious cakes and pastries every morning for the local', 'café including chocolate cake and fruit', 'pies.'], correct: 0 }
+                { sections: ['The reknown', 'artist created', 'masterpieces', 'admired worldwide.'], correct: 0 }
             ] },
             { type: 'spelling', misspelled: 'questionaire', correction: 'questionnaire', explanation: 'Double "n" and ends in "-aire"', variants: [
-                { sections: ['The questionaire asked about', 'favourite subjects and', 'hobbies.'], correct: 0 },
-                { sections: ['Regular exercise is consistant with maintaining good health and feeling', 'energetic throughout the', 'day.'], correct: 0 }
+                { sections: ['The questionaire', 'asked about', 'favourite subjects', 'and hobbies.'], correct: 0 }
             ] },
             { type: 'spelling', misspelled: 'existance', correction: 'existence', explanation: '"-ence" not "-ance"', variants: [
-                { sections: ['The existance of aliens', 'remains scientifically', 'unclear.'], correct: 0 },
-                { sections: ['I would reccomend that book to anyone who enjoys mystery stories with exciting plot', 'twists.'], correct: 0 }
+                { sections: ['The existance', 'of aliens', 'remains', 'scientifically unclear.'], correct: 0 }
             ] },
             { type: 'spelling', misspelled: 'foriegn', correction: 'foreign', explanation: '"eig" not "ieg" — foreign', variants: [
-                { sections: ['The foriegn visitors enjoyed', 'exploring the local', 'museums.'], correct: 0 },
-                { sections: ['The students conducted a scienific experiment in the laboratory using beakers', 'and chemicals to test their', 'hypothesis.'], correct: 0 }
+                { sections: ['The foriegn', 'visitors enjoyed', 'exploring the', 'local museums.'], correct: 0 }
             ] },
             { type: 'spelling', misspelled: 'confidance', correction: 'confidence', explanation: '"-ence" not "-ance"', variants: [
-                { sections: ['The confidance of the team', 'impressed the coach', 'greatly.'], correct: 0 },
-                { sections: ['The teacher demonstrated clear competance in explaining difficult mathematical', 'concepts to help us understand the challenging', 'topic.'], correct: 0 }
+                { sections: ['The confidance', 'of the team', 'impressed the', 'coach greatly.'], correct: 0 }
             ] },
             { type: 'spelling', explanation: 'No spelling mistakes!', variants: [
-                { sections: ['The weather was pleasant and', 'mild throughout the', 'week.'], correct: -1 }
+                { sections: ['The weather', 'was pleasant and', 'mild throughout', 'the week.'], correct: -1 },
+                { sections: ['The children', 'played happily in', 'the sunshine', 'after school.'], correct: -1 }
             ] },
             { type: 'spelling', misspelled: 'diferent', correction: 'different', explanation: 'Double "f": different', variants: [
-                { sections: ['The diferent cultures enriched', 'our understanding of the', 'world.'], correct: 0 }
+                { sections: ['The diferent', 'cultures enriched our', 'understanding of', 'the world.'], correct: 0 },
+                { sections: ['She tried', 'three diferent flavours', 'before choosing', 'her favourite.'], correct: 1 }
             ] },
             { type: 'spelling', misspelled: 'delisious', correction: 'delicious', explanation: '"Delicious" — no "i" after "l"', variants: [
-                { sections: ['The restaurant served delisious', 'food that delighted all', 'guests.'], correct: 1 }
+                { sections: ['The restaurant', 'served delisious food', 'that delighted', 'all guests.'], correct: 1 },
+                { sections: ['The bakery made', 'the most', 'delisious cakes in', 'the village.'], correct: 2 }
             ] },
             { type: 'spelling', misspelled: 'consistant', correction: 'consistent', explanation: '"-ent" not "-ant"', variants: [
-                { sections: ['The weather remained consistant', 'throughout the summer', 'season.'], correct: 1 }
+                { sections: ['The weather', 'remained consistant', 'throughout the', 'summer season.'], correct: 1 },
+                { sections: ['His consistant effort', 'in class earned', 'him a place', 'on the team.'], correct: 0 }
             ] },
             { type: 'spelling', misspelled: 'reccomend', correction: 'recommend', explanation: 'One "c", double "m": recommend', variants: [
-                { sections: ['They decided to reccomend the', 'new film to their', 'friends.'], correct: 1 }
+                { sections: ['They decided to', 'reccomend the', 'new film to', 'their friends.'], correct: 1 },
+                { sections: ['I would reccomend', 'this book to', 'anyone who', 'enjoys adventure stories.'], correct: 0 }
             ] },
             { type: 'spelling', explanation: 'No spelling mistakes!', variants: [
-                { sections: ['The environment around us should', 'be protected', 'carefully.'], correct: -1 }
+                { sections: ['The environment', 'around us', 'should be', 'protected carefully.'], correct: -1 },
+                { sections: ['The concert', 'was absolutely wonderful', 'and everyone', 'enjoyed it.'], correct: -1 }
             ] },
             { type: 'spelling', misspelled: 'scienific', correction: 'scientific', explanation: '"Science" becomes "scientific"', variants: [
-                { sections: ['The scienific discovery was', 'announced at the research', 'conference.'], correct: 0 }
+                { sections: ['The scienific', 'discovery was announced', 'at the', 'research conference.'], correct: 0 },
+                { sections: ['Her scienific experiment', 'won first', 'prize at the', 'school fair.'], correct: 0 }
             ] },
             { type: 'spelling', misspelled: 'competance', correction: 'competence', explanation: '"-ence" not "-ance"', variants: [
-                { sections: ['She showed competance in all', 'areas of', 'study.'], correct: 1 }
+                { sections: ['She showed', 'competance in', 'all areas', 'of study.'], correct: 1 },
+                { sections: ['The pilot', 'demonstrated great competance', 'during the', 'difficult landing.'], correct: 1 }
             ] }
         ];
 
@@ -2439,116 +2443,153 @@
                 { sentence: 'He studied hard his exam went well.', options: ['He studied hard; his exam went well.', 'He studied hard. His exam went well.', 'He studied hard, his exam went well.', 'No change needed'], correct: 1 }
             ] },
             { type: 'punctuation', explanation: 'One boy owns the skateboard.', variants: [
-                { sentence: 'The boys skateboard is in the garage.', options: ['The boy\'s skateboard is in the garage.', 'The boys\' skateboard is in the garage.', 'The boys\'s skateboard is in the garage.', 'No change needed'], correct: 0 }
+                { sentence: 'The boys skateboard is in the garage.', options: ['The boy\'s skateboard is in the garage.', 'The boys\' skateboard is in the garage.', 'The boys\'s skateboard is in the garage.', 'No change needed'], correct: 0 },
+                { sentence: 'The dogs bone was buried in the garden.', options: ['The dog\'s bone was buried in the garden.', 'The dogs\' bone was buried in the garden.', 'The dogs bone was buried in the garden.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Direct questions need question marks and quotation marks.', variants: [
-                { sentence: 'Mary asked Can you help me with my homework.', options: ['Mary asked, "Can you help me with my homework?"', 'Mary asked "Can you help me with my homework?"', 'Mary asked; "Can you help me with my homework?"', 'No change needed'], correct: 0 }
+                { sentence: 'Mary asked Can you help me with my homework.', options: ['Mary asked, "Can you help me with my homework?"', 'Mary asked "Can you help me with my homework?"', 'Mary asked; "Can you help me with my homework?"', 'No change needed'], correct: 0 },
+                { sentence: 'Tom shouted Where are you going.', options: ['Tom shouted, "Where are you going?"', 'Tom shouted "Where are you going?"', 'Tom shouted; "Where are you going?"', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Comma before coordinating conjunctions.', variants: [
-                { sentence: 'She went to the store but the shop was closed.', options: ['She went to the store, but the shop was closed.', 'She went to the store; but the shop was closed.', 'She went to the store. But the shop was closed.', 'No change needed'], correct: 0 }
+                { sentence: 'She went to the store but the shop was closed.', options: ['She went to the store, but the shop was closed.', 'She went to the store; but the shop was closed.', 'She went to the store. But the shop was closed.', 'No change needed'], correct: 0 },
+                { sentence: 'He wanted to play outside yet the rain would not stop.', options: ['He wanted to play outside, yet the rain would not stop.', 'He wanted to play outside; yet the rain would not stop.', 'He wanted to play outside. Yet the rain would not stop.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Plural nouns don\'t need apostrophes.', variants: [
-                { sentence: 'The teachers are discussing our grades now.', options: ['The teachers\' are discussing our grades now.', 'The teacher\'s are discussing our grades now.', 'The teachers are discussing our grades now.', 'No change needed'], correct: 2 }
+                { sentence: 'The teachers are discussing our grades now.', options: ['The teachers\' are discussing our grades now.', 'The teacher\'s are discussing our grades now.', 'The teachers are discussing our grades now.', 'No change needed'], correct: 2 },
+                { sentence: 'The rabbits are eating the carrots in the field.', options: ['The rabbit\'s are eating the carrots in the field.', 'The rabbits\' are eating the carrots in the field.', 'The rabbits are eating the carrots in the field.', 'No change needed'], correct: 2 }
             ] },
             { type: 'punctuation', explanation: 'Use "who" for people, not "which".', variants: [
-                { sentence: 'James which is my best friend came to visit.', options: ['James, which is my best friend, came to visit.', 'James, who is my best friend, came to visit.', 'James who is my best friend came to visit.', 'No change needed'], correct: 1 }
+                { sentence: 'James which is my best friend came to visit.', options: ['James, which is my best friend, came to visit.', 'James, who is my best friend, came to visit.', 'James who is my best friend came to visit.', 'No change needed'], correct: 1 },
+                { sentence: 'The girl which won the race is in my class.', options: ['The girl, which won the race, is in my class.', 'The girl, who won the race, is in my class.', 'The girl which won the race is in my class.', 'No change needed'], correct: 1 }
             ] },
             { type: 'punctuation', explanation: 'Comma after "therefore" when used as a conjunctive adverb.', variants: [
-                { sentence: 'The report was finished; therefore the manager approved it.', options: ['The report was finished, therefore the manager approved it.', 'The report was finished. Therefore, the manager approved it.', 'The report was finished; therefore, the manager approved it.', 'No change needed'], correct: 2 }
+                { sentence: 'The report was finished; therefore the manager approved it.', options: ['The report was finished, therefore the manager approved it.', 'The report was finished. Therefore, the manager approved it.', 'The report was finished; therefore, the manager approved it.', 'No change needed'], correct: 2 },
+                { sentence: 'It was raining heavily; therefore we stayed inside all day.', options: ['It was raining heavily, therefore we stayed inside all day.', 'It was raining heavily; therefore, we stayed inside all day.', 'It was raining heavily. Therefore we stayed inside all day.', 'No change needed'], correct: 1 }
             ] },
             { type: 'punctuation', explanation: '"It\'s" means "it is".', variants: [
-                { sentence: 'Its a beautiful day outside!', options: ['It\'s a beautiful day outside!', 'Its a beautiful day outside!', 'Its\' a beautiful day outside!', 'No change needed'], correct: 0 }
+                { sentence: 'Its a beautiful day outside!', options: ['It\'s a beautiful day outside!', 'Its a beautiful day outside!', 'Its\' a beautiful day outside!', 'No change needed'], correct: 0 },
+                { sentence: 'Its going to rain later this afternoon.', options: ['It\'s going to rain later this afternoon.', 'Its going to rain later this afternoon.', 'Its\' going to rain later this afternoon.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Use a semicolon or period between closely related independent clauses.', variants: [
-                { sentence: 'The team celebrated they had won the championship.', options: ['The team celebrated, and they had won the championship.', 'The team celebrated; they had won the championship.', 'The team celebrated. They had won the championship.', 'No change needed'], correct: 1 }
+                { sentence: 'The team celebrated they had won the championship.', options: ['The team celebrated, and they had won the championship.', 'The team celebrated; they had won the championship.', 'The team celebrated. They had won the championship.', 'No change needed'], correct: 1 },
+                { sentence: 'She finished the book she started the next one.', options: ['She finished the book, and she started the next one.', 'She finished the book; she started the next one.', 'She finished the book. She started the next one.', 'No change needed'], correct: 1 }
             ] },
             { type: 'punctuation', explanation: 'Use the Oxford comma in lists.', variants: [
-                { sentence: 'She brought apples oranges and bananas.', options: ['She brought apples, oranges, and bananas.', 'She brought apples oranges, and bananas.', 'She brought apples, oranges and bananas.', 'No change needed'], correct: 0 }
+                { sentence: 'She brought apples oranges and bananas.', options: ['She brought apples, oranges, and bananas.', 'She brought apples oranges, and bananas.', 'She brought apples, oranges and bananas.', 'No change needed'], correct: 0 },
+                { sentence: 'He packed his bag with books pens and pencils.', options: ['He packed his bag with books, pens, and pencils.', 'He packed his bag with books pens, and pencils.', 'He packed his bag with books, pens and pencils.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Semicolons join related independent clauses.', variants: [
-                { sentence: 'The musicians played; the dancers performed; the singers sang.', options: ['The musicians played. The dancers performed. The singers sang.', 'The musicians played, the dancers performed, the singers sang.', 'The musicians played; the dancers performed; the singers sang.', 'No change needed'], correct: 2 }
+                { sentence: 'The musicians played; the dancers performed; the singers sang.', options: ['The musicians played. The dancers performed. The singers sang.', 'The musicians played, the dancers performed, the singers sang.', 'The musicians played; the dancers performed; the singers sang.', 'No change needed'], correct: 2 },
+                { sentence: 'The sun set; the stars appeared; the moon rose high.', options: ['The sun set. The stars appeared. The moon rose high.', 'The sun set, the stars appeared, the moon rose high.', 'The sun set; the stars appeared; the moon rose high.', 'No change needed'], correct: 2 }
             ] },
             { type: 'punctuation', explanation: 'Introductory phrases need commas.', variants: [
-                { sentence: 'After finishing his homework he went outside to play.', options: ['After finishing his homework, he went outside to play.', 'After finishing his homework; he went outside to play.', 'After finishing his homework. He went outside to play.', 'No change needed'], correct: 0 }
+                { sentence: 'After finishing his homework he went outside to play.', options: ['After finishing his homework, he went outside to play.', 'After finishing his homework; he went outside to play.', 'After finishing his homework. He went outside to play.', 'No change needed'], correct: 0 },
+                { sentence: 'Before leaving the house she grabbed her umbrella.', options: ['Before leaving the house, she grabbed her umbrella.', 'Before leaving the house; she grabbed her umbrella.', 'Before leaving the house. She grabbed her umbrella.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Third person singular verbs don\'t need apostrophes.', variants: [
-                { sentence: 'She love\'s reading books and watching films.', options: ['She loves reading books and watching films.', 'She love\'s reading books and watching films.', 'She love\'s reading book\'s and watching film\'s.', 'No change needed'], correct: 0 }
+                { sentence: 'She love\'s reading books and watching films.', options: ['She loves reading books and watching films.', 'She love\'s reading books and watching films.', 'She love\'s reading book\'s and watching film\'s.', 'No change needed'], correct: 0 },
+                { sentence: 'He play\'s football every Saturday morning.', options: ['He plays football every Saturday morning.', 'He play\'s football every Saturday morning.', 'He play\'s football\'s every Saturday morning.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Punctuation goes inside quotation marks.', variants: [
-                { sentence: 'The boss said "Please submit your reports by Friday"', options: ['The boss said, "Please submit your reports by Friday."', 'The boss said "Please submit your reports by Friday."', 'The boss said. "Please submit your reports by Friday."', 'No change needed'], correct: 0 }
+                { sentence: 'The boss said "Please submit your reports by Friday"', options: ['The boss said, "Please submit your reports by Friday."', 'The boss said "Please submit your reports by Friday."', 'The boss said. "Please submit your reports by Friday."', 'No change needed'], correct: 0 },
+                { sentence: 'The teacher said "Open your textbooks to page twelve"', options: ['The teacher said, "Open your textbooks to page twelve."', 'The teacher said "Open your textbooks to page twelve."', 'The teacher said. "Open your textbooks to page twelve."', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Introductory phrases need commas.', variants: [
-                { sentence: 'Running through the park the children laughed.', options: ['Running through the park, the children laughed.', 'Running through the park. The children laughed.', 'Running through the park; the children laughed.', 'No change needed'], correct: 0 }
+                { sentence: 'Running through the park the children laughed.', options: ['Running through the park, the children laughed.', 'Running through the park. The children laughed.', 'Running through the park; the children laughed.', 'No change needed'], correct: 0 },
+                { sentence: 'Climbing up the hill the hiker paused for breath.', options: ['Climbing up the hill, the hiker paused for breath.', 'Climbing up the hill. The hiker paused for breath.', 'Climbing up the hill; the hiker paused for breath.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'No colon before a list after "are".', variants: [
-                { sentence: 'The students are: excited, nervous, and hopeful.', options: ['The students are excited, nervous, and hopeful.', 'The students are: excited, nervous, and hopeful.', 'The students are; excited, nervous, and hopeful.', 'No change needed'], correct: 0 }
+                { sentence: 'The students are: excited, nervous, and hopeful.', options: ['The students are excited, nervous, and hopeful.', 'The students are: excited, nervous, and hopeful.', 'The students are; excited, nervous, and hopeful.', 'No change needed'], correct: 0 },
+                { sentence: 'The colours of the flag are: red, white, and blue.', options: ['The colours of the flag are red, white, and blue.', 'The colours of the flag are: red, white, and blue.', 'The colours of the flag are; red, white, and blue.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Appositive nouns need commas on both sides.', variants: [
-                { sentence: 'My best friend Sarah is very clever.', options: ['My best friend, Sarah, is very clever.', 'My best friend Sarah is very clever.', 'My best friend Sarah, is very clever.', 'No change needed'], correct: 0 }
+                { sentence: 'My best friend Sarah is very clever.', options: ['My best friend, Sarah, is very clever.', 'My best friend Sarah is very clever.', 'My best friend Sarah, is very clever.', 'No change needed'], correct: 0 },
+                { sentence: 'Our teacher Mr Thompson gives us too much homework.', options: ['Our teacher, Mr Thompson, gives us too much homework.', 'Our teacher Mr Thompson gives us too much homework.', 'Our teacher Mr Thompson, gives us too much homework.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Direct speech needs quotation marks and a comma.', variants: [
-                { sentence: 'He said I am coming and I will bring a friend.', options: ['He said, "I am coming and I will bring a friend."', 'He said "I am coming and I will bring a friend."', 'He said; "I am coming and I will bring a friend."', 'No change needed'], correct: 0 }
+                { sentence: 'He said I am coming and I will bring a friend.', options: ['He said, "I am coming and I will bring a friend."', 'He said "I am coming and I will bring a friend."', 'He said; "I am coming and I will bring a friend."', 'No change needed'], correct: 0 },
+                { sentence: 'She whispered I have a surprise for you.', options: ['She whispered, "I have a surprise for you."', 'She whispered "I have a surprise for you."', 'She whispered; "I have a surprise for you."', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Plural nouns don\'t need apostrophes.', variants: [
-                { sentence: 'The students turned in their assignment\'s on time.', options: ['The students turned in their assignments on time.', 'The students turned in their assignment\'s on time.', 'The students turned in there assignments on time.', 'No change needed'], correct: 0 }
+                { sentence: 'The students turned in their assignment\'s on time.', options: ['The students turned in their assignments on time.', 'The students turned in their assignment\'s on time.', 'The students turned in there assignments on time.', 'No change needed'], correct: 0 },
+                { sentence: 'All the apple\'s in the basket were ripe and juicy.', options: ['All the apples in the basket were ripe and juicy.', 'All the apple\'s in the basket were ripe and juicy.', 'All the apples\' in the basket were ripe and juicy.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Introductory dependent clauses need commas.', variants: [
-                { sentence: 'Although he was tired he continued running.', options: ['Although he was tired, he continued running.', 'Although he was tired. He continued running.', 'Although he was tired; he continued running.', 'No change needed'], correct: 0 }
+                { sentence: 'Although he was tired he continued running.', options: ['Although he was tired, he continued running.', 'Although he was tired. He continued running.', 'Although he was tired; he continued running.', 'No change needed'], correct: 0 },
+                { sentence: 'Because the weather was cold they stayed indoors.', options: ['Because the weather was cold, they stayed indoors.', 'Because the weather was cold. They stayed indoors.', 'Because the weather was cold; they stayed indoors.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: '"She\'s" means "she is".', variants: [
-                { sentence: 'Shes going to the beach tomorrow.', options: ['She\'s going to the beach tomorrow.', 'Shes going to the beach tomorrow.', 'She\'s going to the beache tomorrow.', 'No change needed'], correct: 0 }
+                { sentence: 'Shes going to the beach tomorrow.', options: ['She\'s going to the beach tomorrow.', 'Shes going to the beach tomorrow.', 'She\'s going to the beache tomorrow.', 'No change needed'], correct: 0 },
+                { sentence: 'Hes the fastest runner in the school.', options: ['He\'s the fastest runner in the school.', 'Hes the fastest runner in the school.', 'He\'s the fastest runner in the school!', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'One cat owns the toy.', variants: [
-                { sentence: 'The cats toy is under the bed.', options: ['The cat\'s toy is under the bed.', 'The cats\' toy is under the bed.', 'The cats toy is under the bed.', 'No change needed'], correct: 0 }
+                { sentence: 'The cats toy is under the bed.', options: ['The cat\'s toy is under the bed.', 'The cats\' toy is under the bed.', 'The cats toy is under the bed.', 'No change needed'], correct: 0 },
+                { sentence: 'The birds nest was hidden in the tall tree.', options: ['The bird\'s nest was hidden in the tall tree.', 'The birds\' nest was hidden in the tall tree.', 'The birds nest was hidden in the tall tree.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Use a comma, not a semicolon, for appositives.', variants: [
-                { sentence: 'She went to Paris; a city in France.', options: ['She went to Paris, a city in France.', 'She went to Paris; a city in France.', 'She went to Paris. A city in France.', 'No change needed'], correct: 0 }
+                { sentence: 'She went to Paris; a city in France.', options: ['She went to Paris, a city in France.', 'She went to Paris; a city in France.', 'She went to Paris. A city in France.', 'No change needed'], correct: 0 },
+                { sentence: 'He visited London; the capital of England.', options: ['He visited London, the capital of England.', 'He visited London; the capital of England.', 'He visited London. The capital of England.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Semicolons join closely related independent clauses.', variants: [
-                { sentence: 'The team won the game; the players celebrated.', options: ['The team won the game. The players celebrated.', 'The team won the game, the players celebrated.', 'The team won the game; the players celebrated.', 'No change needed'], correct: 2 }
+                { sentence: 'The team won the game; the players celebrated.', options: ['The team won the game. The players celebrated.', 'The team won the game, the players celebrated.', 'The team won the game; the players celebrated.', 'No change needed'], correct: 2 },
+                { sentence: 'The bell rang; the children rushed outside.', options: ['The bell rang. The children rushed outside.', 'The bell rang, the children rushed outside.', 'The bell rang; the children rushed outside.', 'No change needed'], correct: 2 }
             ] },
             { type: 'punctuation', explanation: '"Let\'s" means "let us".', variants: [
-                { sentence: 'Before we go lets check the map.', options: ['Before we go, let\'s check the map.', 'Before we go lets\' check the map.', 'Before we go. Lets check the map.', 'No change needed'], correct: 0 }
+                { sentence: 'Before we go lets check the map.', options: ['Before we go, let\'s check the map.', 'Before we go lets\' check the map.', 'Before we go. Lets check the map.', 'No change needed'], correct: 0 },
+                { sentence: 'Come on lets go to the park before it rains.', options: ['Come on, let\'s go to the park before it rains.', 'Come on lets\' go to the park before it rains.', 'Come on. Lets go to the park before it rains.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Use a comma and coordinating conjunction or semicolon.', variants: [
-                { sentence: 'The boys are playing football the girls are dancing.', options: ['The boys are playing football, and the girls are dancing.', 'The boys are playing football; the girls are dancing.', 'The boys are playing football. The girls are dancing.', 'No change needed'], correct: 0 }
+                { sentence: 'The boys are playing football the girls are dancing.', options: ['The boys are playing football, and the girls are dancing.', 'The boys are playing football; the girls are dancing.', 'The boys are playing football. The girls are dancing.', 'No change needed'], correct: 0 },
+                { sentence: 'The cat sat on the mat the dog lay by the fire.', options: ['The cat sat on the mat, and the dog lay by the fire.', 'The cat sat on the mat; the dog lay by the fire.', 'The cat sat on the mat. The dog lay by the fire.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'No comma before "because" in this case.', variants: [
-                { sentence: 'She was very happy because she had won first place.', options: ['She was very happy, because she had won first place.', 'She was very happy because she had won first place.', 'She was very happy. Because she had won first place.', 'No change needed'], correct: 1 }
+                { sentence: 'She was very happy because she had won first place.', options: ['She was very happy, because she had won first place.', 'She was very happy because she had won first place.', 'She was very happy. Because she had won first place.', 'No change needed'], correct: 1 },
+                { sentence: 'He smiled because his team had won the match.', options: ['He smiled, because his team had won the match.', 'He smiled because his team had won the match.', 'He smiled. Because his team had won the match.', 'No change needed'], correct: 1 }
             ] },
             { type: 'punctuation', explanation: 'No comma needed with a single verb and compound object.', variants: [
-                { sentence: 'Writing a book is difficult but rewarding.', options: ['Writing a book is difficult, but rewarding.', 'Writing a book is difficult; but rewarding.', 'Writing a book is difficult but rewarding.', 'No change needed'], correct: 2 }
+                { sentence: 'Writing a book is difficult but rewarding.', options: ['Writing a book is difficult, but rewarding.', 'Writing a book is difficult; but rewarding.', 'Writing a book is difficult but rewarding.', 'No change needed'], correct: 2 },
+                { sentence: 'The test was long but fair.', options: ['The test was long, but fair.', 'The test was long; but fair.', 'The test was long but fair.', 'No change needed'], correct: 2 }
             ] },
             { type: 'punctuation', explanation: 'Questions need question marks.', variants: [
-                { sentence: 'Have you seen the movie Inception', options: ['Have you seen the movie "Inception"?', 'Have you seen the movie Inception?', 'Have you seen the movie "Inception".', 'No change needed'], correct: 1 }
+                { sentence: 'Have you seen the movie Inception', options: ['Have you seen the movie "Inception"?', 'Have you seen the movie Inception?', 'Have you seen the movie "Inception".', 'No change needed'], correct: 1 },
+                { sentence: 'Where did you put the car keys', options: ['Where did you put the car keys.', 'Where did you put the car keys?', 'Where did you put the car keys!', 'No change needed'], correct: 1 }
             ] },
             { type: 'punctuation', explanation: 'Direct questions need question marks and quotation marks.', variants: [
-                { sentence: 'The teacher asked Is everyone ready.', options: ['The teacher asked, "Is everyone ready?"', 'The teacher asked "Is everyone ready?"', 'The teacher asked. "Is everyone ready?"', 'No change needed'], correct: 0 }
+                { sentence: 'The teacher asked Is everyone ready.', options: ['The teacher asked, "Is everyone ready?"', 'The teacher asked "Is everyone ready?"', 'The teacher asked. "Is everyone ready?"', 'No change needed'], correct: 0 },
+                { sentence: 'Dad asked Have you finished your homework yet.', options: ['Dad asked, "Have you finished your homework yet?"', 'Dad asked "Have you finished your homework yet?"', 'Dad asked. "Have you finished your homework yet?"', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Use commas between items in a series.', variants: [
-                { sentence: 'She loves to read write and paint.', options: ['She loves to read, write, and paint.', 'She loves to read write, and paint.', 'She loves to read, write and paint.', 'No change needed'], correct: 0 }
+                { sentence: 'She loves to read write and paint.', options: ['She loves to read, write, and paint.', 'She loves to read write, and paint.', 'She loves to read, write and paint.', 'No change needed'], correct: 0 },
+                { sentence: 'We need eggs flour sugar and butter.', options: ['We need eggs, flour, sugar, and butter.', 'We need eggs flour, sugar, and butter.', 'We need eggs, flour, sugar and butter.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Use a semicolon or period between independent clauses.', variants: [
-                { sentence: 'The doors are locked nobody can enter.', options: ['The doors are locked; nobody can enter.', 'The doors are locked, nobody can enter.', 'The doors are locked. Nobody can enter.', 'No change needed'], correct: 0 }
+                { sentence: 'The doors are locked nobody can enter.', options: ['The doors are locked; nobody can enter.', 'The doors are locked, nobody can enter.', 'The doors are locked. Nobody can enter.', 'No change needed'], correct: 0 },
+                { sentence: 'The lights went out everyone screamed.', options: ['The lights went out; everyone screamed.', 'The lights went out, everyone screamed.', 'The lights went out. Everyone screamed.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Introductory words need commas.', variants: [
-                { sentence: 'Well I suppose we should go now.', options: ['Well, I suppose we should go now.', 'Well; I suppose we should go now.', 'Well. I suppose we should go now.', 'No change needed'], correct: 0 }
+                { sentence: 'Well I suppose we should go now.', options: ['Well, I suppose we should go now.', 'Well; I suppose we should go now.', 'Well. I suppose we should go now.', 'No change needed'], correct: 0 },
+                { sentence: 'Actually I think you are right about that.', options: ['Actually, I think you are right about that.', 'Actually; I think you are right about that.', 'Actually. I think you are right about that.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Non-essential relative clauses need commas.', variants: [
-                { sentence: 'The book which won an award is available now.', options: ['The book which won an award, is available now.', 'The book, which won an award, is available now.', 'The book which won an award is available now.', 'No change needed'], correct: 1 }
+                { sentence: 'The book which won an award is available now.', options: ['The book which won an award, is available now.', 'The book, which won an award, is available now.', 'The book which won an award is available now.', 'No change needed'], correct: 1 },
+                { sentence: 'The painting which hung in the hall was very old.', options: ['The painting which hung in the hall, was very old.', 'The painting, which hung in the hall, was very old.', 'The painting which hung in the hall was very old.', 'No change needed'], correct: 1 }
             ] },
             { type: 'punctuation', explanation: 'Multiple sisters own friends.', variants: [
-                { sentence: 'My sisters\' friends are coming over tonight.', options: ['My sisters\' friends are coming over tonight.', 'My sister\'s friends are coming over tonight.', 'My sisters friends are coming over tonight.', 'No change needed'], correct: 0 }
+                { sentence: 'My sisters\' friends are coming over tonight.', options: ['My sisters\' friends are coming over tonight.', 'My sister\'s friends are coming over tonight.', 'My sisters friends are coming over tonight.', 'No change needed'], correct: 0 },
+                { sentence: 'The teachers\' meeting lasted for two hours.', options: ['The teachers\' meeting lasted for two hours.', 'The teacher\'s meeting lasted for two hours.', 'The teachers meeting lasted for two hours.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Use a comma before "so" when joining independent clauses.', variants: [
-                { sentence: 'She asked me to help so I did.', options: ['She asked me to help, so I did.', 'She asked me to help so I did.', 'She asked me to help; so I did.', 'No change needed'], correct: 0 }
+                { sentence: 'She asked me to help so I did.', options: ['She asked me to help, so I did.', 'She asked me to help so I did.', 'She asked me to help; so I did.', 'No change needed'], correct: 0 },
+                { sentence: 'It was getting late so we decided to leave.', options: ['It was getting late, so we decided to leave.', 'It was getting late so we decided to leave.', 'It was getting late; so we decided to leave.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Use a space before AM/PM.', variants: [
-                { sentence: 'The meeting starts at 9:00 am sharp.', options: ['The meeting starts at 9:00 AM sharp.', 'The meeting starts at 9:00 am sharp.', 'The meeting starts at 9:00am sharp.', 'No change needed'], correct: 0 }
+                { sentence: 'The meeting starts at 9:00 am sharp.', options: ['The meeting starts at 9:00 AM sharp.', 'The meeting starts at 9:00 am sharp.', 'The meeting starts at 9:00am sharp.', 'No change needed'], correct: 0 },
+                { sentence: 'School ends at 3:30 pm every day.', options: ['School ends at 3:30 PM every day.', 'School ends at 3:30 pm every day.', 'School ends at 3:30pm every day.', 'No change needed'], correct: 0 }
             ] },
             { type: 'punctuation', explanation: 'Use a period or semicolon with transitional words.', variants: [
-                { sentence: 'I think therefore I am.', options: ['I think; therefore, I am.', 'I think. Therefore, I am.', 'I think, therefore I am.', 'No change needed'], correct: 1 }
-            ] }
+                { sentence: 'I think therefore I am.', options: ['I think; therefore, I am.', 'I think. Therefore, I am.', 'I think, therefore I am.', 'No change needed'], correct: 1 },
+                { sentence: 'She was late however she still passed the test.', options: ['She was late; however, she still passed the test.', 'She was late. However, she still passed the test.', 'She was late, however she still passed the test.', 'No change needed'], correct: 1 }
+            ] },
         ];
 
         const COMPREHENSION_CONCEPTS = [
@@ -2681,7 +2722,8 @@
                 { passage: 'In a town divided by conflict, a community art project asked people to paint stones with symbols of hope. Thousands of people painted stones and placed them along the main street. Though the stones themselves were small, they represented unity and the desire for peace. Visitors from opposing sides of the conflict saw the stones and felt something shift. The simple act became a symbol of reconciliation.', question: 'What made the painted stones powerful?', options: ['They were beautiful.', 'They represented larger hopes and brought people together around a shared symbol.', 'They were very expensive.', 'They solved the conflict.'], correct: 1, explanation: 'Like Gandhi\'s salt, the painted stones were symbols. Their power came not from the objects themselves but from what they represented—hope, unity, and peace.' }
             ] },
             { type: 'comprehension', explanation: 'The passage emphasises how the garden brought diverse neighbours together and created friendships.', variants: [
-                { passage: 'In a bustling city, a community garden flourished on an abandoned lot. Residents grew vegetables together, regardless of their backgrounds or languages. The garden became a place where neighbours became friends. It proved that small green spaces create big social connections. The garden showed the power of shared purpose.', question: 'What is the main message of this passage?', options: ['Cities are too crowded', 'Vegetables are better than flowers', 'Shared community spaces can build human connection', 'Only certain people should garden'], correct: 2 }
+                { passage: 'In a bustling city, a community garden flourished on an abandoned lot. Residents grew vegetables together, regardless of their backgrounds or languages. The garden became a place where neighbours became friends. It proved that small green spaces create big social connections. The garden showed the power of shared purpose.', question: 'What is the main message of this passage?', options: ['Cities are too crowded', 'Vegetables are better than flowers', 'Shared community spaces can build human connection', 'Only certain people should garden'], correct: 2 },
+                { passage: 'When the old library closed, volunteers turned a disused bus into a mobile reading room. They parked it in different neighbourhoods each week. Children who had never owned a book could borrow one. Elderly residents who lived alone came aboard just to chat. The bus became more than a library — it became a meeting place for people who might never have spoken otherwise.', question: 'What is the main theme of this passage?', options: ['Buses are better than libraries', 'Reading is only for children', 'A shared resource can bring a community together', 'Old people need more buses'], correct: 2 }
             ] }
         ];
 
@@ -2895,28 +2937,36 @@
                 { sentence: 'She _____ across the lake to reach the island.', options: ['walked', 'played', 'swam', 'ran'], correct: 2 }
             ] },
             { type: 'cloze', explanation: '\'Swam\' means moved through water using arms and legs.', variants: [
-                { sentence: 'The children _____ in the shallow end of the swimming pool.', options: ['walked', 'played', 'swam', 'slept'], correct: 2 }
+                { sentence: 'The children _____ in the shallow end of the swimming pool.', options: ['walked', 'played', 'swam', 'slept'], correct: 2 },
+                { sentence: 'She _____ across the river to reach the other side.', options: ['drove', 'swam', 'climbed', 'flew'], correct: 1 }
             ] },
             { type: 'cloze', explanation: '\'Satisfied\' is a good feeling about getting good results.', variants: [
-                { sentence: 'She felt _____ about her exam results.', options: ['angry', 'satisfied', 'bored', 'confused'], correct: 1 }
+                { sentence: 'She felt _____ about her exam results.', options: ['angry', 'satisfied', 'bored', 'confused'], correct: 1 },
+                { sentence: 'The customer was _____ with the excellent service at the restaurant.', options: ['disappointed', 'worried', 'satisfied', 'frightened'], correct: 2 }
             ] },
             { type: 'cloze', explanation: '\'Plot\' is the story that keeps readers interested.', variants: [
-                { sentence: 'The _____ of the book was interesting and kept me reading.', options: ['cover', 'plot', 'size', 'colour'], correct: 1 }
+                { sentence: 'The _____ of the book was interesting and kept me reading.', options: ['cover', 'plot', 'size', 'colour'], correct: 1 },
+                { sentence: 'The film had a thrilling _____ with many unexpected twists.', options: ['soundtrack', 'poster', 'plot', 'budget'], correct: 2 }
             ] },
             { type: 'cloze', explanation: '\'Important\' means it\'s necessary for safety.', variants: [
-                { sentence: 'It is _____ to wear a helmet when riding a bicycle.', options: ['dangerous', 'important', 'silly', 'impossible'], correct: 1 }
+                { sentence: 'It is _____ to wear a helmet when riding a bicycle.', options: ['dangerous', 'important', 'silly', 'impossible'], correct: 1 },
+                { sentence: 'Eating a healthy breakfast is _____ for having energy all day.', options: ['unnecessary', 'harmful', 'important', 'difficult'], correct: 2 }
             ] },
             { type: 'cloze', explanation: '\'Forest\' is a place with lots of trees.', variants: [
-                { sentence: 'The _____ was magnificent with lots of tall trees.', options: ['desert', 'forest', 'beach', 'city'], correct: 1 }
+                { sentence: 'The _____ was magnificent with lots of tall trees.', options: ['desert', 'forest', 'beach', 'city'], correct: 1 },
+                { sentence: 'They went for a walk through the _____ and spotted a deer.', options: ['market', 'playground', 'forest', 'car park'], correct: 2 }
             ] },
             { type: 'cloze', explanation: '\'Useful\' advice is helpful and practical.', variants: [
-                { sentence: 'She gave me some _____ advice about my problem.', options: ['silly', 'useful', 'vague', 'confusing'], correct: 1 }
+                { sentence: 'She gave me some _____ advice about my problem.', options: ['silly', 'useful', 'vague', 'confusing'], correct: 1 },
+                { sentence: 'The dictionary was very _____ for finding difficult words.', options: ['heavy', 'useful', 'boring', 'colourful'], correct: 1 }
             ] },
             { type: 'cloze', explanation: '\'Gallery\' is the main room in a museum where things are displayed.', variants: [
-                { sentence: 'The _____ of the museum had many ancient artifacts.', options: ['gift shop', 'entrance', 'gallery', 'cafe'], correct: 2 }
+                { sentence: 'The _____ of the museum had many ancient artifacts.', options: ['gift shop', 'entrance', 'gallery', 'cafe'], correct: 2 },
+                { sentence: 'We visited a famous art _____ to see paintings by great artists.', options: ['stadium', 'gallery', 'library', 'factory'], correct: 1 }
             ] },
             { type: 'cloze', explanation: '\'Excited\' means feeling happy and eager about something fun.', variants: [
-                { sentence: 'He was _____ about the school trip.', options: ['sad', 'excited', 'tired', 'worried'], correct: 1 }
+                { sentence: 'He was _____ about the school trip.', options: ['sad', 'excited', 'tired', 'worried'], correct: 1 },
+                { sentence: 'The children were _____ to open their birthday presents.', options: ['bored', 'annoyed', 'excited', 'sleepy'], correct: 2 }
             ] }
         ];
 
@@ -3259,13 +3309,16 @@
                 { sentence: 'He _____ all his driving tests on the first attempt.', options: ['past', 'passed'], correct: 1, explanation: '"Passed" means succeeded or completed successfully.' }
             ] },
             { type: 'homophone', explanation: '"Passed" (verb) = succeeded in. "Past" (preposition/noun) = beyond or a previous time.', variants: [
-                { sentence: 'She _____ the exam with flying colours.', options: ['past', 'passed'], correct: 1 }
+                { sentence: 'She _____ the exam with flying colours.', options: ['past', 'passed'], correct: 1 },
+                { sentence: 'The runners _____ the finish line together.', options: ['past', 'passed'], correct: 1 }
             ] },
             { type: 'homophone', explanation: '"Their" shows possession — the seats belonging to them.', variants: [
-                { sentence: 'The teacher asked the students to sit in _____ seats quietly.', options: ['there', 'their', 'they\'re'], correct: 1 }
+                { sentence: 'The teacher asked the students to sit in _____ seats quietly.', options: ['there', 'their', 'they\'re'], correct: 1 },
+                { sentence: 'The dogs wagged _____ tails happily when we arrived.', options: ['there', 'their', 'they\'re'], correct: 1 }
             ] },
             { type: 'homophone', explanation: '"Wear" means to have clothing on. "Where" asks about a place. "Were" is past tense of "are".', variants: [
-                { sentence: 'You need to _____ your coat; it\'s cold outside.', options: ['where', 'wear', 'were'], correct: 1 }
+                { sentence: 'You need to _____ your coat; it\'s cold outside.', options: ['where', 'wear', 'were'], correct: 1 },
+                { sentence: 'What should I _____ to the party tonight?', options: ['where', 'wear', 'were'], correct: 1 }
             ] }
         ];
 
@@ -3721,38 +3774,37 @@
             }
 
             renderSpellingQuestion(container, question) {
-                const sentence = document.createElement('div');
-                sentence.className = 'spelling-sentence';
+                // GL-style layout: sentence text with bracket dividers below
+                const spellingContainer = document.createElement('div');
+                spellingContainer.className = 'spelling-container';
 
-                const colors = [
-                    'rgba(108, 92, 231, 0.2)',
-                    'rgba(162, 155, 254, 0.2)',
-                    'rgba(108, 92, 231, 0.15)',
-                    'rgba(162, 155, 254, 0.15)'
-                ];
+                // Full sentence as continuous text
+                const sentenceText = document.createElement('div');
+                sentenceText.className = 'spelling-sentence-text';
+                sentenceText.textContent = question.sections.join(' ');
+                spellingContainer.appendChild(sentenceText);
+
+                // Bracket row with section labels (matches GL paper format)
+                const brackets = document.createElement('div');
+                brackets.className = 'spelling-brackets';
+
                 const labels = ['A', 'B', 'C', 'D'];
-
                 question.sections.forEach((section, idx) => {
-                    const sectionWrapper = document.createElement('div');
-                    sectionWrapper.style.display = 'inline-block';
-                    sectionWrapper.style.marginRight = '12px';
-                    sectionWrapper.style.marginBottom = '30px';
+                    const bracket = document.createElement('div');
+                    bracket.className = 'spelling-bracket';
+                    // Size each bracket proportionally to its section's text length
+                    bracket.style.flex = String(Math.max(section.length, 3));
 
-                    const span = document.createElement('div');
-                    span.className = 'spelling-section';
-                    span.style.backgroundColor = colors[idx];
-                    span.textContent = section;
-                    sectionWrapper.appendChild(span);
-
-                    const label = document.createElement('div');
-                    label.className = 'spelling-section-label';
+                    const label = document.createElement('span');
+                    label.className = 'spelling-bracket-label';
                     label.textContent = labels[idx];
-                    sectionWrapper.appendChild(label);
+                    bracket.appendChild(label);
 
-                    sentence.appendChild(sectionWrapper);
+                    brackets.appendChild(bracket);
                 });
 
-                container.appendChild(sentence);
+                spellingContainer.appendChild(brackets);
+                container.appendChild(spellingContainer);
 
                 const questionText = document.createElement('div');
                 questionText.className = 'question-text';
