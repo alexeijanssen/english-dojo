@@ -1212,6 +1212,9 @@
         </div>
     </div>
 
+    <!-- Persistent version tag — always visible, every screen -->
+    <div id="persistentVersion" style="position: fixed; bottom: 6px; left: 10px; font-size: 0.6em; color: #6c5ce7; opacity: 0.35; pointer-events: none; z-index: 9999; font-family: monospace;"></div>
+
     <!-- Developer Feedback Bar (only visible when dev account logged in) -->
     <div class="dev-feedback-bar" id="devFeedbackBar">
         <span class="dev-label">DEV</span>
@@ -1223,9 +1226,10 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.5.0';
+        const APP_VERSION = 'v1.5.1';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
+        document.getElementById('persistentVersion').textContent = APP_VERSION;
 
         // ===== FIREBASE INITIALIZATION =====
         const firebaseConfig = {
