@@ -3572,6 +3572,18 @@
                 const item = this.engine.items[itemId];
                 const question = this.getQuestionData(item);
 
+                // Skip orphaned items whose concept no longer exists in the current array
+                if (!question) {
+                    console.warn('[Session] Skipping orphaned item', itemId);
+                    this.sessionCurrentIndex++;
+                    if (this.sessionCurrentIndex >= this.sessionQueue.length) {
+                        this.finishSession();
+                        return;
+                    }
+                    this.showNextQuestion();
+                    return;
+                }
+
                 document.getElementById('progressIndicator').textContent =
                     (this.sessionCurrentIndex + 1) + '/' + Math.min(this.sessionQueue.length, 50);
 
@@ -3829,15 +3841,23 @@
             }
 
             getQuestionData(item) {
+                // Build ID→concept map once per session
                 const allConcepts = this.engine.getAllConcepts();
-                const globalIdx = parseInt(item.id.split('-').pop());
-                const concept = allConcepts[globalIdx];
+                if (!this._conceptMap) {
+                    this._conceptMap = {};
+                    allConcepts.forEach((concept, idx) => {
+                        const id = `${concept.type}-${idx}`;
+                        this._conceptMap[id] = concept;
+                    });
+                }
+
+                const concept = this._conceptMap[item.id];
 
                 if (!concept || !concept.variants || concept.variants.length === 0) {
-                    // Fallback: return first concept's first variant
-                    const fallback = allConcepts[0];
-                    const { variants, ...conceptFields } = fallback;
-                    return { ...conceptFields, ...variants[0] };
+                    // Orphaned item — ID from an older array layout that no longer matches.
+                    // Return null so the caller can skip this question.
+                    console.warn('[QuestionData] Orphaned item', item.id, '— no matching concept. Skipping.');
+                    return null;
                 }
 
                 // Select a variant the user hasn't seen recently
@@ -3950,6 +3970,20 @@
             }
 
             renderSpellingQuestion(container, question) {
+                // Guard: if question data is malformed, skip to next question
+                if (!question || !question.sections || !Array.isArray(question.sections)) {
+                    console.error('[Render] Spelling question has no sections:', this.currentItemId, question);
+                    const err = document.createElement('div');
+                    err.className = 'question-text';
+                    err.textContent = 'Question data error — skipping...';
+                    container.appendChild(err);
+                    setTimeout(() => {
+                        this.sessionCurrentIndex++;
+                        this.showNextQuestion();
+                    }, 1000);
+                    return;
+                }
+
                 // GL-style layout: sentence text with bracket dividers below
                 const spellingContainer = document.createElement('div');
                 spellingContainer.className = 'spelling-container';
