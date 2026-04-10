@@ -845,6 +845,43 @@
             }
         }
 
+        /* Intro hint for unknown items — first encounter */
+        .intro-hint {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            background: rgba(108, 92, 231, 0.1);
+            border-left: 3px solid rgba(108, 92, 231, 0.5);
+            border-radius: 0 8px 8px 0;
+            animation: introHintFadeIn 0.3s ease-out;
+        }
+
+        @keyframes introHintFadeIn {
+            from { opacity: 0; transform: translateX(-8px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .intro-hint-icon {
+            font-size: 1.2em;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .intro-hint-text {
+            font-size: 0.95em;
+            color: #b0b0c0;
+            line-height: 1.6;
+        }
+
+        .intro-hint-rule {
+            display: block;
+            margin-top: 6px;
+            color: #d0d0e0;
+            font-weight: 500;
+        }
+
         /* Auth Screen */
         #authScreen {
             justify-content: center;
@@ -1186,7 +1223,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.4.1';
+        const APP_VERSION = 'v1.5.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
 
@@ -3553,11 +3590,16 @@
                 updateDevContext(itemId, item.type);
 
                 // Teaching phase: show a mini-lesson before the question for items in teaching state
+                // Intro phase: show a brief context hint for unknown items on first encounter
                 if (item.state === 'teaching') {
                     this.showTeachingCard(item, question, () => {
                         this.renderQuestion(item, question);
                         this.questionStartTime = Date.now();
                     });
+                } else if (item.state === 'unknown') {
+                    this.renderQuestion(item, question);
+                    this.prependIntroHint(item, question);
+                    this.questionStartTime = Date.now();
                 } else {
                     this.renderQuestion(item, question);
                     this.questionStartTime = Date.now();
@@ -3625,15 +3667,26 @@
                 explanation.textContent = question.explanation || 'Read carefully and think about the answer before choosing.';
                 card.appendChild(explanation);
 
+                // Type-specific strategy hint — teaches HOW to approach the question, not just the answer
+                const strategy = this.getTeachingStrategy(item.type, question);
+                if (strategy) {
+                    const stratDiv = document.createElement('div');
+                    stratDiv.className = 'teaching-tip';
+                    stratDiv.style.fontStyle = 'normal';
+                    stratDiv.style.color = '#b0b0c0';
+                    stratDiv.textContent = strategy;
+                    card.appendChild(stratDiv);
+                }
+
                 // Encouraging tip
                 const tip = document.createElement('div');
                 tip.className = 'teaching-tip';
                 const tips = [
-                    'You got this wrong last time \u2014 no worries! Read the explanation, then have another go.',
-                    'Everyone makes mistakes \u2014 that\u2019s how we learn. Take a moment to understand, then try again.',
-                    'This one tripped you up before. Study the explanation above, then show what you\u2019ve learned!',
-                    'Take your time with this one. Understanding WHY is more important than getting it right quickly.',
-                    'Remember: getting it wrong just means your brain is working on learning it!'
+                    'You got this wrong before \u2014 no worries. Read the explanation, then have another go.',
+                    'Take a moment to understand, then try again.',
+                    'Study the explanation above, then show what you\u2019ve learned.',
+                    'Understanding WHY is more important than getting it right quickly.',
+                    'Getting it wrong just means your brain is working on learning it.'
                 ];
                 tip.textContent = tips[Math.floor(Math.random() * tips.length)];
                 card.appendChild(tip);
@@ -3655,6 +3708,124 @@
                 card.appendChild(tryBtn);
 
                 container.appendChild(card);
+            }
+
+            prependIntroHint(item, question) {
+                const container = document.getElementById('questionContainer');
+                const hint = document.createElement('div');
+                hint.className = 'intro-hint';
+
+                const icon = document.createElement('span');
+                icon.className = 'intro-hint-icon';
+
+                const textDiv = document.createElement('div');
+                textDiv.className = 'intro-hint-text';
+
+                // Type-specific intro content for unknown items
+                switch (item.type) {
+                    case 'vocab':
+                        icon.textContent = '\uD83D\uDCD6'; // open book
+                        textDiv.textContent = 'New word. Read the sentence carefully \u2014 the surrounding words will help you work out the meaning.';
+                        break;
+                    case 'spelling':
+                        icon.textContent = '\u270F\uFE0F'; // pencil
+                        if (question.explanation && question.correction) {
+                            textDiv.innerHTML = 'New spelling pattern. Look carefully at each section.';
+                            const rule = document.createElement('span');
+                            rule.className = 'intro-hint-rule';
+                            rule.textContent = 'Tip: ' + question.explanation;
+                            textDiv.appendChild(rule);
+                        } else if (question.explanation && question.explanation.includes('No')) {
+                            textDiv.textContent = 'Look carefully \u2014 not every sentence has a mistake.';
+                        } else {
+                            textDiv.textContent = 'New spelling pattern. Check each section carefully for mistakes.';
+                        }
+                        break;
+                    case 'punctuation':
+                        icon.textContent = '\uD83D\uDCDD'; // memo
+                        textDiv.innerHTML = 'New punctuation rule.';
+                        if (question.explanation) {
+                            const rule = document.createElement('span');
+                            rule.className = 'intro-hint-rule';
+                            rule.textContent = 'Rule: ' + question.explanation;
+                            textDiv.appendChild(rule);
+                        }
+                        break;
+                    case 'comprehension':
+                        icon.textContent = '\uD83D\uDCD6'; // open book
+                        textDiv.textContent = 'New passage. Read it carefully before choosing your answer \u2014 the evidence is in the text.';
+                        break;
+                    case 'cloze':
+                        icon.textContent = '\u2709\uFE0F'; // envelope
+                        textDiv.textContent = 'Read the whole sentence first. Think about which word fits the meaning and the grammar.';
+                        break;
+                    case 'synonym':
+                        icon.textContent = '\uD83D\uDD04'; // counterclockwise arrows
+                        textDiv.textContent = 'Find the word that means the same (or nearly the same) as the highlighted word.';
+                        break;
+                    case 'antonym':
+                        icon.textContent = '\u21C4'; // right left arrows
+                        textDiv.textContent = 'Find the word that means the opposite of the highlighted word.';
+                        break;
+                    case 'context-clues':
+                        icon.textContent = '\uD83D\uDD0D'; // magnifying glass
+                        textDiv.textContent = 'Use the surrounding words as clues to work out what the highlighted word means.';
+                        break;
+                    case 'homophone':
+                        icon.textContent = '\uD83D\uDC42'; // ear
+                        if (question.explanation) {
+                            textDiv.innerHTML = 'These words sound the same but mean different things.';
+                            const rule = document.createElement('span');
+                            rule.className = 'intro-hint-rule';
+                            rule.textContent = question.explanation;
+                            textDiv.appendChild(rule);
+                        } else {
+                            textDiv.textContent = 'These words sound the same but mean different things. Choose the correct spelling for this sentence.';
+                        }
+                        break;
+                    default:
+                        icon.textContent = '\uD83D\uDCA1'; // lightbulb
+                        textDiv.textContent = 'New concept. Read carefully and think before you answer.';
+                }
+
+                hint.appendChild(icon);
+                hint.appendChild(textDiv);
+
+                // Prepend hint before the question content (after the type label)
+                const typeLabel = container.querySelector('.question-type');
+                if (typeLabel && typeLabel.nextSibling) {
+                    container.insertBefore(hint, typeLabel.nextSibling);
+                } else {
+                    container.insertBefore(hint, container.firstChild);
+                }
+            }
+
+            getTeachingStrategy(type, question) {
+                switch (type) {
+                    case 'vocab':
+                        return 'Strategy: look for clues in the sentence \u2014 what is the person or thing doing? How does the sentence make you feel? Those clues point to the meaning.';
+                    case 'spelling':
+                        if (question.correction) {
+                            return 'Strategy: say the word slowly in your head. If a part sounds different from how it\u2019s spelled, that\u2019s where the mistake usually hides.';
+                        }
+                        return null;
+                    case 'punctuation':
+                        return 'Strategy: read each option aloud in your head. Correct punctuation makes the sentence sound natural and clear.';
+                    case 'comprehension':
+                        return 'Strategy: go back to the passage and find the specific words that support your answer. The evidence is always in the text.';
+                    case 'cloze':
+                        return 'Strategy: try each word in the gap. Does the sentence make sense? Does it sound right? Check both meaning and grammar.';
+                    case 'synonym':
+                        return 'Strategy: think of the word\u2019s meaning first, then look for the option that matches most closely.';
+                    case 'antonym':
+                        return 'Strategy: think of the word\u2019s meaning first, then look for the option that means the exact opposite.';
+                    case 'context-clues':
+                        return 'Strategy: cover the highlighted word and read the rest. What word would YOU put there? Then find the closest match.';
+                    case 'homophone':
+                        return 'Strategy: try replacing the gap with the full meaning of each word. The one that makes the sentence make sense is correct.';
+                    default:
+                        return null;
+                }
             }
 
             getQuestionData(item) {
