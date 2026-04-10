@@ -296,65 +296,39 @@
             color: #a29bfe;
         }
 
-        /* GL-style spelling spotter layout */
+        /* GL-style spelling spotter layout — text inside brackets */
         .spelling-container {
             margin-bottom: 24px;
         }
 
-        .spelling-sentence-text {
-            font-size: 1.1em;
-            line-height: 1.6;
-            color: #e0e0e0;
-            margin-bottom: 6px;
-            padding: 0 4px;
-        }
-
         .spelling-brackets {
             display: flex;
-            gap: 0;
-            padding: 0 4px;
+            gap: 2px;
+            padding: 0;
         }
 
         .spelling-bracket {
             flex: 1;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            text-align: center;
+            padding: 12px 6px 6px;
+            border-bottom: 2px solid rgba(108, 92, 231, 0.5);
             position: relative;
-            height: 26px;
-            border-top: 2px solid rgba(108, 92, 231, 0.5);
         }
 
-        /* Upward arrow at left edge of each bracket */
-        .spelling-bracket::before {
-            content: '';
-            position: absolute;
-            top: -7px;
-            left: -1px;
-            width: 0;
-            height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-bottom: 6px solid rgba(108, 92, 231, 0.5);
-        }
-
-        /* Upward arrow at right edge of last bracket */
-        .spelling-bracket:last-child::after {
-            content: '';
-            position: absolute;
-            top: -7px;
-            right: -1px;
-            width: 0;
-            height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-bottom: 6px solid rgba(108, 92, 231, 0.5);
+        .spelling-section-text {
+            font-size: 1.05em;
+            line-height: 1.5;
+            color: #e0e0e0;
+            margin-bottom: 8px;
         }
 
         .spelling-bracket-label {
             font-weight: 700;
             color: #6c5ce7;
-            font-size: 0.9em;
+            font-size: 0.85em;
             letter-spacing: 1px;
         }
 
@@ -1226,7 +1200,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.5.2';
+        const APP_VERSION = 'v1.5.4';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -3908,9 +3882,9 @@
                 } else if (item.type === 'cloze') {
                     this.renderClozeQuestion(container, question);
                 } else if (item.type === 'synonym') {
-                    this.renderSynonymQuestion(container, question);
+                    this.renderSynonymQuestion(container, question, item);
                 } else if (item.type === 'antonym') {
-                    this.renderAntonymQuestion(container, question);
+                    this.renderAntonymQuestion(container, question, item);
                 } else if (item.type === 'context-clues') {
                     this.renderContextCluesQuestion(container, question);
                 } else if (item.type === 'homophone') {
@@ -3968,13 +3942,7 @@
                 const spellingContainer = document.createElement('div');
                 spellingContainer.className = 'spelling-container';
 
-                // Full sentence as continuous text
-                const sentenceText = document.createElement('div');
-                sentenceText.className = 'spelling-sentence-text';
-                sentenceText.textContent = question.sections.join(' ');
-                spellingContainer.appendChild(sentenceText);
-
-                // Bracket row with section labels (matches GL paper format)
+                // GL-style: text sits inside labelled brackets so labels always align
                 const brackets = document.createElement('div');
                 brackets.className = 'spelling-brackets';
 
@@ -3982,8 +3950,11 @@
                 question.sections.forEach((section, idx) => {
                     const bracket = document.createElement('div');
                     bracket.className = 'spelling-bracket';
-                    // Size each bracket proportionally to its section's text length
-                    bracket.style.flex = String(Math.max(section.length, 3));
+
+                    const sectionText = document.createElement('span');
+                    sectionText.className = 'spelling-section-text';
+                    sectionText.textContent = section;
+                    bracket.appendChild(sectionText);
 
                     const label = document.createElement('span');
                     label.className = 'spelling-bracket-label';
@@ -4097,10 +4068,17 @@
                 container.appendChild(options);
             }
 
-            renderSynonymQuestion(container, question) {
+            renderSynonymQuestion(container, question, item) {
                 const questionText = document.createElement('div');
                 questionText.className = 'question-text';
-                questionText.textContent = 'Which word is closest in meaning to:';
+                // Scaffold the exam term — teach what "synonym" means through exposure
+                if (item && (item.state === 'fluent' || item.state === 'lapsed')) {
+                    questionText.textContent = 'What is the synonym of:';
+                } else if (item && item.state === 'fragile') {
+                    questionText.textContent = 'Which word is closest in meaning (synonym) to:';
+                } else {
+                    questionText.textContent = 'Which word is closest in meaning to:';
+                }
                 container.appendChild(questionText);
 
                 const word = document.createElement('div');
@@ -4123,10 +4101,17 @@
                 container.appendChild(options);
             }
 
-            renderAntonymQuestion(container, question) {
+            renderAntonymQuestion(container, question, item) {
                 const questionText = document.createElement('div');
                 questionText.className = 'question-text';
-                questionText.textContent = 'Which word is opposite in meaning to:';
+                // Scaffold the exam term — teach what "antonym" means through exposure
+                if (item && (item.state === 'fluent' || item.state === 'lapsed')) {
+                    questionText.textContent = 'What is the antonym of:';
+                } else if (item && item.state === 'fragile') {
+                    questionText.textContent = 'Which word is opposite in meaning (antonym) to:';
+                } else {
+                    questionText.textContent = 'Which word is opposite in meaning to:';
+                }
                 container.appendChild(questionText);
 
                 const word = document.createElement('div');
