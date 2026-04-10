@@ -1226,7 +1226,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.5.1';
+        const APP_VERSION = 'v1.5.2';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -3745,27 +3745,11 @@
                         break;
                     case 'spelling':
                         icon.textContent = '\u270F\uFE0F'; // pencil
-                        if (question.explanation && question.correction) {
-                            textDiv.innerHTML = 'New spelling pattern. Look carefully at each section.';
-                            const rule = document.createElement('span');
-                            rule.className = 'intro-hint-rule';
-                            rule.textContent = 'Tip: ' + question.explanation;
-                            textDiv.appendChild(rule);
-                        } else if (question.explanation && question.explanation.includes('No')) {
-                            textDiv.textContent = 'Look carefully \u2014 not every sentence has a mistake.';
-                        } else {
-                            textDiv.textContent = 'New spelling pattern. Check each section carefully for mistakes.';
-                        }
+                        textDiv.textContent = 'New spelling pattern. Say each word slowly in your head \u2014 if a part sounds different from how it\u2019s spelled, that\u2019s where the mistake hides.';
                         break;
                     case 'punctuation':
                         icon.textContent = '\uD83D\uDCDD'; // memo
-                        textDiv.innerHTML = 'New punctuation rule.';
-                        if (question.explanation) {
-                            const rule = document.createElement('span');
-                            rule.className = 'intro-hint-rule';
-                            rule.textContent = 'Rule: ' + question.explanation;
-                            textDiv.appendChild(rule);
-                        }
+                        textDiv.textContent = 'New punctuation rule. Read each option aloud in your head \u2014 correct punctuation makes the sentence sound natural.';
                         break;
                     case 'comprehension':
                         icon.textContent = '\uD83D\uDCD6'; // open book
@@ -3789,15 +3773,7 @@
                         break;
                     case 'homophone':
                         icon.textContent = '\uD83D\uDC42'; // ear
-                        if (question.explanation) {
-                            textDiv.innerHTML = 'These words sound the same but mean different things.';
-                            const rule = document.createElement('span');
-                            rule.className = 'intro-hint-rule';
-                            rule.textContent = question.explanation;
-                            textDiv.appendChild(rule);
-                        } else {
-                            textDiv.textContent = 'These words sound the same but mean different things. Choose the correct spelling for this sentence.';
-                        }
+                        textDiv.textContent = 'These words sound the same but mean different things. Think about the meaning of the sentence \u2014 which spelling fits?';
                         break;
                     default:
                         icon.textContent = '\uD83D\uDCA1'; // lightbulb
