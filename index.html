@@ -1380,7 +1380,7 @@
                 if (stats) payload.stats = JSON.parse(stats);
                 payload.lastSync = now;
 
-                dbRef.set(payload).then(() => {
+                dbRef.update(payload).then(() => {
                     cloudSyncOk = true;
                     console.log('[Cloud] Sync OK — ' + Object.keys(payload.items || {}).length + ' items saved');
                     const el = document.getElementById('syncStatus');
@@ -4584,7 +4584,7 @@
                 // Use navigator.sendBeacon for reliable unload sync
                 const url = dbRef.toString() + '.json?auth=' + (currentUser ? currentUser.getIdToken && '' : '');
                 // Fallback: synchronous set (may not complete but worth trying)
-                try { dbRef.set(payload); } catch(e) {}
+                try { dbRef.update(payload); } catch(e) {}
             }
         });
     </script>
