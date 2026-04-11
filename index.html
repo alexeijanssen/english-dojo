@@ -709,85 +709,141 @@
             opacity: 1;
         }
 
-        /* Teaching Card */
+        /* Teaching Card — strategy only, minimal, respects the child */
         .teaching-card {
-            background: linear-gradient(135deg, rgba(253, 203, 110, 0.12) 0%, rgba(108, 92, 231, 0.08) 100%);
-            border: 2px solid rgba(253, 203, 110, 0.4);
-            border-radius: 16px;
-            padding: 28px;
+            border-radius: 12px;
+            padding: 24px;
             margin-bottom: 0;
-            animation: teachingSlideIn 0.4s ease-out;
+            animation: teachingSlideIn 0.3s ease-out;
         }
 
         @keyframes teachingSlideIn {
-            from { opacity: 0; transform: translateY(15px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-
-        .teaching-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .teaching-icon {
-            font-size: 1.6em;
-        }
-
-        .teaching-badge {
-            font-size: 0.8em;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #fdcb6e;
-        }
-
-        .teaching-concept {
-            font-size: 1.25em;
-            font-weight: 600;
-            color: #e0e0e0;
-            margin-bottom: 14px;
-            line-height: 1.5;
         }
 
         .teaching-explanation {
             font-size: 1.05em;
-            color: #c0c0d0;
+            color: #b0b0c0;
             line-height: 1.7;
-            margin-bottom: 10px;
-            padding: 14px 16px;
-            background: rgba(108, 92, 231, 0.1);
-            border-left: 3px solid #fdcb6e;
-            border-radius: 6px;
+            margin-bottom: 24px;
         }
 
-        .teaching-tip {
-            font-size: 0.9em;
-            color: #a0a0b0;
+        .teaching-word-definition {
+            font-size: 1.1em;
+            color: #e0e0f0;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: rgba(108, 92, 231, 0.08);
+            border-left: 3px solid rgba(108, 92, 231, 0.4);
+            border-radius: 0 8px 8px 0;
+        }
+
+        .teaching-word-definition strong {
+            color: #a29bfe;
+        }
+
+        .teaching-pattern-words {
+            font-size: 1em;
+            color: #b0b0c0;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .teaching-pattern-words .pattern-highlight {
+            color: #fdcb6e;
+            font-weight: 600;
+        }
+
+        .teaching-substitution {
+            font-size: 1.05em;
+            color: #b0b0c0;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .teaching-substitution .sub-example {
+            display: block;
+            margin-top: 8px;
+            padding: 10px 14px;
+            background: rgba(108, 92, 231, 0.08);
+            border-radius: 8px;
+            color: #d0d0e0;
             font-style: italic;
-            margin-bottom: 22px;
+        }
+
+        /* Focus Mode for comprehension teaching */
+        .focus-mode-container {
+            margin-bottom: 20px;
+        }
+
+        .focus-mode-instruction {
+            font-size: 0.95em;
+            color: #9090a0;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .focus-mode-sentences {
+            position: relative;
+        }
+
+        .focus-sentence {
+            font-size: 1.05em;
+            line-height: 1.7;
+            padding: 10px 14px;
+            margin-bottom: 4px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            color: rgba(176, 176, 192, 0.2);
+        }
+
+        .focus-sentence.active {
+            color: #e0e0f0;
+            background: rgba(108, 92, 231, 0.08);
+        }
+
+        .focus-sentence.read {
+            color: rgba(176, 176, 192, 0.35);
+        }
+
+        .focus-advance-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            font-size: 0.95em;
+            font-weight: 500;
+            background: rgba(108, 92, 231, 0.15);
+            color: #b0b0c0;
+            border: 1px solid rgba(108, 92, 231, 0.25);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .focus-advance-btn:hover {
+            background: rgba(108, 92, 231, 0.25);
+            color: #d0d0e0;
         }
 
         .btn-try {
             display: block;
             width: 100%;
-            padding: 16px 32px;
-            font-size: 1.15em;
-            font-weight: 700;
-            font-family: 'Fredoka', sans-serif;
-            background: linear-gradient(135deg, #fdcb6e 0%, #f0932b 100%);
-            color: #1a0f2e;
-            border: none;
-            border-radius: 12px;
+            padding: 14px 24px;
+            font-size: 1em;
+            font-weight: 600;
+            background: rgba(108, 92, 231, 0.2);
+            color: #d0d0e0;
+            border: 1px solid rgba(108, 92, 231, 0.35);
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
         }
 
         .btn-try:hover {
-            transform: scale(1.03);
-            box-shadow: 0 4px 20px rgba(253, 203, 110, 0.3);
+            background: rgba(108, 92, 231, 0.3);
         }
 
         .btn-try:active {
@@ -1200,7 +1256,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.6.0';
+        const APP_VERSION = 'v1.7.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -3632,82 +3688,22 @@
                 typeLabel.textContent = typeDisplayNames[item.type] || item.type.toUpperCase().replace('-', ' ');
                 container.appendChild(typeLabel);
 
+                // Comprehension uses Focus Mode — a completely different teaching path
+                if (item.type === 'comprehension' && question.passage) {
+                    this.showFocusMode(container, question, onReady);
+                    return;
+                }
+
                 const card = document.createElement('div');
                 card.className = 'teaching-card';
 
-                // Header with lightbulb
-                const header = document.createElement('div');
-                header.className = 'teaching-header';
-                const icon = document.createElement('span');
-                icon.className = 'teaching-icon';
-                icon.textContent = '\uD83D\uDCA1'; // lightbulb
-                header.appendChild(icon);
-                const badge = document.createElement('span');
-                badge.className = 'teaching-badge';
-                badge.textContent = 'Let\u2019s Learn This';
-                header.appendChild(badge);
-                card.appendChild(header);
+                // Build per-type teaching content
+                this.buildTeachingContent(card, item, question);
 
-                // Build concept title based on question type
-                const conceptTitle = document.createElement('div');
-                conceptTitle.className = 'teaching-concept';
-                if (item.type === 'vocab' && question.word) {
-                    conceptTitle.textContent = 'The word \u201C' + question.word + '\u201D';
-                } else if (item.type === 'spelling' && question.correction) {
-                    conceptTitle.textContent = 'How to spell \u201C' + question.correction + '\u201D';
-                } else if (item.type === 'synonym' && question.word) {
-                    conceptTitle.textContent = 'Synonym for \u201C' + question.word + '\u201D';
-                } else if (item.type === 'antonym' && question.word) {
-                    conceptTitle.textContent = 'Antonym for \u201C' + question.word + '\u201D';
-                } else if (item.type === 'homophone' && question.homophones) {
-                    conceptTitle.textContent = 'Homophones: ' + question.homophones.join(' vs ');
-                } else if (item.type === 'punctuation') {
-                    conceptTitle.textContent = 'Punctuation Rule';
-                } else if (item.type === 'cloze') {
-                    conceptTitle.textContent = 'Sentence Completion';
-                } else if (item.type === 'comprehension') {
-                    conceptTitle.textContent = 'Reading Comprehension';
-                } else if (item.type === 'context-clues') {
-                    conceptTitle.textContent = 'Working Out Word Meanings';
-                } else {
-                    conceptTitle.textContent = 'Let\u2019s review this concept';
-                }
-                card.appendChild(conceptTitle);
-
-                // Explanation
-                const explanation = document.createElement('div');
-                explanation.className = 'teaching-explanation';
-                explanation.textContent = question.explanation || 'Read carefully and think about the answer before choosing.';
-                card.appendChild(explanation);
-
-                // Type-specific strategy hint — teaches HOW to approach the question, not just the answer
-                const strategy = this.getTeachingStrategy(item.type, question);
-                if (strategy) {
-                    const stratDiv = document.createElement('div');
-                    stratDiv.className = 'teaching-tip';
-                    stratDiv.style.fontStyle = 'normal';
-                    stratDiv.style.color = '#b0b0c0';
-                    stratDiv.textContent = strategy;
-                    card.appendChild(stratDiv);
-                }
-
-                // Encouraging tip
-                const tip = document.createElement('div');
-                tip.className = 'teaching-tip';
-                const tips = [
-                    'You got this wrong before \u2014 no worries. Read the explanation, then have another go.',
-                    'Take a moment to understand, then try again.',
-                    'Study the explanation above, then show what you\u2019ve learned.',
-                    'Understanding WHY is more important than getting it right quickly.',
-                    'Getting it wrong just means your brain is working on learning it.'
-                ];
-                tip.textContent = tips[Math.floor(Math.random() * tips.length)];
-                card.appendChild(tip);
-
-                // "Let me try!" button
+                // Ready button
                 const tryBtn = document.createElement('button');
                 tryBtn.className = 'btn-try';
-                tryBtn.textContent = 'I\u2019ve got it \u2014 let me try!';
+                tryBtn.textContent = 'Ready';
                 tryBtn.addEventListener('click', () => {
                     card.style.animation = 'none';
                     card.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
@@ -3720,6 +3716,180 @@
                 });
                 card.appendChild(tryBtn);
 
+                container.appendChild(card);
+            }
+
+            buildTeachingContent(card, item, question) {
+                const type = item.type;
+
+                if (type === 'vocab' || type === 'context-clues') {
+                    // Vocab/context-clues: define the word so the answer becomes self-evident
+                    const def = document.createElement('div');
+                    def.className = 'teaching-word-definition';
+                    if (question.word && question.explanation) {
+                        def.innerHTML = '<strong>' + question.word.charAt(0).toUpperCase() + question.word.slice(1) + '</strong> means ' + question.explanation.replace(/^['"].*?['"]\s*means\s*/i, '').replace(/\.$/, '') + '.';
+                    } else {
+                        def.textContent = question.explanation || 'Think about what this word means before choosing.';
+                    }
+                    card.appendChild(def);
+
+                } else if (type === 'antonym' || type === 'synonym') {
+                    // Antonym/synonym: define the target word so the opposite/similar becomes obvious
+                    const def = document.createElement('div');
+                    def.className = 'teaching-word-definition';
+                    const word = question.word || question.prompt || '';
+                    const direction = type === 'antonym' ? 'opposite' : 'similar';
+                    if (question.explanation) {
+                        // Extract a clean definition from the explanation
+                        def.innerHTML = '<strong>' + word.charAt(0).toUpperCase() + word.slice(1) + '</strong> \u2014 ' + question.explanation;
+                    } else {
+                        def.textContent = 'Think about what \u201c' + word + '\u201d means. Then find the ' + direction + '.';
+                    }
+                    card.appendChild(def);
+
+                    const tip = document.createElement('div');
+                    tip.className = 'teaching-explanation';
+                    tip.textContent = 'If you know what the word means, the ' + direction + ' should feel obvious.';
+                    card.appendChild(tip);
+
+                } else if (type === 'spelling') {
+                    // Spelling: show the pattern with related words
+                    const patternDiv = document.createElement('div');
+                    patternDiv.className = 'teaching-word-definition';
+                    if (question.correction && question.misspelled) {
+                        patternDiv.innerHTML = '<strong>' + question.misspelled + '</strong> \u2192 <strong>' + question.correction + '</strong>';
+                    }
+                    card.appendChild(patternDiv);
+
+                    // Show the explanation as the pattern rule
+                    if (question.explanation) {
+                        const rule = document.createElement('div');
+                        rule.className = 'teaching-pattern-words';
+                        rule.textContent = question.explanation;
+                        card.appendChild(rule);
+                    }
+
+                    const tip = document.createElement('div');
+                    tip.className = 'teaching-explanation';
+                    tip.textContent = 'Say the word slowly in your head. If a part sounds different from how it\u2019s spelled, that\u2019s where the mistake hides.';
+                    card.appendChild(tip);
+
+                } else if (type === 'homophone') {
+                    // Homophone: give a substitution test
+                    const sub = document.createElement('div');
+                    sub.className = 'teaching-substitution';
+                    if (question.explanation) {
+                        // The explanation already defines the words — use it
+                        sub.textContent = question.explanation;
+                    }
+                    card.appendChild(sub);
+
+                    const tip = document.createElement('div');
+                    tip.className = 'teaching-explanation';
+                    tip.textContent = 'Try replacing each word with its meaning. The one that makes the sentence make sense is correct.';
+                    card.appendChild(tip);
+
+                } else if (type === 'cloze') {
+                    // Cloze: highlight context clue words
+                    const tip = document.createElement('div');
+                    tip.className = 'teaching-explanation';
+                    tip.textContent = 'Read the whole sentence again. Which words give you a clue about what\u2019s missing? The answer should fit both the meaning and the grammar.';
+                    card.appendChild(tip);
+
+                    if (question.sentence) {
+                        const example = document.createElement('div');
+                        example.className = 'teaching-substitution';
+                        const exSpan = document.createElement('span');
+                        exSpan.className = 'sub-example';
+                        exSpan.textContent = question.sentence.replace('_____', '___');
+                        example.appendChild(exSpan);
+                        card.appendChild(example);
+                    }
+
+                } else if (type === 'punctuation') {
+                    // Punctuation: read it aloud in your head
+                    const tip = document.createElement('div');
+                    tip.className = 'teaching-explanation';
+                    tip.textContent = 'Read each option aloud in your head. Correct punctuation makes the sentence sound natural \u2014 you can hear when it\u2019s right.';
+                    card.appendChild(tip);
+
+                } else {
+                    // Fallback: show explanation if available
+                    const explanation = document.createElement('div');
+                    explanation.className = 'teaching-explanation';
+                    explanation.textContent = question.explanation || 'Read carefully and think about the answer before choosing.';
+                    card.appendChild(explanation);
+                }
+            }
+
+            showFocusMode(container, question, onReady) {
+                const card = document.createElement('div');
+                card.className = 'teaching-card';
+
+                // Instruction
+                const instruction = document.createElement('div');
+                instruction.className = 'focus-mode-instruction';
+                instruction.textContent = 'Read each sentence. Picture it in your mind. Then move on.';
+                card.appendChild(instruction);
+
+                // Split passage into sentences
+                const sentences = question.passage
+                    .replace(/([.!?])\s+/g, '$1|')
+                    .split('|')
+                    .filter(s => s.trim().length > 0);
+
+                const sentencesContainer = document.createElement('div');
+                sentencesContainer.className = 'focus-mode-sentences';
+
+                const sentenceEls = sentences.map((text, idx) => {
+                    const el = document.createElement('div');
+                    el.className = 'focus-sentence' + (idx === 0 ? ' active' : '');
+                    el.textContent = text.trim();
+                    sentencesContainer.appendChild(el);
+                    return el;
+                });
+
+                card.appendChild(sentencesContainer);
+
+                let currentIdx = 0;
+
+                // Advance button
+                const advanceBtn = document.createElement('button');
+                advanceBtn.className = 'focus-advance-btn';
+                advanceBtn.textContent = 'Next sentence';
+
+                advanceBtn.addEventListener('click', () => {
+                    // Mark current as read
+                    sentenceEls[currentIdx].classList.remove('active');
+                    sentenceEls[currentIdx].classList.add('read');
+                    currentIdx++;
+
+                    if (currentIdx < sentenceEls.length) {
+                        // Activate next sentence
+                        sentenceEls[currentIdx].classList.add('active');
+                        // Scroll into view if needed
+                        sentenceEls[currentIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else {
+                        // All sentences read — show the Ready button
+                        advanceBtn.style.display = 'none';
+                        const tryBtn = document.createElement('button');
+                        tryBtn.className = 'btn-try';
+                        tryBtn.textContent = 'Answer the question';
+                        tryBtn.addEventListener('click', () => {
+                            card.style.animation = 'none';
+                            card.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+                            card.style.opacity = '0';
+                            card.style.transform = 'translateY(-10px)';
+                            setTimeout(() => {
+                                container.innerHTML = '';
+                                onReady();
+                            }, 250);
+                        });
+                        card.appendChild(tryBtn);
+                    }
+                });
+
+                card.appendChild(advanceBtn);
                 container.appendChild(card);
             }
 
@@ -3789,33 +3959,7 @@
                 }
             }
 
-            getTeachingStrategy(type, question) {
-                switch (type) {
-                    case 'vocab':
-                        return 'Strategy: look for clues in the sentence \u2014 what is the person or thing doing? How does the sentence make you feel? Those clues point to the meaning.';
-                    case 'spelling':
-                        if (question.correction) {
-                            return 'Strategy: say the word slowly in your head. If a part sounds different from how it\u2019s spelled, that\u2019s where the mistake usually hides.';
-                        }
-                        return null;
-                    case 'punctuation':
-                        return 'Strategy: read each option aloud in your head. Correct punctuation makes the sentence sound natural and clear.';
-                    case 'comprehension':
-                        return 'Strategy: go back to the passage and find the specific words that support your answer. The evidence is always in the text.';
-                    case 'cloze':
-                        return 'Strategy: try each word in the gap. Does the sentence make sense? Does it sound right? Check both meaning and grammar.';
-                    case 'synonym':
-                        return 'Strategy: think of the word\u2019s meaning first, then look for the option that matches most closely.';
-                    case 'antonym':
-                        return 'Strategy: think of the word\u2019s meaning first, then look for the option that means the exact opposite.';
-                    case 'context-clues':
-                        return 'Strategy: cover the highlighted word and read the rest. What word would YOU put there? Then find the closest match.';
-                    case 'homophone':
-                        return 'Strategy: try replacing the gap with the full meaning of each word. The one that makes the sentence make sense is correct.';
-                    default:
-                        return null;
-                }
-            }
+            // getTeachingStrategy() removed — replaced by per-type buildTeachingContent() in showTeachingCard
 
             getQuestionData(item) {
                 // Build ID→concept map once per session
