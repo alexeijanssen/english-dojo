@@ -977,6 +977,96 @@
             margin-top: 20px;
         }
 
+        /* Profile Setup Screen */
+        #profileScreen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .profile-container {
+            max-width: 440px;
+            width: 100%;
+        }
+
+        .profile-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #a29bfe;
+            margin-bottom: 8px;
+        }
+
+        .profile-subtitle {
+            font-size: 0.95em;
+            color: #9090a0;
+            margin-bottom: 32px;
+        }
+
+        .profile-field {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .profile-field label {
+            display: block;
+            font-size: 0.8em;
+            color: #9090a0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .profile-field input {
+            width: 100%;
+            background: rgba(108, 92, 231, 0.08);
+            border: 1px solid rgba(108, 92, 231, 0.25);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: #e0e0e0;
+            font-family: 'Inter', sans-serif;
+            font-size: 1em;
+        }
+
+        .profile-field input:focus {
+            outline: none;
+            border-color: #6c5ce7;
+        }
+
+        .profile-field input::placeholder {
+            color: #505060;
+        }
+
+        .profile-field .field-hint {
+            font-size: 0.75em;
+            color: #707080;
+            margin-top: 4px;
+        }
+
+        .btn-profile-save {
+            width: 100%;
+            padding: 14px 24px;
+            font-size: 1.05em;
+            font-weight: 600;
+            background: rgba(108, 92, 231, 0.2);
+            color: #d0d0e0;
+            border: 1px solid rgba(108, 92, 231, 0.35);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 12px;
+        }
+
+        .btn-profile-save:hover {
+            background: rgba(108, 92, 231, 0.3);
+        }
+
+        .btn-profile-save:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
         /* Subject Selection Screen */
         #subjectScreen {
             justify-content: center;
@@ -1111,6 +1201,38 @@
                     Sign in with Google
                 </button>
                 <div class="auth-loading" id="authLoading" style="display:none;">Signing in...</div>
+            </div>
+        </div>
+
+        <!-- Profile Setup Screen (first-time users) -->
+        <div id="profileScreen" class="screen">
+            <div class="profile-container">
+                <div class="profile-title">Welcome to 11 Plus Dojo</div>
+                <div class="profile-subtitle">Tell us a bit about yourself so we can set things up</div>
+
+                <div class="profile-field">
+                    <label>First name</label>
+                    <input type="text" id="profileName" placeholder="e.g. Walter" autocomplete="given-name">
+                </div>
+
+                <div class="profile-field">
+                    <label>Date of birth</label>
+                    <input type="date" id="profileDOB">
+                </div>
+
+                <div class="profile-field">
+                    <label>Exam date</label>
+                    <input type="date" id="profileExamDate">
+                    <div class="field-hint">When is the 11+ exam? Leave blank if you're not sure yet.</div>
+                </div>
+
+                <div class="profile-field">
+                    <label>School(s) applying to</label>
+                    <input type="text" id="profileSchools" placeholder="e.g. King Edward's, Sutton Grammar" autocomplete="off">
+                    <div class="field-hint">We'll work out the exam board from this.</div>
+                </div>
+
+                <button class="btn-profile-save" id="profileSaveBtn" onclick="saveProfile()">Let's go</button>
             </div>
         </div>
 
@@ -1260,7 +1382,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.7.0';
+        const APP_VERSION = 'v1.8.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -1312,26 +1434,119 @@
             }
         }
 
+        // ===== PROFILE SETUP =====
+        let userProfile = null;
+
+        async function loadProfile(uid) {
+            try {
+                const snap = await db.ref('users/' + uid + '/profile').once('value');
+                return snap.val();
+            } catch (err) {
+                console.error('[Profile] Load error:', err);
+                return null;
+            }
+        }
+
+        async function saveProfile() {
+            if (!currentUser) return;
+            const name = document.getElementById('profileName').value.trim();
+            const dob = document.getElementById('profileDOB').value;
+            const examDate = document.getElementById('profileExamDate').value;
+            const schools = document.getElementById('profileSchools').value.trim();
+
+            if (!name) {
+                document.getElementById('profileName').focus();
+                return;
+            }
+            if (!dob) {
+                document.getElementById('profileDOB').focus();
+                return;
+            }
+
+            const profile = {
+                name: name,
+                dob: dob,
+                examDate: examDate || null,
+                schools: schools || null,
+                createdAt: Date.now(),
+                email: currentUser.email || null
+            };
+
+            const btn = document.getElementById('profileSaveBtn');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            try {
+                await db.ref('users/' + currentUser.uid + '/profile').set(profile);
+                userProfile = profile;
+                // Now proceed to the app with the new profile
+                proceedToApp(currentUser);
+            } catch (err) {
+                console.error('[Profile] Save error:', err);
+                btn.disabled = false;
+                btn.textContent = 'Let\'s go';
+            }
+        }
+
+        function getUserAge(dob) {
+            if (!dob) return null;
+            const birth = new Date(dob);
+            const now = new Date();
+            let age = now.getFullYear() - birth.getFullYear();
+            const monthDiff = now.getMonth() - birth.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
+        function proceedToApp(user) {
+            dbRef = db.ref('users/' + user.uid + '/english');
+
+            // Age-gated dev mode: 15+ = tester with feedback panel, <15 = learner
+            const age = userProfile ? getUserAge(userProfile.dob) : null;
+            if (age !== null && age >= 15) {
+                isDevMode = true;
+                document.getElementById('devFeedbackBar').classList.add('active');
+                document.querySelector('.container').style.paddingBottom = '100px';
+            } else if (age !== null && age < 15) {
+                isDevMode = false;
+                document.getElementById('devFeedbackBar').classList.remove('active');
+                document.querySelector('.container').style.paddingBottom = '20px';
+            } else {
+                // No profile or no DOB — fall back to email-based dev mode
+                checkDevMode(user);
+            }
+
+            // Update UI with profile name if available
+            const avatar = document.getElementById('userAvatar');
+            const userName = document.getElementById('userName');
+            const greeting = document.getElementById('subjectGreeting');
+
+            avatar.src = user.photoURL || '';
+            avatar.style.display = user.photoURL ? 'block' : 'none';
+
+            const displayName = (userProfile && userProfile.name) ? userProfile.name : (user.displayName || user.email);
+            userName.textContent = displayName;
+
+            const firstName = (userProfile && userProfile.name) ? userProfile.name.split(' ')[0] : (user.displayName || 'there').split(' ')[0];
+            greeting.textContent = `Hey ${firstName}! Choose a subject`;
+
+            showScreen('subjectScreen');
+
+            // Update the English start screen stats
+            if (typeof ui !== 'undefined') {
+                ui.updateStartScreen();
+            }
+        }
+
         // Listen for auth state changes
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 currentUser = user;
+
+                // Load cloud data
                 dbRef = db.ref('users/' + user.uid + '/english');
-                checkDevMode(user);
-
-                // Update UI
-                const avatar = document.getElementById('userAvatar');
-                const userName = document.getElementById('userName');
-                const greeting = document.getElementById('subjectGreeting');
-
-                avatar.src = user.photoURL || '';
-                avatar.style.display = user.photoURL ? 'block' : 'none';
-                userName.textContent = user.displayName || user.email;
-
-                const firstName = (user.displayName || 'there').split(' ')[0];
-                greeting.textContent = `Hey ${firstName}! Choose a subject`;
-
-                // Load cloud data then show subject screen
                 await loadFromCloud();
 
                 // Reload engine items from localStorage (which loadFromCloud may have updated)
@@ -1340,15 +1555,25 @@
                     engine.globalStats = engine.loadGlobalStats();
                 }
 
-                showScreen('subjectScreen');
+                // Check for existing profile
+                userProfile = await loadProfile(user.uid);
 
-                // Update the English start screen stats
-                if (typeof ui !== 'undefined') {
-                    ui.updateStartScreen();
+                if (!userProfile) {
+                    // First-time user — show profile setup
+                    // Pre-fill name from Google account if available
+                    const nameInput = document.getElementById('profileName');
+                    if (user.displayName && !nameInput.value) {
+                        nameInput.value = user.displayName.split(' ')[0];
+                    }
+                    showScreen('profileScreen');
+                } else {
+                    // Returning user — go straight to app
+                    proceedToApp(user);
                 }
             } else {
                 currentUser = null;
                 dbRef = null;
+                userProfile = null;
                 checkDevMode(null);
                 showScreen('authScreen');
             }
