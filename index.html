@@ -628,7 +628,7 @@
             border-top: 2px solid rgba(255, 165, 0, 0.4);
             padding: 8px 16px;
             display: none;
-            align-items: center;
+            align-items: flex-end;
             gap: 10px;
             z-index: 1000;
             backdrop-filter: blur(10px);
@@ -656,7 +656,7 @@
             text-overflow: ellipsis;
         }
 
-        .dev-feedback-bar input {
+        .dev-feedback-bar textarea {
             flex: 1;
             background: rgba(108, 92, 231, 0.1);
             border: 1px solid rgba(108, 92, 231, 0.3);
@@ -665,13 +665,17 @@
             color: #e0e0e0;
             font-family: 'Inter', sans-serif;
             font-size: 0.85em;
+            min-height: 60px;
+            max-height: 120px;
+            resize: vertical;
+            line-height: 1.4;
         }
 
-        .dev-feedback-bar input::placeholder {
+        .dev-feedback-bar textarea::placeholder {
             color: #6060708a;
         }
 
-        .dev-feedback-bar input:focus {
+        .dev-feedback-bar textarea:focus {
             outline: none;
             border-color: #ffa500;
         }
@@ -1249,7 +1253,7 @@
     <div class="dev-feedback-bar" id="devFeedbackBar">
         <span class="dev-label">DEV</span>
         <span class="dev-context" id="devContext"></span>
-        <input type="text" id="devFeedbackInput" placeholder="Type feedback on this question, hit Enter..." autocomplete="off">
+        <textarea id="devFeedbackInput" placeholder="Type feedback on this question, hit Enter..." autocomplete="off"></textarea>
         <button class="dev-send" id="devSendBtn">Send</button>
         <div class="dev-toast" id="devToast">Saved</div>
     </div>
@@ -4657,7 +4661,7 @@
                 isDevMode = true;
                 document.getElementById('devFeedbackBar').classList.add('active');
                 // Add bottom padding to container so feedback bar doesn't cover content
-                document.querySelector('.container').style.paddingBottom = '70px';
+                document.querySelector('.container').style.paddingBottom = '100px';
             } else {
                 isDevMode = false;
                 document.getElementById('devFeedbackBar').classList.remove('active');
@@ -4667,11 +4671,16 @@
 
         function updateDevContext(itemId, questionType) {
             if (!isDevMode) return;
+            // Auto-send any unsent feedback before switching to new question
+            const input = document.getElementById('devFeedbackInput');
+            if (input.value.trim()) {
+                submitDevFeedback();
+            }
             devCurrentItemId = itemId;
             devCurrentQuestionType = questionType;
             const ctx = document.getElementById('devContext');
             ctx.textContent = itemId || '';
-            document.getElementById('devFeedbackInput').value = '';
+            input.value = '';
         }
 
         function submitDevFeedback() {
@@ -4718,7 +4727,7 @@
 
         // Wire up feedback bar
         document.getElementById('devFeedbackInput').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
+            if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 submitDevFeedback();
             }
