@@ -1220,16 +1220,18 @@
                     <input type="date" id="profileDOB">
                 </div>
 
-                <div class="profile-field">
-                    <label>Exam date</label>
-                    <input type="date" id="profileExamDate">
-                    <div class="field-hint">When is the 11+ exam? Leave blank if you're not sure yet.</div>
-                </div>
+                <div id="profileLearnerFields">
+                    <div class="profile-field">
+                        <label>Exam date</label>
+                        <input type="date" id="profileExamDate">
+                        <div class="field-hint">When is the 11+ exam? Leave blank if you're not sure yet.</div>
+                    </div>
 
-                <div class="profile-field">
-                    <label>School(s) applying to</label>
-                    <input type="text" id="profileSchools" placeholder="e.g. King Edward's, Sutton Grammar" autocomplete="off">
-                    <div class="field-hint">We'll work out the exam board from this.</div>
+                    <div class="profile-field">
+                        <label>School(s) applying to</label>
+                        <input type="text" id="profileSchools" placeholder="e.g. King Edward's, Sutton Grammar" autocomplete="off">
+                        <div class="field-hint">We'll work out the exam board from this.</div>
+                    </div>
                 </div>
 
                 <button class="btn-profile-save" id="profileSaveBtn" onclick="saveProfile()">Let's go</button>
@@ -1463,11 +1465,15 @@
                 return;
             }
 
+            const age = getUserAge(dob);
+            const isTester = age !== null && age >= 15;
+
             const profile = {
                 name: name,
                 dob: dob,
-                examDate: examDate || null,
-                schools: schools || null,
+                role: isTester ? 'tester' : 'learner',
+                examDate: isTester ? null : (examDate || null),
+                schools: isTester ? null : (schools || null),
                 createdAt: Date.now(),
                 email: currentUser.email || null
             };
@@ -1499,6 +1505,17 @@
             }
             return age;
         }
+
+        // Hide learner fields (exam date, schools) when DOB shows 15+
+        document.getElementById('profileDOB').addEventListener('change', function() {
+            const age = getUserAge(this.value);
+            const learnerFields = document.getElementById('profileLearnerFields');
+            if (age !== null && age >= 15) {
+                learnerFields.style.display = 'none';
+            } else {
+                learnerFields.style.display = 'block';
+            }
+        });
 
         function proceedToApp(user) {
             dbRef = db.ref('users/' + user.uid + '/english');
