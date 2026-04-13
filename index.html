@@ -4402,22 +4402,43 @@
             renderPunctuationQuestion(container, question) {
                 const questionText = document.createElement('div');
                 questionText.className = 'question-text';
-                questionText.textContent = 'Which option is correctly punctuated?';
+                questionText.textContent = 'Which sentence is correctly punctuated?';
                 container.appendChild(questionText);
 
-                const currentSentence = document.createElement('div');
-                currentSentence.style.cssText = 'background: rgba(108, 92, 231, 0.15); padding: 15px; border-radius: 8px; margin-bottom: 20px; font-style: italic; color: #d0d0e0;';
-                currentSentence.textContent = question.sentence;
-                container.appendChild(currentSentence);
+                // Build a clean options list:
+                //  - Drop "No change needed" (meaningless without an original sentence)
+                //  - If correct answer was "No change needed", map it to the option that
+                //    matches question.sentence (the already-correct version).
+                //  - Dedupe any options that are identical to another remaining option.
+                const rawOptions = question.options || [];
+                const originalCorrectText = rawOptions[question.correct];
+                const isNoChange = s => typeof s === 'string' && s.trim().toLowerCase() === 'no change needed';
+
+                // If correct points at "No change needed", the real correct text is question.sentence.
+                const resolvedCorrectText = isNoChange(originalCorrectText) ? question.sentence : originalCorrectText;
+
+                const cleaned = [];
+                rawOptions.forEach(o => {
+                    if (isNoChange(o)) return;
+                    if (cleaned.includes(o)) return; // dedupe
+                    cleaned.push(o);
+                });
+
+                // Make sure the correct answer is present (safety net for edge cases).
+                let newCorrectIdx = cleaned.indexOf(resolvedCorrectText);
+                if (newCorrectIdx === -1) {
+                    cleaned.push(resolvedCorrectText);
+                    newCorrectIdx = cleaned.length - 1;
+                }
 
                 const options = document.createElement('div');
                 options.className = 'options';
 
-                question.options.forEach((option, idx) => {
+                cleaned.forEach((option, idx) => {
                     const opt = document.createElement('div');
                     opt.className = 'option';
                     opt.innerHTML = '<span class="option-label">' + String.fromCharCode(65 + idx) + '.</span>' + option;
-                    opt.addEventListener('click', () => this.handleAnswer(idx, question.correct, question.explanation));
+                    opt.addEventListener('click', () => this.handleAnswer(idx, newCorrectIdx, question.explanation));
                     options.appendChild(opt);
                 });
 
