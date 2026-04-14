@@ -1384,7 +1384,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.9.0';
+        const APP_VERSION = 'v1.10.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -2554,135 +2554,223 @@
             ] },
             { id: 'spelling-unknown', type: 'spelling', explanation: 'No spelling mistakes!', variants: [
                 { sections: ['The doctor\'s', 'handwriting was so illegible', 'that it rendered the', 'prescription invalid.'], correct: -1 }
+            ,
+                { sections: ['The bright sunshine warmed', 'the garden on that lovely', 'afternoon during springtime making', 'everyone smile happily.'], correct: -1 }
             ] },
             { id: 'spelling-unknown-2', type: 'spelling', explanation: 'No mistakes here!', variants: [
                 { sections: ['The principal', 'expressed her gratitude to the', 'students for their', 'dedication.'], correct: -1 }
+            ,
+                { sections: ['We played football in the', 'park with our friends after', 'school finished for the day', 'until sunset.'], correct: -1 }
             ] },
             { id: 'spelling-library', type: 'spelling', misspelled: 'libary', correction: 'library', explanation: 'lib-R-ary!', variants: [
                 { sections: ['The ancient libary', 'contained manuscripts that', 'were centuries', 'old.'], correct: 0 }
+            ,
+                { sections: ['The teacher asked us to', 'return our books to', 'the libary before the', 'end of term.'], correct: 2 }
             ] },
             { id: 'spelling-accommodation', type: 'spelling', misspelled: 'accomodation', correction: 'accommodation', explanation: 'double C and double M.', variants: [
                 { sections: ['The accomodation', 'was surprisingly comfortable', 'despite the affordable', 'price.'], correct: 0 }
+            ,
+                { sections: ['We found a lovely hotel', 'with comfortable rooms and', 'good accomodation for our', 'family holiday.'], correct: 2 }
             ] },
             { id: 'spelling-extremely', type: 'spelling', misspelled: 'extremly', correction: 'extremely', explanation: 'extreme + ly.', variants: [
                 { sections: ['The neighbours', 'were extremly concerned about', 'the mysterious', 'noise.'], correct: 1 }
+            ,
+                { sections: ['The weather today was cold', 'and the wind was very', 'strong making it', 'extremly unpleasant outside.'], correct: 3 }
             ] },
             { id: 'spelling-embarrassment', type: 'spelling', misspelled: 'embarressment', correction: 'embarrassment', explanation: 'two R\'s and two S\'s.', variants: [
                 { sections: ['Her impeccably', 'obedient dog\'s unexpected antics', 'in public caused her', 'embarressment.'], correct: 3 }
+            ,
+                { sections: ['I felt terrible when my', 'embarressment was complete', 'and everyone laughed at', 'me in class.'], correct: 1 }
             ] },
             { id: 'spelling-government', type: 'spelling', misspelled: 'goverment', correction: 'government', explanation: 'goverNment.', variants: [
                 { sections: ['The goverment', 'announced new measures to', 'protect endangered wildlife', 'species.'], correct: 0 }
+            ,
+                { sections: ['The Prime Minister leads', 'the goverment and makes', 'important decisions for the', 'whole country.'], correct: 1 }
             ] },
             { id: 'spelling-courage', type: 'spelling', misspelled: 'currage', correction: 'courage', explanation: '"ou" makes the vowel sound; remember "cour-age"', variants: [
                 { sections: ['She had the', 'currage to speak her', 'mind even when', 'afraid'], correct: 1 }
+            ,
+                { sections: ['The soldier showed great', 'bravery and strength in', 'the battle with such', 'currage and determination.'], correct: 3 }
             ] },
             { id: 'spelling-absolutely', type: 'spelling', misspelled: 'absolutly', correction: 'absolutely', explanation: '"absolute" + "ly" = "absolutely"', variants: [
                 { sections: ['The mountains', 'were absolutly breathtaking', 'in the evening', 'light'], correct: 1 }
+            ,
+                { sections: ['The fireworks display was', 'fantastic and everyone agreed', 'that the show was', 'absolutly spectacular tonight.'], correct: 3 }
             ] },
             { id: 'spelling-mysterious', type: 'spelling', misspelled: 'misterious', correction: 'mysterious', explanation: 'From "mystery"; the vowel pattern uses "y" not "i"', variants: [
                 { sections: ['The misterious stranger', 'arrived at midnight', 'without', 'warning'], correct: 0 }
+            ,
+                { sections: ['The old house seemed very', 'dark and quiet on the', 'hill with something misterious', 'about it.'], correct: 2 }
             ] },
             { id: 'spelling-nervous', type: 'spelling', misspelled: 'nervious', correction: 'nervous', explanation: '"Nervous" from "nerve"; no "i" before "ous"', variants: [
                 { sections: ['She felt', 'very nervious about the', 'audition', 'tomorrow'], correct: 1 }
+            ,
+                { sections: ['She felt nervious about', 'the interview next week', 'but tried to stay calm', 'and confident.'], correct: 0 }
             ] },
             { id: 'spelling-unknown-3', type: 'spelling', explanation: 'No spelling mistakes!', variants: [
                 { sections: ['The recipe', 'called for four cups of', 'flour and', 'one egg'], correct: -1 }
+            ,
+                { sections: ['The library has many wonderful', 'books that children enjoy reading', 'during their free time after', 'lessons end.'], correct: -1 }
             ] },
             { id: 'spelling-illegible', type: 'spelling', misspelled: 'ilegible', correction: 'illegible', explanation: 'Double "l" at the start: il-legible', variants: [
                 { sections: ['His handwriting', 'was ilegible and hard to', 'read', 'properly'], correct: 1 }
+            ,
+                { sections: ['The teacher could not read', 'the boy\'s homework because', 'his writing was ilegible', 'and very messy.'], correct: 2 }
             ] },
             { id: 'spelling-children', type: 'spelling', misspelled: 'childern', correction: 'children', explanation: '"Children" is an irregular plural — memorise it', variants: [
                 { sections: ['The childern', 'played happily in the park', 'all', 'afternoon'], correct: 0 }
+            ,
+                { sections: ['The park was full of happy', 'parents watching their childern', 'play games and swing on', 'the equipment.'], correct: 1 }
             ] },
             { id: 'spelling-separate', type: 'spelling', misspelled: 'seperate', correction: 'separate', explanation: 'There\'s "a rat" in "separate"', variants: [
                 { sections: ['We seperate', 'the recycling into different', 'coloured', 'bins'], correct: 0 }
+            ,
+                { sections: ['The teacher told us to', 'put the books into', 'seperate piles based on', 'their colour and size.'], correct: 2 }
             ] },
             { id: 'spelling-occurred', type: 'spelling', misspelled: 'occured', correction: 'occurred', explanation: 'Double the "r" before "-ed": occurred', variants: [
                 { sections: ['The occured', 'incident was discussed in the', 'staff', 'meeting'], correct: 0 }
+            ,
+                { sections: ['The accident on the road', 'happened just after school', 'ended and it all', 'occured quite suddenly.'], correct: 3 }
             ] },
             { id: 'spelling-exceptional', type: 'spelling', misspelled: 'exeptional', correction: 'exceptional', explanation: '"Exception" becomes "exceptional" — uses "c" not "p"', variants: [
                 { sections: ['She showed', 'exeptional talent in mathematics', 'and science', 'classes'], correct: 1 }
+            ,
+                { sections: ['The exeptional student won', 'the competition with her', 'hard work and clever thinking', 'throughout the year.'], correct: 0 }
             ] },
             { id: 'spelling-brilliant', type: 'spelling', misspelled: 'brillient', correction: 'brilliant', explanation: 'Ends in "-iant" not "-ient"', variants: [
                 { sections: ['The performance', 'was brillient and the', 'audience applauded', 'loudly'], correct: 1 }
+            ,
+                { sections: ['His brillient idea saved', 'the day and everyone', 'praised him for thinking', 'so cleverly and quickly.'], correct: 0 }
             ] },
             { id: 'spelling-persistence', type: 'spelling', misspelled: 'persistance', correction: 'persistence', explanation: '"-ence" not "-ance"', variants: [
                 { sections: ['She showed', 'great persistance in', 'her efforts', 'to improve.'], correct: 1 }
+            ,
+                { sections: ['Hard work and dedication', 'are important qualities that', 'help you succeed with', 'persistance over time.'], correct: 3 }
             ] },
             { id: 'spelling-definitely', type: 'spelling', misspelled: 'definately', correction: 'definitely', explanation: '"Definite" + "-ly"; remember the "i" in the middle', variants: [
                 { sections: ['We will', 'definately attend', 'the concert', 'next month.'], correct: 1 }
+            ,
+                { sections: ['I will definately come to', 'your party next Saturday', 'and bring a nice present', 'for you.'], correct: 0 }
             ] },
             { id: 'spelling-unknown-4', type: 'spelling', explanation: 'No spelling mistakes!', variants: [
                 { sections: ['No spelling', 'mistakes appear in this', 'sentence at', 'all'], correct: -1 }
+            ,
+                { sections: ['Music lessons are exciting and', 'help students learn instruments', 'like piano guitar and violin', 'every week.'], correct: -1 }
             ] },
             { id: 'spelling-achievement', type: 'spelling', misspelled: 'achevement', correction: 'achievement', explanation: '"Achieve" + "-ment"', variants: [
                 { sections: ['The athlete\'s', 'achevement was recognised by the', 'entire', 'school'], correct: 1 }
+            ,
+                { sections: ['His achevement in passing', 'the exam made his parents', 'proud and happy that he', 'worked so hard.'], correct: 0 }
             ] },
             { id: 'spelling-powerful', type: 'spelling', misspelled: 'powerfull', correction: 'powerful', explanation: 'Adjectives ending in "-ful" use single "l"', variants: [
                 { sections: ['She gave a', 'powerfull speech about', 'climate', 'change'], correct: 1 }
+            ,
+                { sections: ['The storm brought very', 'strong winds and incredibly', 'powerfull gusts that knocked', 'down trees everywhere.'], correct: 2 }
             ] },
             { id: 'spelling-bravery', type: 'spelling', misspelled: 'bravry', correction: 'bravery', explanation: '"Brave" becomes "bravery"', variants: [
                 { sections: ['He showed', 'great bravry when facing the', 'difficult', 'challenge'], correct: 1 }
+            ,
+                { sections: ['The firefighter showed great', 'courage and skill in saving', 'the trapped kitten with real', 'bravry and compassion.'], correct: 3 }
             ] },
             { id: 'spelling-receive', type: 'spelling', misspelled: 'recieve', correction: 'receive', explanation: '"i before e except after c" — receive', variants: [
                 { sections: ['The recieve', 'of the', 'package was', 'confirmed yesterday.'], correct: 0 }
+            ,
+                { sections: ['The school asked every', 'family to check that', 'they recieve the letter', 'about the trip.'], correct: 2 }
             ] },
             { id: 'spelling-originally', type: 'spelling', misspelled: 'originaly', correction: 'originally', explanation: '"Original" + "-ly" = "originally"', variants: [
                 { sections: ['The painting', 'was originaly', 'created in', 'the 1920s.'], correct: 1 }
+            ,
+                { sections: ['The book was written long', 'ago and published in France', 'but was later changed and', 'originaly came from Paris.'], correct: 3 }
             ] },
             { id: 'spelling-truthful', type: 'spelling', misspelled: 'truthfull', correction: 'truthful', explanation: '"-ful" uses only one "l"', variants: [
                 { sections: ['The witness', 'gave a truthfull', 'account of', 'what happened.'], correct: 1 }
+            ,
+                { sections: ['The judge asked everyone to', 'be honest and give a', 'truthfull account of what', 'they saw that day.'], correct: 2 }
             ] },
             { id: 'spelling-unknown-5', type: 'spelling', explanation: 'No spelling mistakes!', variants: [
                 { sections: ['All the students', 'gathered together for', 'the assembly this', 'morning.'], correct: -1 }
+            ,
+                { sections: ['The swimming pool is perfect', 'for learning to swim safely', 'with trained teachers helping', 'young children improve.'], correct: -1 }
             ] },
             { id: 'spelling-interesting', type: 'spelling', misspelled: 'intresting', correction: 'interesting', explanation: '"Interest" + "-ing"', variants: [
                 { sections: ['The intresting', 'book was about', 'explorers and', 'ancient civilisations.'], correct: 0 }
+            ,
+                { sections: ['The story was very engaging', 'and I found it to be', 'intresting because the plot', 'kept me reading.'], correct: 2 }
             ] },
             { id: 'spelling-atmosphere', type: 'spelling', misspelled: 'atmosfere', correction: 'atmosphere', explanation: 'Ends in "-sphere" not "-fere"', variants: [
                 { sections: ['The atmosfere', 'in the classroom', 'was very', 'positive today'], correct: 0 }
+            ,
+                { sections: ['The school hall had a lovely', 'feel with decorations and the', 'atmosfere made everyone smile', 'and enjoy themselves.'], correct: 2 }
             ] },
             { id: 'spelling-excellent', type: 'spelling', misspelled: 'excelent', correction: 'excellent', explanation: 'Double "l": excel-lent', variants: [
                 { sections: ['The artist', 'showed excelent', 'control over', 'the medium.'], correct: 1 }
+            ,
+                { sections: ['The excelent meal was', 'delicious with lots of flavour', 'and everyone loved the', 'food very much.'], correct: 0 }
             ] },
             { id: 'spelling-preferred', type: 'spelling', misspelled: 'prefered', correction: 'preferred', explanation: 'Double the "r" before "-ed"', variants: [
                 { sections: ['We must', 'follow the prefered', 'route through', 'the forest.'], correct: 1 }
+            ,
+                { sections: ['I prefered chocolate ice', 'cream to vanilla flavour but', 'my sister likes strawberry', 'the best.'], correct: 0 }
             ] },
             { id: 'spelling-author', type: 'spelling', misspelled: 'autor', correction: 'author', explanation: '"Author" has a silent "th"', variants: [
                 { sections: ['The autor of', 'the book', 'signed copies at', 'the bookstore.'], correct: 0 }
+            ,
+                { sections: ['My favourite book was written', 'by a famous and talented', 'autor who writes amazing', 'stories for children.'], correct: 2 }
             ] },
             { id: 'spelling-excellence', type: 'spelling', misspelled: 'excelence', correction: 'excellence', explanation: 'Double "l": excellence', variants: [
                 { sections: ['The building', 'showed excelence', 'in design', 'and construction.'], correct: 1 }
+            ,
+                { sections: ['The team showed excelence', 'throughout the season with skill', 'and dedication to winning', 'the championship match.'], correct: 0 }
             ] },
             { id: 'spelling-thief', type: 'spelling', misspelled: 'theif', correction: 'thief', explanation: '"i before e except after c" — thief', variants: [
                 { sections: ['The theif', 'stole valuables', 'from the', 'museum exhibit.'], correct: 0 }
+            ,
+                { sections: ['The police searched high', 'and low to catch the', 'theif who had stolen from', 'the corner shop.'], correct: 2 }
             ] },
             { id: 'spelling-perseverance', type: 'spelling', misspelled: 'perseverence', correction: 'perseverance', explanation: '"-ance" not "-ence"', variants: [
                 { sections: ['She showed', 'great perseverence in', 'her efforts', 'to improve.'], correct: 1 }
+            ,
+                { sections: ['With perseverence and hard', 'work you can achieve your', 'dreams and reach your goals', 'in life.'], correct: 0 }
             ] },
             { id: 'spelling-announcement', type: 'spelling', misspelled: 'anouncement', correction: 'announcement', explanation: '"Announce" + "-ment" = "announcement"', variants: [
                 { sections: ['The manager', 'made an anouncement', 'about the', 'new policy.'], correct: 1 }
+            ,
+                { sections: ['The anouncement was made in', 'assembly about the school trip', 'coming up next month and', 'what to bring.'], correct: 0 }
             ] },
             { id: 'spelling-unknown-6', type: 'spelling', explanation: 'No spelling mistakes!', variants: [
                 { sections: ['The beautiful', 'garden was', 'filled with', 'colourful flowers.'], correct: -1 }
+            ,
+                { sections: ['Our school has a beautiful', 'garden where we grow flowers', 'and vegetables for the lunch', 'programme this term.'], correct: -1 }
             ] },
             { id: 'spelling-appearance', type: 'spelling', misspelled: 'appearence', correction: 'appearance', explanation: '"Appear" + "-ance"', variants: [
                 { sections: ['He felt nervous', 'about the', 'appearence of his', 'new shoes.'], correct: 2 }
+            ,
+                { sections: ['She was concerned about the', 'appearence of the messy', 'classroom before the parents', 'arrived for the evening.'], correct: 1 }
             ] },
             { id: 'spelling-renowned', type: 'spelling', misspelled: 'reknown', correction: 'renowned', explanation: '"Renowned" means famous', variants: [
                 { sections: ['The reknown', 'artist created', 'masterpieces', 'admired worldwide.'], correct: 0 }
+            ,
+                { sections: ['The museum is very famous', 'and well-known because of its', 'reknown collection of ancient', 'artefacts from Egypt.'], correct: 2 }
             ] },
             { id: 'spelling-questionnaire', type: 'spelling', misspelled: 'questionaire', correction: 'questionnaire', explanation: 'Double "n" and ends in "-aire"', variants: [
                 { sections: ['The questionaire', 'asked about', 'favourite subjects', 'and hobbies.'], correct: 0 }
+            ,
+                { sections: ['The teacher gave us a', 'long form to complete with', 'questionaire questions about our', 'favourite subjects and hobbies.'], correct: 2 }
             ] },
             { id: 'spelling-existence', type: 'spelling', misspelled: 'existance', correction: 'existence', explanation: '"-ence" not "-ance"', variants: [
                 { sections: ['The existance', 'of aliens', 'remains', 'scientifically unclear.'], correct: 0 }
+            ,
+                { sections: ['Scientists are studying the', 'possibility of life and the', 'existance of water on other', 'planets in space.'], correct: 2 }
             ] },
             { id: 'spelling-foreign', type: 'spelling', misspelled: 'foriegn', correction: 'foreign', explanation: '"eig" not "ieg" — foreign', variants: [
                 { sections: ['The foriegn', 'visitors enjoyed', 'exploring the', 'local museums.'], correct: 0 }
+            ,
+                { sections: ['My friend comes from a', 'different country and speaks a', 'foriegn language at home', 'with her family.'], correct: 2 }
             ] },
             { id: 'spelling-confidence', type: 'spelling', misspelled: 'confidance', correction: 'confidence', explanation: '"-ence" not "-ance"', variants: [
                 { sections: ['The confidance', 'of the team', 'impressed the', 'coach greatly.'], correct: 0 }
+            ,
+                { sections: ['She walked into the room', 'with her head high full of', 'confidance and ready to give', 'her presentation.'], correct: 2 }
             ] },
             { id: 'spelling-unknown-7', type: 'spelling', explanation: 'No spelling mistakes!', variants: [
                 { sections: ['The weather', 'was pleasant and', 'mild throughout', 'the week.'], correct: -1 },
