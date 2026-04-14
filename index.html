@@ -1384,7 +1384,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.8.0';
+        const APP_VERSION = 'v1.9.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -1765,7 +1765,8 @@
                     ...SYNONYM_CONCEPTS,
                     ...ANTONYM_CONCEPTS,
                     ...CONTEXT_CLUES_CONCEPTS,
-                    ...HOMOPHONE_CONCEPTS
+                    ...HOMOPHONE_CONCEPTS,
+                    ...META_CONCEPTS
                 ];
             }
 
@@ -1832,6 +1833,15 @@
                 saveToCloud();
             }
 
+            // Check whether the child knows a specific exam term (for Jargon Rule gating)
+            // Returns the state of the meta-concept item, or 'unknown' if not yet encountered
+            getMetaConceptState(term) {
+                const metaId = 'meta-' + term;
+                const metaItem = this.items[metaId];
+                if (!metaItem) return 'unknown';
+                return metaItem.state || 'unknown';
+            }
+
             calculateRecall(item) {
                 if (item.recall === null || item.lastReview === null) {
                     return 0;
@@ -1883,7 +1893,7 @@
 
             getAccuracyByType() {
                 const typeAccuracy = {};
-                const types = ['vocab', 'spelling', 'punctuation', 'comprehension', 'cloze', 'synonym', 'antonym', 'context-clues', 'homophone'];
+                const types = ['vocab', 'spelling', 'punctuation', 'comprehension', 'cloze', 'synonym', 'antonym', 'context-clues', 'homophone', 'meta'];
 
                 types.forEach(type => {
                     const typeItems = Object.values(this.items).filter(item => item.type === type && item.encounters > 0);
@@ -2061,15 +2071,32 @@
                 const item = this.items[itemId];
                 if (!item) return;
 
+                // Latency floor and ceiling — filter out accidental clicks and tab-switches
+                const LATENCY_FLOOR = 1500;   // 1.5s — too fast to have read the question
+                const LATENCY_CEILING = 120000; // 120s — likely tab-switched or walked away
+                let latencyValid = true;
+                if (latency < LATENCY_FLOOR) {
+                    console.log('[Latency] Sub-floor response', latency, 'ms for', itemId, '— excluding from latency average');
+                    latencyValid = false;
+                    // Still count the answer (correct/wrong) but don't let it pollute latency data
+                }
+                if (latency > LATENCY_CEILING) {
+                    console.log('[Latency] Over-ceiling response', latency, 'ms for', itemId, '— capping at', LATENCY_CEILING, 'ms');
+                    latency = LATENCY_CEILING; // Cap but still count the answer
+                }
+
                 item.encounters += 1;
                 if (isCorrect) {
                     item.correctCount += 1;
                 }
 
-                if (item.avgLatency === 0) {
-                    item.avgLatency = latency;
-                } else {
-                    item.avgLatency = item.avgLatency * 0.7 + latency * 0.3;
+                // Only update latency average with valid (non-accidental) response times
+                if (latencyValid) {
+                    if (item.avgLatency === 0) {
+                        item.avgLatency = latency;
+                    } else {
+                        item.avgLatency = item.avgLatency * 0.7 + latency * 0.3;
+                    }
                 }
 
                 const thresholds = {
@@ -2081,11 +2108,13 @@
                     synonym: { fluent: 6000, slow: 12000 },
                     antonym: { fluent: 6000, slow: 12000 },
                     'context-clues': { fluent: 15000, slow: 30000 },
-                    homophone: { fluent: 8000, slow: 15000 }
+                    homophone: { fluent: 8000, slow: 15000 },
+                    meta: { fluent: 8000, slow: 15000 }
                 };
 
                 const threshold = thresholds[item.type] || { fluent: 10000, slow: 20000 };
-                const isFast = latency < threshold.fluent;
+                // Sub-floor responses are treated as "not fast" — don't reward accidental clicks
+                const isFast = latencyValid && latency < threshold.fluent;
 
                 // --- FSRS scheduling updates (unchanged) ---
                 if (item.lastReview === null) {
@@ -2178,11 +2207,14 @@
                     case 'fluent':
                         if (!isCorrect) {
                             // Fluent → Lapsed: single incorrect answer (immediate, unconditional)
+                            // lapseCount already incremented in recordAnswer() FSRS section
                             item.state = 'lapsed';
                             item.promotionSessions = [];
                         } else if (!isFast) {
                             // Correct but slow (>2x fluency threshold) → Lapsed
-                            // The FSRS update already handled the stability reduction for slow answers
+                            // FSRS section doesn't increment lapseCount for correct answers,
+                            // but this IS a lapse (knowledge fading), so increment here
+                            item.lapseCount += 1;
                             item.state = 'lapsed';
                             item.promotionSessions = [];
                         }
@@ -2863,7 +2895,7 @@
                 { sentence: 'Although he was tired he continued running.', options: ['Although he was tired, he continued running.', 'Although he was tired. He continued running.', 'Although he was tired; he continued running.', 'No change needed'], correct: 0 },
                 { sentence: 'Because the weather was cold they stayed indoors.', options: ['Because the weather was cold, they stayed indoors.', 'Because the weather was cold. They stayed indoors.', 'Because the weather was cold; they stayed indoors.', 'No change needed'], correct: 0 }
             ] },
-            { id: 'punct-44', type: 'punctuation', explanation: '"She\'s" means "she is".', variants: [
+            { id: 'punct-44', type: 'punctuation', explanation: 'An apostrophe replaces the missing letter in a contraction: "she is" becomes "she\'s", "he is" becomes "he\'s".', variants: [
                 { sentence: 'Shes going to the beach tomorrow.', options: ['She\'s going to the beach tomorrow.', 'Shes going to the beach tomorrow.', 'She\'s going to the beache tomorrow.', 'No change needed'], correct: 0 },
                 { sentence: 'Hes the fastest runner in the school.', options: ['He\'s the fastest runner in the school.', 'Hes the fastest runner in the school.', 'He\'s the fastest runner in the school!', 'No change needed'], correct: 0 }
             ] },
@@ -3649,13 +3681,13 @@
                 { sentence: 'She received a lovely _____ from her grandmother.', options: ['presence', 'presents'], correct: 1 },
                 { sentence: 'Your _____ at the party was much appreciated.', options: ['presents', 'presence'], correct: 1, explanation: '"Presence" means being there or existing in a place.' }
             ] },
-            { id: 'homophone-past-passed', type: 'homophone', explanation: '"Past" (preposition) = beyond. "Passed" (verb) = went by. Here it\'s a preposition.', variants: [
-                { sentence: 'He walked _____ the school on his way home.', options: ['past', 'passed'], correct: 0 },
-                { sentence: 'He _____ all his driving tests on the first attempt.', options: ['past', 'passed'], correct: 1, explanation: '"Passed" means succeeded or completed successfully.' }
+            { id: 'homophone-past-passed', type: 'homophone', explanation: '"Past" (preposition) = beyond a point. "Passed" (verb) = went by or succeeded. "Paced" (verb) = walked back and forth.', variants: [
+                { sentence: 'He walked _____ the school on his way home.', options: ['past', 'passed', 'paced'], correct: 0 },
+                { sentence: 'He _____ all his driving tests on the first attempt.', options: ['past', 'passed', 'paced'], correct: 1, explanation: '"Passed" means succeeded or completed successfully.' }
             ] },
-            { id: 'homophone-passed-past', type: 'homophone', explanation: '"Passed" (verb) = succeeded in. "Past" (preposition/noun) = beyond or a previous time.', variants: [
-                { sentence: 'She _____ the exam with flying colours.', options: ['past', 'passed'], correct: 1 },
-                { sentence: 'The runners _____ the finish line together.', options: ['past', 'passed'], correct: 1 }
+            { id: 'homophone-passed-past', type: 'homophone', explanation: '"Passed" (verb) = succeeded in or went by. "Past" (preposition/noun) = beyond or a previous time. "Paced" (verb) = walked back and forth.', variants: [
+                { sentence: 'She _____ the exam with flying colours.', options: ['past', 'passed', 'paced'], correct: 1 },
+                { sentence: 'The runners _____ the finish line together.', options: ['past', 'passed', 'paced'], correct: 1 }
             ] },
             { id: 'homophone-23', type: 'homophone', explanation: '"Their" shows possession — the seats belonging to them.', variants: [
                 { sentence: 'The teacher asked the students to sit in _____ seats quietly.', options: ['there', 'their', 'they\'re'], correct: 1 },
@@ -3664,6 +3696,56 @@
             { id: 'homophone-wear-where', type: 'homophone', explanation: '"Wear" means to have clothing on. "Where" asks about a place. "Were" is past tense of "are".', variants: [
                 { sentence: 'You need to _____ your coat; it\'s cold outside.', options: ['where', 'wear', 'were'], correct: 1 },
                 { sentence: 'What should I _____ to the party tonight?', options: ['where', 'wear', 'were'], correct: 1 }
+            ] }
+        ];
+
+        // ===== META-QUESTIONS (Jargon Rule) =====
+        // These test whether the child knows what the TERM means, not a specific word.
+        // Their state gates the jargon scaffolding in synonym/antonym/etc question wording.
+        // e.g. "meta-synonym" must be fragile+ before synonym questions use the word "synonym"
+        const META_CONCEPTS = [
+            { id: 'meta-synonym', type: 'meta', term: 'synonym', explanation: 'A synonym is a word that means the same or nearly the same as another word.', variants: [
+                { question: 'A word that means the same as another word is called a:', options: ['synonym', 'antonym', 'homophone', 'prefix'], correct: 0 },
+                { question: 'What do we call two words that have the same meaning?', options: ['antonyms', 'homophones', 'synonyms', 'rhymes'], correct: 2 },
+                { question: '"Happy" and "joyful" mean the same thing. They are:', options: ['antonyms', 'synonyms', 'homophones', 'similes'], correct: 1 }
+            ] },
+            { id: 'meta-antonym', type: 'meta', term: 'antonym', explanation: 'An antonym is a word that means the opposite of another word.', variants: [
+                { question: 'A word that means the opposite of another word is called an:', options: ['synonym', 'antonym', 'adjective', 'adverb'], correct: 1 },
+                { question: 'What do we call two words that have opposite meanings?', options: ['synonyms', 'homophones', 'antonyms', 'similes'], correct: 2 },
+                { question: '"Hot" and "cold" are opposites. They are:', options: ['synonyms', 'antonyms', 'homophones', 'metaphors'], correct: 1 }
+            ] },
+            { id: 'meta-simile', type: 'meta', term: 'simile', explanation: 'A simile compares two things using "like" or "as". For example: "as brave as a lion."', variants: [
+                { question: 'A comparison using "like" or "as" is called a:', options: ['metaphor', 'simile', 'synonym', 'alliteration'], correct: 1 },
+                { question: '"She ran like the wind." This is an example of a:', options: ['metaphor', 'personification', 'simile', 'synonym'], correct: 2 },
+                { question: 'Which of these is a simile?', options: ['The sun is a golden ball', 'She is as quiet as a mouse', 'The wind whispered', 'The bright blue balloon'], correct: 1 }
+            ] },
+            { id: 'meta-metaphor', type: 'meta', term: 'metaphor', explanation: 'A metaphor says something IS something else (without using "like" or "as"). For example: "Time is money."', variants: [
+                { question: 'A figure of speech that says something IS something else (without "like" or "as") is a:', options: ['simile', 'metaphor', 'personification', 'alliteration'], correct: 1 },
+                { question: '"The classroom was a zoo." This is an example of a:', options: ['simile', 'metaphor', 'personification', 'onomatopoeia'], correct: 1 },
+                { question: 'What is the difference between a simile and a metaphor?', options: ['A simile uses "like" or "as"; a metaphor does not', 'A metaphor uses "like" or "as"; a simile does not', 'They mean the same thing', 'A simile is longer than a metaphor'], correct: 0 }
+            ] },
+            { id: 'meta-personification', type: 'meta', term: 'personification', explanation: 'Personification gives human qualities to something that is not human. For example: "The wind whispered through the trees."', variants: [
+                { question: 'Giving human qualities to a non-human thing is called:', options: ['a simile', 'personification', 'a metaphor', 'alliteration'], correct: 1 },
+                { question: '"The trees danced in the wind." This is an example of:', options: ['a simile', 'a metaphor', 'personification', 'onomatopoeia'], correct: 2 },
+                { question: 'Which sentence uses personification?', options: ['The boy ran fast', 'The sun smiled down on us', 'She is like a star', 'The red balloon floated away'], correct: 1 }
+            ] },
+            { id: 'meta-inference', type: 'meta', term: 'inference', explanation: 'An inference is when you work out something that the text does not say directly, using clues from what it DOES say.', variants: [
+                { question: 'Working out something that is not directly stated in the text is called:', options: ['summarising', 'inferring', 'quoting', 'predicting'], correct: 1 },
+                { question: 'When you "read between the lines," you are making a(n):', options: ['summary', 'prediction', 'inference', 'quotation'], correct: 2 },
+                { question: 'An inference uses clues from the text to work out something that is:', options: ['written in bold', 'not directly stated', 'in the title', 'in the last sentence'], correct: 1 }
+            ] },
+            { id: 'meta-homophone', type: 'meta', term: 'homophone', explanation: 'Homophones are words that sound the same but have different meanings and usually different spellings. For example: "there", "their", and "they\'re."', variants: [
+                { question: 'Words that sound the same but have different meanings are called:', options: ['synonyms', 'antonyms', 'homophones', 'rhymes'], correct: 2 },
+                { question: '"There," "their," and "they\'re" are examples of:', options: ['synonyms', 'homophones', 'antonyms', 'similes'], correct: 1 },
+                { question: 'Which pair are homophones?', options: ['big / large', 'hot / cold', 'flower / flour', 'run / running'], correct: 2 }
+            ] },
+            { id: 'meta-alliteration', type: 'meta', term: 'alliteration', explanation: 'Alliteration is when words close together start with the same sound. For example: "Peter Piper picked a peck."', variants: [
+                { question: 'When nearby words start with the same sound, this is called:', options: ['alliteration', 'onomatopoeia', 'rhyme', 'personification'], correct: 0 },
+                { question: '"Silly Sally sang softly." This is an example of:', options: ['a metaphor', 'onomatopoeia', 'alliteration', 'personification'], correct: 2 }
+            ] },
+            { id: 'meta-onomatopoeia', type: 'meta', term: 'onomatopoeia', explanation: 'Onomatopoeia is when a word sounds like the thing it describes. For example: "buzz," "crash," "sizzle."', variants: [
+                { question: 'A word that sounds like the noise it describes is called:', options: ['alliteration', 'onomatopoeia', 'a simile', 'personification'], correct: 1 },
+                { question: 'Which word is an example of onomatopoeia?', options: ['beautiful', 'quickly', 'splash', 'enormous'], correct: 2 }
             ] }
         ];
 
@@ -3737,11 +3819,12 @@
                 const breakdownContent = document.getElementById('breakdownContent');
                 breakdownContent.innerHTML = '';
 
-                const types = ['vocab', 'spelling', 'punctuation', 'comprehension', 'cloze', 'synonym', 'antonym', 'context-clues', 'homophone'];
+                const types = ['vocab', 'spelling', 'punctuation', 'comprehension', 'cloze', 'synonym', 'antonym', 'context-clues', 'homophone', 'meta'];
                 const typeDisplayNames = {
                     'vocab': 'Vocab', 'spelling': 'Spelling', 'punctuation': 'Punctuation',
                     'comprehension': 'Comprehension', 'cloze': 'Sentence Completion', 'synonym': 'Synonyms',
-                    'antonym': 'Antonyms', 'context-clues': 'Context Clues', 'homophone': 'Homophones'
+                    'antonym': 'Antonyms', 'context-clues': 'Context Clues', 'homophone': 'Homophones',
+                    'meta': 'Key Terms'
                 };
                 types.forEach(type => {
                     const item = document.createElement('span');
@@ -3769,6 +3852,7 @@
                     correctAnswers: 0,
                     pointsEarned: 0,
                     currentStreak: 0,
+                    bestStreak: 0,
                     startTime: Date.now()
                 };
 
@@ -3929,7 +4013,8 @@
                 typeLabel.className = 'question-type';
                 const typeDisplayNames = {
                     'cloze': 'SENTENCE COMPLETION',
-                    'context-clues': 'CONTEXT CLUES'
+                    'context-clues': 'CONTEXT CLUES',
+                    'meta': 'WHAT DOES IT MEAN?'
                 };
                 typeLabel.textContent = typeDisplayNames[item.type] || item.type.toUpperCase().replace('-', ' ');
                 container.appendChild(typeLabel);
@@ -4058,6 +4143,13 @@
                     tip.className = 'teaching-explanation';
                     tip.textContent = 'Read each option aloud in your head. Correct punctuation makes the sentence sound natural \u2014 you can hear when it\u2019s right.';
                     card.appendChild(tip);
+
+                } else if (type === 'meta') {
+                    // Meta: explain the term directly — the teaching IS the definition
+                    const def = document.createElement('div');
+                    def.className = 'teaching-word-definition';
+                    def.textContent = question.explanation || 'This is a term you need to know for the exam.';
+                    card.appendChild(def);
 
                 } else {
                     // Fallback: show explanation if available
@@ -4188,6 +4280,10 @@
                         icon.textContent = '\uD83D\uDC42'; // ear
                         textDiv.textContent = 'These words sound the same but mean different things. Think about the meaning of the sentence \u2014 which spelling fits?';
                         break;
+                    case 'meta':
+                        icon.textContent = '\uD83C\uDFF7\uFE0F'; // label
+                        textDiv.textContent = 'This is about a word you\u2019ll see in the exam. Read the question carefully and think about what the term means.';
+                        break;
                     default:
                         icon.textContent = '\uD83D\uDCA1'; // lightbulb
                         textDiv.textContent = 'New concept. Read carefully and think before you answer.';
@@ -4232,8 +4328,11 @@
                 let variantIdx;
 
                 if (numVariants === 1) {
-                    // Only one variant — no choice
+                    // Only one variant — use it but shuffle distractors on repeat
                     variantIdx = 0;
+                    if (variantsUsed.length > 0) {
+                        console.log('[Variant] Single-variant concept', item.id, '— shuffling distractors for repeat presentation');
+                    }
                 } else {
                     // Find variants not yet used
                     const available = [];
@@ -4263,7 +4362,23 @@
                 // Merge concept-level fields with variant-level fields
                 // Variant fields override concept fields (e.g., variant-specific explanation)
                 const { variants, ...conceptFields } = concept;
-                return { ...conceptFields, ...variants[variantIdx] };
+                const result = { ...conceptFields, ...variants[variantIdx] };
+
+                // For single-variant repeats, shuffle the options so the answer isn't in the same position
+                if (numVariants === 1 && variantsUsed.length > 0 && result.options && result.options.length > 2) {
+                    const correctAnswer = result.options[result.correct];
+                    // Fisher-Yates shuffle
+                    const shuffled = [...result.options];
+                    for (let i = shuffled.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                    }
+                    result.options = shuffled;
+                    result.correct = shuffled.indexOf(correctAnswer);
+                    console.log('[Variant] Shuffled distractors for', item.id, '→ correct now at index', result.correct);
+                }
+
+                return result;
             }
 
             renderQuestion(item, question) {
@@ -4274,7 +4389,8 @@
                 typeLabel.className = 'question-type';
                 const typeDisplayNames = {
                     'cloze': 'SENTENCE COMPLETION',
-                    'context-clues': 'CONTEXT CLUES'
+                    'context-clues': 'CONTEXT CLUES',
+                    'meta': 'WHAT DOES IT MEAN?'
                 };
                 typeLabel.textContent = typeDisplayNames[item.type] || item.type.toUpperCase().replace('-', ' ');
                 container.appendChild(typeLabel);
@@ -4301,6 +4417,8 @@
                     this.renderContextCluesQuestion(container, question);
                 } else if (item.type === 'homophone') {
                     this.renderHomophoneQuestion(container, question);
+                } else if (item.type === 'meta') {
+                    this.renderMetaQuestion(container, question);
                 }
             }
 
@@ -4504,10 +4622,11 @@
             renderSynonymQuestion(container, question, item) {
                 const questionText = document.createElement('div');
                 questionText.className = 'question-text';
-                // Scaffold the exam term — teach what "synonym" means through exposure
-                if (item && (item.state === 'fluent' || item.state === 'lapsed')) {
+                // Scaffold the exam term — gated on meta-synonym concept state, not item state
+                const metaSynonymState = this.engine.getMetaConceptState('synonym');
+                if (metaSynonymState === 'fluent' || metaSynonymState === 'lapsed') {
                     questionText.textContent = 'What is the synonym of:';
-                } else if (item && item.state === 'fragile') {
+                } else if (metaSynonymState === 'fragile') {
                     questionText.textContent = 'Which word is closest in meaning (synonym) to:';
                 } else {
                     questionText.textContent = 'Which word is closest in meaning to:';
@@ -4537,10 +4656,11 @@
             renderAntonymQuestion(container, question, item) {
                 const questionText = document.createElement('div');
                 questionText.className = 'question-text';
-                // Scaffold the exam term — teach what "antonym" means through exposure
-                if (item && (item.state === 'fluent' || item.state === 'lapsed')) {
+                // Scaffold the exam term — gated on meta-antonym concept state, not item state
+                const metaAntonymState = this.engine.getMetaConceptState('antonym');
+                if (metaAntonymState === 'fluent' || metaAntonymState === 'lapsed') {
                     questionText.textContent = 'What is the antonym of:';
-                } else if (item && item.state === 'fragile') {
+                } else if (metaAntonymState === 'fragile') {
                     questionText.textContent = 'Which word is opposite in meaning (antonym) to:';
                 } else {
                     questionText.textContent = 'Which word is opposite in meaning to:';
@@ -4623,6 +4743,26 @@
                 container.appendChild(options);
             }
 
+            renderMetaQuestion(container, question) {
+                const questionText = document.createElement('div');
+                questionText.className = 'question-text';
+                questionText.textContent = question.question;
+                container.appendChild(questionText);
+
+                const options = document.createElement('div');
+                options.className = 'options';
+
+                question.options.forEach((option, idx) => {
+                    const opt = document.createElement('div');
+                    opt.className = 'option';
+                    opt.innerHTML = '<span class="option-label">' + String.fromCharCode(65 + idx) + '.</span>' + option;
+                    opt.addEventListener('click', () => this.handleAnswer(idx, question.correct, question.explanation));
+                    options.appendChild(opt);
+                });
+
+                container.appendChild(options);
+            }
+
             handleAnswer(selectedIdx, correctIdx, explanation) {
                 if (this.answered) return;
                 this.answered = true;
@@ -4656,6 +4796,10 @@
                 if (isCorrect) {
                     this.sessionStats.correctAnswers += 1;
                     this.sessionStats.currentStreak += 1;
+                    // Track best streak per-answer, not just at session end
+                    if (this.sessionStats.currentStreak > this.sessionStats.bestStreak) {
+                        this.sessionStats.bestStreak = this.sessionStats.currentStreak;
+                    }
                 } else {
                     this.sessionStats.currentStreak = 0;
                 }
@@ -4760,7 +4904,7 @@
                         extraDiv.textContent = '\uD83C\uDF1F ' + encouragements[Math.floor(Math.random() * encouragements.length)];
                     } else {
                         const retryMessages = [
-                            'Don\u2019t worry \u2014 this one needs a bit more practice. You\u2019ll see it again soon.',
+                            'Don\u2019t worry \u2014 this one needs a bit more practice. We\u2019ll come back to this idea with a fresh question.',
                             'Tricky one! Your brain is still working on it. Next time you\u2019ll be closer.',
                             'Keep going \u2014 every attempt makes the connection stronger in your brain.'
                         ];
@@ -4845,8 +4989,8 @@
                 this.engine.globalStats.totalSessions += 1;
                 this.engine.globalStats.totalPoints += this.sessionStats.pointsEarned;
 
-                if (this.sessionStats.currentStreak > this.engine.globalStats.bestStreak) {
-                    this.engine.globalStats.bestStreak = this.sessionStats.currentStreak;
+                if (this.sessionStats.bestStreak > this.engine.globalStats.bestStreak) {
+                    this.engine.globalStats.bestStreak = this.sessionStats.bestStreak;
                 }
 
                 this.engine.globalStats.sessionHistory.push({
@@ -4855,7 +4999,7 @@
                     questionsAnswered: this.sessionStats.questionsAnswered,
                     correctAnswers: this.sessionStats.correctAnswers,
                     pointsEarned: this.sessionStats.pointsEarned,
-                    streak: this.sessionStats.currentStreak
+                    streak: this.sessionStats.bestStreak
                 });
 
                 this.engine.saveGlobalStats();
@@ -4869,7 +5013,7 @@
                 document.getElementById('completeQuestionsCount').textContent = this.sessionStats.questionsAnswered;
                 document.getElementById('completeAccuracy').textContent = accuracy + '%';
                 document.getElementById('completePoints').textContent = this.sessionStats.pointsEarned;
-                document.getElementById('completeStreak').textContent = this.sessionStats.currentStreak;
+                document.getElementById('completeStreak').textContent = this.sessionStats.bestStreak;
 
                 let encouragement = '';
                 if (accuracy >= 90) {
