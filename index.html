@@ -398,6 +398,13 @@
             color: #ff6b6b;
         }
 
+        .feedback.amber {
+            display: block;
+            background: rgba(253, 203, 110, 0.15);
+            border: 2px solid rgba(253, 203, 110, 0.5);
+            color: #fdcb6e;
+        }
+
         .feedback-label {
             font-weight: 700;
             margin-bottom: 8px;
@@ -1384,7 +1391,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.10.0';
+        const APP_VERSION = 'v1.11.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -2309,9 +2316,9 @@
                 { sentence: 'The lion looked ferocious as it bared its teeth', options: ['Tired', 'Fierce and aggressive', 'Confused', 'Small'], correct: 1 },
                 { sentence: 'The ferocious storm destroyed many houses in the village.', options: ['Gentle', 'Mild', 'Extremely violent', 'Brief'], correct: 2 }
             ] },
-            { id: 'vocab-livid', type: 'vocab', word: 'livid', explanation: '\'Livid\' can mean a pale, greyish colour.', variants: [
-                { sentence: 'Its livid colour made the face look horrible', options: ['Bright red', 'Pale and deathly', 'Dark blue', 'Golden'], correct: 1 },
-                { sentence: 'The livid bruise on his arm showed where he had fallen.', options: ['Bright pink', 'Purple and pale', 'Black and blue', 'Dark and ghostly'], correct: 1 }
+            { id: 'vocab-livid', type: 'vocab', word: 'livid', explanation: '\'Livid\' means a dark bluish-grey colour, like a bruise.', variants: [
+                { sentence: 'Its livid colour made the face look horrible', options: ['Bright red', 'Pale and deathly', 'Dark blue', 'Golden'], correct: 2 },
+                { sentence: 'The livid bruise on his arm showed where he had fallen.', options: ['Bright pink', 'Purple and pale', 'Black and blue', 'Dark and ghostly'], correct: 2 }
             ] },
             { id: 'vocab-bestowed', type: 'vocab', word: 'bestowed', explanation: '\'Bestowed\' means to give something as a gift or honour.', variants: [
                 { sentence: 'She bestowed a generous gift upon the orphanage', options: ['Took', 'Gave', 'Borrowed', 'Lost'], correct: 1 },
@@ -2809,19 +2816,19 @@
         const PUNCTUATION_CONCEPTS = [
             { id: 'punct-0', type: 'punctuation', explanation: 'Comma needed after long introductory phrase.', variants: [
                 { sentence: 'During her journey through the derelict town Rachel stumbled upon a mysterious building.', options: ['During her journey through the derelict town, Rachel stumbled upon a mysterious building.', 'During her journey through the derelict town Rachel, stumbled upon a mysterious building.', 'During her journey, through the derelict town Rachel stumbled upon a mysterious building.', 'No change needed'], correct: 0 },
-                { sentence: 'She asked "Can you help me with this project"', options: ['She asked, "Can you help me with this project?"', 'She asked "Can you help me with this project?"', 'She asked. "Can you help me with this project?"', 'No change needed'], correct: 0 }
+                { sentence: 'After winning the competition the whole team celebrated at a restaurant.', options: ['After winning the competition, the whole team celebrated at a restaurant.', 'After winning the competition the whole team, celebrated at a restaurant.', 'After winning, the competition the whole team celebrated at a restaurant.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-1', type: 'punctuation', explanation: '\'Its\' = belonging to it. \'It\'s\' = it is.', variants: [
                 { sentence: 'It\'s exterior loomed ominously over the street.', options: ['Its exterior loomed ominously over the street.', 'It\'s exterior loomed ominously, over the street.', 'Its\' exterior loomed ominously over the street.', 'No change needed'], correct: 0 },
-                { sentence: 'Walking down the street he saw his best friend.', options: ['Walking down the street, he saw his best friend.', 'Walking down the street. He saw his best friend.', 'Walking down the street; he saw his best friend.', 'No change needed'], correct: 0 }
+                { sentence: 'The cat licked it\'s paws clean after eating it\'s dinner.', options: ['The cat licked its paws clean after eating its dinner.', 'The cat licked it\'s paws clean after eating its dinner.', 'The cat licked its paws clean after eating it\'s dinner.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-2', type: 'punctuation', explanation: 'Question mark inside speech marks.', variants: [
                 { sentence: '"Who is there" she called out nervously.', options: ['"Who is there?" she called out nervously.', '"Who is there," she called out nervously.', '"Who is there!" she called out nervously.', 'No change needed'], correct: 0 },
-                { sentence: 'My favourite colours are: blue, green, and purple.', options: ['My favourite colours are blue, green, and purple.', 'My favourite colours are: blue, green, and purple.', 'My favourite colours are; blue, green, and purple.', 'No change needed'], correct: 0 }
+                { sentence: '"Where are we going" asked the little girl nervously.', options: ['"Where are we going?" asked the little girl nervously.', '"Where are we going," asked the little girl nervously.', '"Where are we going!" asked the little girl nervously.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-3', type: 'punctuation', explanation: 'Apostrophe before \'s\' for singular possession.', variants: [
                 { sentence: 'Rachels eyes widened as she saw the shadowy figure.', options: ['Rachel\'s eyes widened as she saw the shadowy figure.', 'Rachels\' eyes widened as she saw the shadowy figure.', 'Rachels eyes\' widened as she saw the shadowy figure.', 'No change needed'], correct: 0 },
-                { sentence: 'The goalkeeper Tom made an amazing save.', options: ['The goalkeeper, Tom, made an amazing save.', 'The goalkeeper Tom made an amazing save.', 'The goalkeeper Tom, made an amazing save.', 'No change needed'], correct: 0 }
+                { sentence: 'The teachers desk was covered in unmarked homework.', options: ['The teacher\'s desk was covered in unmarked homework.', 'The teachers\' desk was covered in unmarked homework.', 'The teachers desk was covered in unmarked homework.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-4', type: 'punctuation', explanation: 'Direct speech needs speech marks.', variants: [
                 { sentence: 'The stranger smiled cryptically. You\'re the chosen one he declared.', options: ['"You\'re the chosen one," he declared.', 'The stranger smiled cryptically "You\'re the chosen one" he declared.', 'The stranger smiled cryptically. You\'re "the chosen one," he declared.', 'No change needed'], correct: 0 },
@@ -2829,15 +2836,15 @@
             ] },
             { id: 'punct-5', type: 'punctuation', explanation: '\'Why me\' is a question, needs question mark.', variants: [
                 { sentence: '"Why me" The mysterious figure gave a cryptic smile.', options: ['"Why me?" The mysterious figure gave a cryptic smile.', '"Why me." The mysterious figure gave a cryptic smile.', '"Why me," The mysterious figure gave a cryptic smile.', 'No change needed'], correct: 0 },
-                { sentence: 'The teacher collected all the pencil\'s from the desk.', options: ['The teacher collected all the pencils from the desk.', 'The teacher collected all the pencil\'s from the desk.', 'The teacher collected all the pencils\' from the desk.', 'No change needed'], correct: 0 }
+                { sentence: '"How did you get here" The boy looked around in confusion.', options: ['"How did you get here?" The boy looked around in confusion.', '"How did you get here." The boy looked around in confusion.', '"How did you get here," The boy looked around in confusion.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-6', type: 'punctuation', explanation: 'Comma needed and apostrophe.', variants: [
                 { sentence: 'Rachel ventured forth but she couldnt shake the feeling of being watched.', options: ['Rachel ventured forth, but she couldn\'t shake the feeling of being watched.', 'Rachel ventured forth but she couldn\'t shake, the feeling of being watched.', 'Rachel ventured forth but, she couldn\'t shake the feeling of being watched.', 'No change needed'], correct: 0 },
-                { sentence: 'If you finish your breakfast you can go outside.', options: ['If you finish your breakfast, you can go outside.', 'If you finish your breakfast. You can go outside.', 'If you finish your breakfast; you can go outside.', 'No change needed'], correct: 0 }
+                { sentence: 'He wanted to stay longer but he couldnt miss the bus home.', options: ['He wanted to stay longer, but he couldn\'t miss the bus home.', 'He wanted to stay longer but he couldn\'t miss, the bus home.', 'He wanted to stay longer, but he couldnt miss the bus home.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-7', type: 'punctuation', explanation: '\'Whispers\' is just plural — no apostrophe needed.', variants: [
                 { sentence: 'whispers seemed to echo in the darkness.', options: ['whisper\'s seemed to echo in the darkness.', 'whispers\' seemed to echo in the darkness.', 'whispers seemed to echo in the darkness.', 'No change needed'], correct: 3 },
-                { sentence: 'Hes the best player on the team.', options: ['He\'s the best player on the team.', 'Hes the best player on the team.', 'He\'s the best player one the team.', 'No change needed'], correct: 0 }
+                { sentence: 'The student\'s were excited about the school trip.', options: ['The students were excited about the school trip.', 'The student\'s were excited about the school trip.', 'The students\' were excited about the school trip.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-8', type: 'punctuation', explanation: '\'Boy\'s\' = one boy. \'Boys\'\' = several boys.', variants: [
                 { sentence: 'The boys football boots were covered in mud after the match.', options: ['The boy\'s football boots were covered in mud after the match.', 'The boys\' football boots were covered in mud after the match.', 'Either A or B could be correct, depending on meaning.', 'No change needed'], correct: 2 },
@@ -2845,39 +2852,39 @@
             ] },
             { id: 'punct-9', type: 'punctuation', explanation: 'Commas save lives!', variants: [
                 { sentence: 'After eating the children went outside to play.', options: ['After eating, the children went outside to play.', 'After eating the children, went outside to play.', 'After, eating the children went outside to play.', 'No change needed'], correct: 0 },
-                { sentence: 'He visited Rome; the capital of Italy.', options: ['He visited Rome, the capital of Italy.', 'He visited Rome; the capital of Italy.', 'He visited Rome. The capital of Italy.', 'No change needed'], correct: 0 }
+                { sentence: 'Without thinking she ran across the busy road.', options: ['Without thinking, she ran across the busy road.', 'Without thinking she ran, across the busy road.', 'Without, thinking she ran across the busy road.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-10', type: 'punctuation', explanation: 'Sentence adverbs need a comma after them.', variants: [
                 { sentence: 'However the teacher was not impressed with the homework.', options: ['However, the teacher was not impressed with the homework.', 'However the teacher, was not impressed with the homework.', 'However the teacher was not, impressed with the homework.', 'No change needed'], correct: 0 },
-                { sentence: 'She studied hard for weeks; she passed the exam with flying colours.', options: ['She studied hard for weeks. She passed the exam with flying colours.', 'She studied hard for weeks, she passed the exam with flying colours.', 'She studied hard for weeks; she passed the exam with flying colours.', 'No change needed'], correct: 2 }
+                { sentence: 'Unfortunately the match was cancelled due to heavy rain.', options: ['Unfortunately, the match was cancelled due to heavy rain.', 'Unfortunately the match, was cancelled due to heavy rain.', 'Unfortunately the match was cancelled, due to heavy rain.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-11', type: 'punctuation', explanation: 'Both should be \'its\'.', variants: [
                 { sentence: 'The dog wagged it\'s tail happily when its owner returned.', options: ['The dog wagged its tail happily when its owner returned.', 'The dog wagged its tail happily when it\'s owner returned.', 'The dog wagged it\'s tail happily when it\'s owner returned.', 'No change needed'], correct: 0 },
-                { sentence: 'When were ready lets go to the cinema.', options: ['When we\'re ready, let\'s go to the cinema.', 'When were ready lets\' go to the cinema.', 'When were ready. Lets go to the cinema.', 'No change needed'], correct: 0 }
+                { sentence: 'The bird spread it\'s wings and flew back to it\'s nest.', options: ['The bird spread its wings and flew back to its nest.', 'The bird spread its wings and flew back to it\'s nest.', 'The bird spread it\'s wings and flew back to its nest.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-12', type: 'punctuation', explanation: 'Relative clause needs commas on BOTH sides.', variants: [
                 { sentence: 'Sarah who was the fastest runner won the race easily.', options: ['Sarah, who was the fastest runner, won the race easily.', 'Sarah who was the fastest runner, won the race easily.', 'Sarah, who was the fastest runner won the race easily.', 'No change needed'], correct: 0 },
-                { sentence: 'Some children like ice cream others prefer cake.', options: ['Some children like ice cream, and others prefer cake.', 'Some children like ice cream; others prefer cake.', 'Some children like ice cream. Others prefer cake.', 'No change needed'], correct: 0 }
+                { sentence: 'The dog which was very friendly followed us all the way home.', options: ['The dog, which was very friendly, followed us all the way home.', 'The dog which was very friendly, followed us all the way home.', 'The dog, which was very friendly followed us all the way home.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-13', type: 'punctuation', explanation: 'Use a comma before "but" when joining two independent clauses.', variants: [
                 { sentence: 'She always wanted to write a novel but she never started.', options: ['She always wanted to write a novel. But she never started.', 'She always wanted to write a novel; but she never started.', 'She always wanted to write a novel, but she never started.', 'No change needed'], correct: 2 },
-                { sentence: 'The plants grow well because they get lots of sunshine.', options: ['The plants grow well, because they get lots of sunshine.', 'The plants grow well because they get lots of sunshine.', 'The plants grow well. Because they get lots of sunshine.', 'No change needed'], correct: 1 }
+                { sentence: 'He studied all night but he still failed the test.', options: ['He studied all night, but he still failed the test.', 'He studied all night but, he still failed the test.', 'He studied all night; but he still failed the test.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-14', type: 'punctuation', explanation: 'Use a comma before "and" when joining independent clauses.', variants: [
                 { sentence: 'The cat sat on the mat and it purred contentedly.', options: ['The cat sat on the mat, and it purred contentedly.', 'The cat sat on the mat. And it purred contentedly.', 'The cat sat on the mat; and it purred contentedly.', 'No change needed'], correct: 0 },
-                { sentence: 'Swimming is fun but exhausting.', options: ['Swimming is fun, but exhausting.', 'Swimming is fun; but exhausting.', 'Swimming is fun but exhausting.', 'No change needed'], correct: 2 }
+                { sentence: 'The thunder rumbled in the distance and the sky turned dark.', options: ['The thunder rumbled in the distance, and the sky turned dark.', 'The thunder rumbled in the distance and, the sky turned dark.', 'The thunder rumbled, in the distance and the sky turned dark.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-15', type: 'punctuation', explanation: 'Use a comma before direct speech and quotation marks.', variants: [
                 { sentence: 'He exclaimed What an amazing discovery!', options: ['He exclaimed, "What an amazing discovery!"', 'He exclaimed "What an amazing discovery"!', 'He exclaimed. "What an amazing discovery!"', 'No change needed'], correct: 0 },
-                { sentence: 'Do you want to play outside with us', options: ['Do you want to play outside with us?', 'Do you want to play outside "with us"?', 'Do you want to play outside with us.', 'No change needed'], correct: 0 }
+                { sentence: 'She replied I will be there at six o\'clock.', options: ['She replied, "I will be there at six o\'clock."', 'She replied "I will be there at six o\'clock."', 'She replied; "I will be there at six o\'clock."', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-16', type: 'punctuation', explanation: '"Its" is possessive; "it\'s" means "it is".', variants: [
                 { sentence: 'The dog loves it\'s owners very much.', options: ['The dog loves its owners very much.', 'The dog loves it\'s owners very much.', 'The dog loves it\'s owner\'s very much.', 'No change needed'], correct: 0 },
-                { sentence: 'She wondered Have you finished your work.', options: ['She wondered, "Have you finished your work?"', 'She wondered "Have you finished your work?"', 'She wondered. "Have you finished your work?"', 'No change needed'], correct: 0 }
+                { sentence: 'The tree lost all of it\'s leaves during the storm.', options: ['The tree lost all of its leaves during the storm.', 'The tree lost all of it\'s leaves during the storm.', 'The tree lost all of its\' leaves during the storm.', 'No change needed'], correct: 0 }
             ] },
-            { id: 'punct-17', type: 'punctuation', explanation: 'Use commas in lists of three or more items.', variants: [
-                { sentence: 'She whispered a secret to me her sister and her mother.', options: ['She whispered a secret to me, her sister, and her mother.', 'She whispered a secret to me her sister, and her mother.', 'She whispered a secret to me, her sister and her mother.', 'No change needed'], correct: 0 },
-                { sentence: 'For the picnic we need plates cups napkins and forks.', options: ['For the picnic we need plates, cups, napkins, and forks.', 'For the picnic we need plates cups, napkins and forks.', 'For the picnic we need plates, cups napkins, and forks.', 'No change needed'], correct: 0 }
+            { id: 'punct-17', type: 'punctuation', explanation: 'Use commas to separate items in a list. In British English, you do not need a comma before \'and\'.', variants: [
+                { sentence: 'She whispered a secret to me her sister and her mother.', options: ['She whispered a secret to me, her sister, and her mother.', 'She whispered a secret to me her sister, and her mother.', 'She whispered a secret to me, her sister and her mother.', 'No change needed'], correct: 2 },
+                { sentence: 'For the picnic we need plates cups napkins and forks.', options: ['For the picnic we need plates, cups, napkins, and forks.', 'For the picnic we need plates cups, napkins and forks.', 'For the picnic, we need plates, cups, napkins and forks.', 'No change needed'], correct: 2 }
             ] },
             { id: 'punct-18', type: 'punctuation', explanation: 'Semicolons separate related independent clauses.', variants: [
                 { sentence: 'The children played; they laughed; they sang.', options: ['The children played, they laughed, they sang.', 'The children played. They laughed. They sang.', 'The children played; they laughed; they sang.', 'No change needed'], correct: 2 },
@@ -2885,7 +2892,7 @@
             ] },
             { id: 'punct-19', type: 'punctuation', explanation: 'Non-essential relative clauses need commas on both sides.', variants: [
                 { sentence: 'The book which I bought last week is excellent.', options: ['The book, which I bought last week, is excellent.', 'The book which, I bought last week is, excellent.', 'The book which I bought last week, is excellent.', 'No change needed'], correct: 0 },
-                { sentence: 'Finally everyone arrived at the party.', options: ['Finally, everyone arrived at the party.', 'Finally; everyone arrived at the party.', 'Finally. Everyone arrived at the party.', 'No change needed'], correct: 0 }
+                { sentence: 'My sister who lives in London is visiting this weekend.', options: ['My sister, who lives in London, is visiting this weekend.', 'My sister who lives in London, is visiting this weekend.', 'My sister, who lives in London is visiting this weekend.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-20', type: 'punctuation', explanation: 'Direct speech needs a comma and quotation marks.', variants: [
                 { sentence: 'Tom said I will come tomorrow.', options: ['Tom said, "I will come tomorrow."', 'Tom said "I will come tomorrow."', 'Tom said; "I will come tomorrow."', 'No change needed'], correct: 0 },
@@ -2895,7 +2902,7 @@
                 { sentence: 'We need: pencils, paper, and pens.', options: ['We need pencils, paper, and pens.', 'We need: pencils; paper; and pens.', 'We need—pencils, paper, and pens.', 'No change needed'], correct: 0 },
                 { sentence: 'For lunch we had: sandwiches, fruit, and juice.', options: ['For lunch we had sandwiches, fruit, and juice.', 'For lunch we had; sandwiches, fruit, and juice.', 'For lunch we had: sandwiches; fruit; and juice.', 'No change needed'], correct: 0 }
             ] },
-            { id: 'punct-22', type: 'punctuation', explanation: 'Use "girls\'" for plural possession.', variants: [
+            { id: 'punct-22', type: 'punctuation', explanation: 'For plural possession, put the apostrophe after the \'s\' (e.g. teachers\' car park, girls\' team).', variants: [
                 { sentence: 'The girls soccer team won the final match.', options: ['The girls\' soccer team won the final match.', 'The girl\'s soccer team won the final match.', 'The girls soccer team won the final match.', 'No change needed'], correct: 0 },
                 { sentence: 'The teachers car park was full this morning.', options: ['The teachers\' car park was full this morning.', 'The teacher\'s car park was full this morning.', 'The teachers car park was full this morning.', 'No change needed'], correct: 0 }
             ] },
@@ -3283,7 +3290,11 @@
             ] },
             { id: 'cloze-22', type: 'cloze', explanation: '\'Refreshing\' means pleasant and cool — perfect for a hot day.', variants: [
                 { sentence: 'The water in the pool felt _____ on a hot day.', options: ['warm', 'freezing', 'refreshing', 'dusty'], correct: 2 },
-                { sentence: 'She walked _____ through the dark corridor to be safe.', options: ['recklessly', 'quickly', 'carefully', 'noisily'], correct: 2 }
+                { sentence: 'The cold drink tasted _____ after the long walk in the sun.', options: ['bitter', 'stale', 'refreshing', 'sour'], correct: 2 }
+            ] },
+            { id: 'cloze-22b', type: 'cloze', explanation: '\'Carefully\' means with great attention and caution — the right way to move through a dark or dangerous place.', variants: [
+                { sentence: 'She walked _____ through the dark corridor to be safe.', options: ['recklessly', 'quickly', 'carefully', 'noisily'], correct: 2 },
+                { sentence: 'He _____ placed the glass vase on the shelf so it would not fall.', options: ['carelessly', 'roughly', 'carefully', 'hastily'], correct: 2 }
             ] },
             { id: 'cloze-23', type: 'cloze', explanation: '\'Quickly\' is an adverb showing fast movement, which helps catch a bus.', variants: [
                 { sentence: 'He ran _____ to catch the bus before it left.', options: ['slowly', 'quickly', 'lazily', 'carefully'], correct: 1 },
@@ -4898,7 +4909,16 @@
                 }
                 this.sessionStats.pointsEarned += points;
 
-                this.showFeedback(isCorrect, explanation);
+                // Determine if correct-but-slow for amber feedback
+                const latencyThresholds = {
+                    vocab: 8000, spelling: 10000, punctuation: 12000, comprehension: 20000,
+                    cloze: 8000, synonym: 6000, antonym: 6000, 'context-clues': 15000,
+                    homophone: 8000, meta: 8000
+                };
+                const fluentThreshold = latencyThresholds[this.currentItemType] || 10000;
+                const isSlowCorrect = isCorrect && latency >= fluentThreshold && latency >= 1500;
+
+                this.showFeedback(isCorrect, explanation, isSlowCorrect);
                 this.showPointsPopup(points, isCorrect && this.sessionStats.currentStreak > 0 && this.sessionStats.currentStreak % 5 === 0);
 
                 if (isCorrect && this.sessionStats.currentStreak > 0 && this.sessionStats.currentStreak % 5 === 0) {
@@ -4923,14 +4943,14 @@
                 this.sessionCurrentIndex += 1;
             }
 
-            showFeedback(isCorrect, explanation) {
+            showFeedback(isCorrect, explanation, isSlowCorrect) {
                 const container = document.getElementById('questionContainer');
                 const feedback = document.createElement('div');
-                feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+                feedback.className = 'feedback ' + (isSlowCorrect ? 'amber' : (isCorrect ? 'correct' : 'incorrect'));
 
                 const label = document.createElement('div');
                 label.className = 'feedback-label';
-                label.textContent = isCorrect ? 'Correct!' : 'Incorrect';
+                label.textContent = isSlowCorrect ? 'Correct — but try to be quicker!' : (isCorrect ? 'Correct!' : 'Incorrect');
                 feedback.appendChild(label);
 
                 // Special handling for spelling questions with visual diff
