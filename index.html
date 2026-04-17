@@ -1391,7 +1391,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.12.0';
+        const APP_VERSION = 'v1.14.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -1577,6 +1577,9 @@
                 if (typeof engine !== 'undefined') {
                     engine.items = engine.loadItems();
                     engine.globalStats = engine.loadGlobalStats();
+                    // Force-sync after load so backward-compat fields (scaffoldLevel, etc.)
+                    // that were just added by loadItems() reach Firebase immediately.
+                    setTimeout(() => { if (typeof saveToCloud === 'function') saveToCloud(true); }, 1500);
                 }
 
                 // Check for existing profile
@@ -1652,11 +1655,11 @@
         let cloudSyncOk = true;
         let lastSyncAttempt = 0;
 
-        function saveToCloud() {
+        function saveToCloud(force) {
             if (!dbRef) return;
             const now = Date.now();
-            // Throttle: don't sync more than once every 3 seconds
-            if (now - lastSyncAttempt < 3000) return;
+            // Throttle: don't sync more than once every 3 seconds (unless forced)
+            if (!force && now - lastSyncAttempt < 3000) return;
             lastSyncAttempt = now;
 
             try {
@@ -1748,6 +1751,11 @@
                                 item.scaffoldLevel = (item.state === 'fluent') ? 3 : 1;
                             }
                         }
+                        // Persist backward-compat fields (esp. scaffoldLevel) to localStorage
+                        // so every sync path (saveToCloud, beforeunload, retry) includes them.
+                        // Without this, loadFromCloud() overwrites localStorage with cloud data
+                        // lacking scaffoldLevel, and the in-memory migration never reaches Firebase.
+                        localStorage.setItem(ITEMS_KEY, JSON.stringify(existingMigrated));
                         return existingMigrated;
                     } catch (e) {
                         console.error('Failed to load items:', e);
@@ -1819,10 +1827,14 @@
                         return JSON.parse(saved);
                     } catch (e) {
                         console.error('Failed to load stats:', e);
-                        return this.getDefaultStats();
                     }
                 }
-                return this.getDefaultStats();
+                // No stats in localStorage — create defaults and persist immediately.
+                // Without this, saveToCloud() reads STATE_KEY as null and never includes
+                // stats in the Firebase payload, so new users (like Johann) get null stats.
+                const defaults = this.getDefaultStats();
+                localStorage.setItem(STATE_KEY, JSON.stringify(defaults));
+                return defaults;
             }
 
             getDefaultStats() {
@@ -1843,7 +1855,7 @@
 
             saveGlobalStats() {
                 localStorage.setItem(STATE_KEY, JSON.stringify(this.globalStats));
-                saveToCloud();
+                saveToCloud(true);  // Force — bypass throttle so session stats always persist
             }
 
             // Check whether the child knows a specific exam term (for Jargon Rule gating)
@@ -3125,7 +3137,7 @@
             ] },
             { id: 'comp-9', type: 'comprehension', explanation: 'The passage shows the petition with 5,000 signatures led to the reversed decision.', variants: [
                 { passage: 'The old library was due to close because the town had limited funding. Local volunteers started a campaign to save it. They collected over 5,000 signatures on a petition. When the petition was presented to the town council, the decision was reversed. The library remains open today.', question: 'What was the key to saving the library?', options: ['Extra government funding', 'Community support through a petition', 'The librarian\'s persuasive speech', 'A wealthy donor'], correct: 1 },
-                { passage: 'The town had no public park for children to play in. A group of residents began planning a community garden project. They raised funds through donations and volunteers cleared an empty lot. Within a year, the park was finished with swings, slides, and flowerbeds. The community worked together to create something special.', question: 'What does this passage show about community action?', options: ['Government must provide all public services', 'Communities can create change through cooperation', 'Parks are not important for children', 'Money is the only barrier to progress'], correct: 1, explanation: 'Like the library, this park was created because community members worked together—fundraising, volunteering, and planning. Cooperation transformed an empty lot into a space for children.' }
+                { passage: 'A village school was losing pupils because the roof leaked and the heating had failed. Parents organised weekend repair sessions, local businesses donated materials, and a retired builder supervised the work. Within three months the school was warm and dry again. Enrolment rose the following term.', question: 'What does this passage show about community action?', options: ['Schools should always wait for government repairs', 'Communities can solve practical problems through cooperation', 'Only professionals should repair buildings', 'Schools are not worth saving'], correct: 1, explanation: 'Like the library petition, the village pulled together—parents, businesses, and a skilled volunteer—to fix a shared problem rather than waiting for outside help.' }
             ] },
             { id: 'comp-10', type: 'comprehension', explanation: 'The passage shows she spends hours coding and impressed a tech company with her portfolio.', variants: [
                 { passage: 'Maxine loves coding and spends hours creating programs. Her friends think it\'s boring, but she finds it fascinating. When a local tech company needed young programmers, Maxine applied. They were impressed by her portfolio and hired her immediately.', question: 'What can we infer about Maxine\'s skills?', options: ['She learned coding in school', 'She is more skilled than her friends', 'She spent time developing her abilities', 'She is the best programmer in the world'], correct: 2 },
@@ -3169,7 +3181,7 @@
             ] },
             { id: 'comp-20', type: 'comprehension', explanation: 'The passage shows historians still study the remaining fragments, indicating the value of what survived.', variants: [
                 { passage: 'The ancient library at Alexandria held thousands of scrolls. Scholars travelled from distant lands to study there. Wars and fires eventually destroyed much of the collection. Today, only fragments remain. Historians still study these pieces to understand the past.', question: 'What do the surviving fragments suggest?', options: ['Ancient knowledge was useless', 'The library was not important', 'The knowledge preserved was valuable enough to study', 'We can never learn from the past'], correct: 2 },
-                { passage: 'The invention of the printing press in 1440 changed the world. Before it, books were handwritten and extremely rare. After it, knowledge could be reproduced and shared. More people learned to read. Ideas spread faster. The press democratised information.', question: 'What was the most significant impact of the printing press?', options: ['It made paper cheaper', 'It allowed knowledge to be shared widely and more people to learn', 'It made handwritten books disappear', 'It eliminated the need for libraries'], correct: 1, explanation: 'The printing press made knowledge accessible to ordinary people. Like the Alexandria library shows the value of preserved knowledge, the printing press shows how sharing knowledge changes society.' }
+                { passage: 'The Rosetta Stone was discovered in 1799 by French soldiers in Egypt. It contained the same text in three scripts: Greek, demotic, and hieroglyphics. For centuries, nobody could read ancient Egyptian writing. By comparing the scripts, scholars finally cracked the code. One stone unlocked an entire civilisation\'s history.', question: 'Why was the Rosetta Stone so important?', options: ['It was made of rare material', 'It allowed scholars to decode hieroglyphics and access lost knowledge', 'It proved Egypt was the oldest civilisation', 'It was the most beautiful artefact ever found'], correct: 1, explanation: 'Like the Alexandria fragments, the Rosetta Stone shows how a single surviving object can unlock vast knowledge. Preserving the past gives us tools to understand it.' }
             ] },
             { id: 'comp-21', type: 'comprehension', explanation: 'The passage shows the sister\'s consistent support and making reading enjoyable led to improvement.', variants: [
                 { passage: 'A teenager noticed her younger brother struggling with reading. She started reading to him every evening. At first, he resisted and felt embarrassed. Gradually, he became interested in the stories. Six months later, his reading skills had improved significantly.', question: 'Why did the brother\'s reading improve?', options: ['He was forced to read', 'His sister provided patient support and made reading enjoyable', 'He went to a special school', 'His teacher gave him extra homework'], correct: 1 },
@@ -3197,7 +3209,7 @@
             ] },
             { id: 'comp-27', type: 'comprehension', explanation: 'The passage shows Mr. Chen\'s emotional attachment to the park and his heartbreak at its destruction.', variants: [
                 { passage: 'Every morning, Mr. Chen took the same route through the park. He greeted neighbours, fed the birds, and sat on his favourite bench. One day, construction began. The park would be destroyed for a shopping centre. Mr. Chen felt heartbroken watching his beloved space disappear.', question: 'What does this passage show about places we love?', options: ['They are never permanent', 'Losing familiar places can cause emotional pain', 'Change is always good', 'Shopping centres are always beneficial'], correct: 1 },
-                { passage: 'Kavi found a beautiful old journal belonging to a family friend who had passed away. The journal contained private thoughts and secret memories. Kavi wondered if she should read it, share it with the family, or respect the friend\'s privacy by not opening it. The journal felt important, but using it without permission felt wrong.', question: 'What makes Kavi\'s situation difficult?', options: ['She lost a journal.', 'She must balance respecting privacy with preserving someone\'s story and history.', 'She has no time to read.', 'The journal was boring.'], correct: 1, explanation: 'Like Maria, Kavi faces competing values: honoring friendship and privacy versus preserving history. These difficult choices don\'t have obvious right answers.' }
+                { passage: 'Kavi found a beautiful old journal belonging to a family friend who had passed away. The journal contained private thoughts and secret memories. Kavi wondered if she should read it, share it with the family, or respect the friend\'s privacy by not opening it. The journal felt important, but using it without permission felt wrong.', question: 'What makes Kavi\'s situation difficult?', options: ['She lost a journal.', 'She must balance respecting privacy with preserving someone\'s story and history.', 'She has no time to read.', 'The journal was boring.'], correct: 1, explanation: 'Like Mr. Chen losing his park, Kavi faces a situation where something meaningful is at stake. She must weigh competing values—respecting privacy versus preserving history—with no obvious right answer.' }
             ] },
             { id: 'comp-28', type: 'comprehension', explanation: 'The passage shows Maria\'s internal conflict about whether to share the secret family recipe.', variants: [
                 { passage: 'The recipe had been passed down through five generations. Maria\'s grandmother taught her mother, who taught Maria. The secret ingredient was a special spice blend. When Maria\'s cousin asked to learn, Maria felt conflicted. Should family traditions stay private or be shared?', question: 'What dilemma does Maria face?', options: ['Whether to move away', 'Whether to share a family tradition or keep it private', 'Whether to open a restaurant', 'Whether to work in the family business'], correct: 1 },
@@ -3205,7 +3217,7 @@
             ] },
             { id: 'comp-29', type: 'comprehension', explanation: 'The passage states the method "cost less than traditional methods and helped the environment".', variants: [
                 { passage: 'Scientists discovered that certain plants could remove toxins from polluted soil. They began growing these plants in contaminated areas. After three years, the soil quality improved dramatically. This "green solution" cost less than traditional methods and helped the environment. Nature\'s own cleaning power proved remarkably effective.', question: 'What advantage do the plants offer over traditional cleaning methods?', options: ['They work faster', 'They are cheaper and environmentally friendly', 'They remove all pollution', 'They require no maintenance'], correct: 1 },
-                { passage: 'Marcus was born with a hearing disability. Doctors said he would struggle in school. His family refused to accept limitations. They found specialists and supported his learning. Marcus worked harder than his peers, learned sign language and speech, and became the first in his family to attend university. He became an advocate for disability rights.', question: 'How did Marcus achieve his goals despite his disability?', options: ['Disability did not affect him.', 'Family support and his own determination to overcome obstacles.', 'He avoided challenges.', 'He was luckier than others.'], correct: 1, explanation: 'Like the athlete, Marcus refused to accept that his disability defined his limits. His determination and support system helped him achieve what others doubted was possible.' }
+                { passage: 'Marcus was born with a hearing disability. Doctors said he would struggle in school. His family refused to accept limitations. They found specialists and supported his learning. Marcus worked harder than his peers, learned sign language and speech, and became the first in his family to attend university. He became an advocate for disability rights.', question: 'How did Marcus achieve his goals despite his disability?', options: ['Disability did not affect him.', 'Family support and his own determination to overcome obstacles.', 'He avoided challenges.', 'He was luckier than others.'], correct: 1, explanation: 'Like the toxin-removing plants that solved pollution in an unexpected way, Marcus found his own path to success. Both passages show that the right approach—whether natural or human—can overcome problems others thought were permanent.' }
             ] },
             { id: 'comp-30', type: 'comprehension', explanation: 'The passage shows she refused to accept the prognosis and underwent two years of intense rehabilitation.', variants: [
                 { passage: 'The athlete injured her knee during training. Doctors said she might never compete again. She refused to accept this. For two years, she underwent intense rehabilitation. Against all odds, she returned to competition and won a medal at the Olympics.', question: 'What quality did the athlete demonstrate?', options: ['She was lucky', 'She had exceptional determination and refused to give up', 'She didn\'t listen to medical advice', 'She worked harder than others naturally'], correct: 1 },
@@ -3215,8 +3227,8 @@
                 { passage: 'The invention of the printing press in 1440 changed the world. Before it, books were handwritten and extremely rare. After it, knowledge could be reproduced and shared. More people learned to read. Ideas spread faster. The press democratised information.', question: 'What was the most significant impact of the printing press?', options: ['It made paper cheaper', 'It allowed knowledge to be shared widely and more people to learn', 'It made handwritten books disappear', 'It eliminated the need for libraries'], correct: 1 },
                 { passage: 'In a town divided by conflict, a community art project asked people to paint stones with symbols of hope. Thousands of people painted stones and placed them along the main street. Though the stones themselves were small, they represented unity and the desire for peace. Visitors from opposing sides of the conflict saw the stones and felt something shift. The simple act became a symbol of reconciliation.', question: 'What made the painted stones powerful?', options: ['They were beautiful.', 'They represented larger hopes and brought people together around a shared symbol.', 'They were very expensive.', 'They solved the conflict.'], correct: 1, explanation: 'Like Gandhi\'s salt, the painted stones were symbols. Their power came not from the objects themselves but from what they represented—hope, unity, and peace.' }
             ] },
-            { id: 'comp-32', type: 'comprehension', explanation: 'The passage emphasises how the garden brought diverse neighbours together and created friendships.', variants: [
-                { passage: 'In a bustling city, a community garden flourished on an abandoned lot. Residents grew vegetables together, regardless of their backgrounds or languages. The garden became a place where neighbours became friends. It proved that small green spaces create big social connections. The garden showed the power of shared purpose.', question: 'What is the main message of this passage?', options: ['Cities are too crowded', 'Vegetables are better than flowers', 'Shared community spaces can build human connection', 'Only certain people should garden'], correct: 2 },
+            { id: 'comp-32', type: 'comprehension', explanation: 'The passage emphasises how the cooking classes brought diverse neighbours together and created friendships.', variants: [
+                { passage: 'A retired chef began offering free cooking classes at the local community centre. People arrived speaking different languages and knowing different recipes. Over weeks, they taught each other dishes from their home countries. Strangers became friends over shared meals. The classes proved that food could bridge cultural divides and turn a neighbourhood into a community.', question: 'What is the main message of this passage?', options: ['Cooking is a difficult skill', 'Professional chefs are the best teachers', 'Shared activities can build human connection across differences', 'Only certain people enjoy cooking'], correct: 2 },
                 { passage: 'When the old library closed, volunteers turned a disused bus into a mobile reading room. They parked it in different neighbourhoods each week. Children who had never owned a book could borrow one. Elderly residents who lived alone came aboard just to chat. The bus became more than a library — it became a meeting place for people who might never have spoken otherwise.', question: 'What is the main theme of this passage?', options: ['Buses are better than libraries', 'Reading is only for children', 'A shared resource can bring a community together', 'Old people need more buses'], correct: 2 }
             ] }
         ];
@@ -4743,15 +4755,28 @@
             renderSynonymQuestion(container, question, item) {
                 const questionText = document.createElement('div');
                 questionText.className = 'question-text';
-                // Scaffold the exam term — gated on meta-synonym concept state, not item state
+                // Scaffolding Gradient Phase 2: label wording depends on scaffoldLevel.
+                // Level 1-2: plain English overrides meta-concept gating.
+                // Level 3: meta-concept gating decides (existing Jargon Rule behaviour).
+                const scaffoldLevel = (item && typeof item.scaffoldLevel === 'number') ? item.scaffoldLevel : 3;
                 const metaSynonymState = this.engine.getMetaConceptState('synonym');
-                if (metaSynonymState === 'fluent' || metaSynonymState === 'lapsed') {
-                    questionText.textContent = 'What is the synonym of:';
-                } else if (metaSynonymState === 'fragile') {
+                if (scaffoldLevel <= 1) {
+                    // Level 1: always plain English, no jargon
+                    questionText.textContent = 'Which word is closest in meaning to:';
+                } else if (scaffoldLevel === 2) {
+                    // Level 2: plain English with jargon in brackets
                     questionText.textContent = 'Which word is closest in meaning (synonym) to:';
                 } else {
-                    questionText.textContent = 'Which word is closest in meaning to:';
+                    // Level 3: full Jargon Rule — gated on meta-concept state
+                    if (metaSynonymState === 'fluent' || metaSynonymState === 'lapsed') {
+                        questionText.textContent = 'What is the synonym of:';
+                    } else if (metaSynonymState === 'fragile') {
+                        questionText.textContent = 'Which word is closest in meaning (synonym) to:';
+                    } else {
+                        questionText.textContent = 'Which word is closest in meaning to:';
+                    }
                 }
+                console.log('[Gradient] renderSynonymQuestion → concept=' + item.id + ' level=' + scaffoldLevel + ' meta=' + metaSynonymState);
                 container.appendChild(questionText);
 
                 const word = document.createElement('div');
@@ -4777,15 +4802,28 @@
             renderAntonymQuestion(container, question, item) {
                 const questionText = document.createElement('div');
                 questionText.className = 'question-text';
-                // Scaffold the exam term — gated on meta-antonym concept state, not item state
+                // Scaffolding Gradient Phase 2: label wording depends on scaffoldLevel.
+                // Level 1-2: plain English overrides meta-concept gating.
+                // Level 3: meta-concept gating decides (existing Jargon Rule behaviour).
+                const scaffoldLevel = (item && typeof item.scaffoldLevel === 'number') ? item.scaffoldLevel : 3;
                 const metaAntonymState = this.engine.getMetaConceptState('antonym');
-                if (metaAntonymState === 'fluent' || metaAntonymState === 'lapsed') {
-                    questionText.textContent = 'What is the antonym of:';
-                } else if (metaAntonymState === 'fragile') {
+                if (scaffoldLevel <= 1) {
+                    // Level 1: always plain English, no jargon
+                    questionText.textContent = 'Which word is opposite in meaning to:';
+                } else if (scaffoldLevel === 2) {
+                    // Level 2: plain English with jargon in brackets
                     questionText.textContent = 'Which word is opposite in meaning (antonym) to:';
                 } else {
-                    questionText.textContent = 'Which word is opposite in meaning to:';
+                    // Level 3: full Jargon Rule — gated on meta-concept state
+                    if (metaAntonymState === 'fluent' || metaAntonymState === 'lapsed') {
+                        questionText.textContent = 'What is the antonym of:';
+                    } else if (metaAntonymState === 'fragile') {
+                        questionText.textContent = 'Which word is opposite in meaning (antonym) to:';
+                    } else {
+                        questionText.textContent = 'Which word is opposite in meaning to:';
+                    }
                 }
+                console.log('[Gradient] renderAntonymQuestion → concept=' + item.id + ' level=' + scaffoldLevel + ' meta=' + metaAntonymState);
                 container.appendChild(questionText);
 
                 const word = document.createElement('div');
@@ -5004,17 +5042,21 @@
                 feedback.appendChild(text);
 
                 // Add context for antonym/synonym questions (always, for reinforcement)
-                if (this.currentQuestion && this.currentItemType === 'antonym') {
+                // Scaffold the jargon in feedback too — plain English at Level 1-2
+                if (this.currentQuestion && (this.currentItemType === 'antonym' || this.currentItemType === 'synonym')) {
+                    const currentItem = this.currentItemId ? this.engine.items[this.currentItemId] : null;
+                    const feedbackLevel = (currentItem && typeof currentItem.scaffoldLevel === 'number') ? currentItem.scaffoldLevel : 3;
                     const contextDiv = document.createElement('div');
                     contextDiv.style.marginTop = '10px';
                     contextDiv.style.fontStyle = 'italic';
-                    contextDiv.textContent = 'So the antonym of \'' + this.currentQuestion.word + '\' is \'' + this.currentQuestion.options[this.currentQuestion.correct] + '\'.';
-                    feedback.appendChild(contextDiv);
-                } else if (this.currentQuestion && this.currentItemType === 'synonym') {
-                    const contextDiv = document.createElement('div');
-                    contextDiv.style.marginTop = '10px';
-                    contextDiv.style.fontStyle = 'italic';
-                    contextDiv.textContent = 'So the synonym of \'' + this.currentQuestion.word + '\' is \'' + this.currentQuestion.options[this.currentQuestion.correct] + '\'.';
+                    const correctWord = this.currentQuestion.options[this.currentQuestion.correct];
+                    if (this.currentItemType === 'antonym') {
+                        const label = feedbackLevel <= 1 ? 'opposite' : (feedbackLevel === 2 ? 'opposite (antonym)' : 'antonym');
+                        contextDiv.textContent = 'So the ' + label + ' of \'' + this.currentQuestion.word + '\' is \'' + correctWord + '\'.';
+                    } else {
+                        const label = feedbackLevel <= 1 ? 'word closest in meaning' : (feedbackLevel === 2 ? 'closest meaning (synonym)' : 'synonym');
+                        contextDiv.textContent = 'So the ' + label + ' of \'' + this.currentQuestion.word + '\' is \'' + correctWord + '\'.';
+                    }
                     feedback.appendChild(contextDiv);
                 }
 
@@ -5231,7 +5273,8 @@
                 questionType: devCurrentQuestionType || 'unknown',
                 text: text,
                 timestamp: Date.now(),
-                date: new Date().toISOString()
+                date: new Date().toISOString(),
+                resolved: false
             };
 
             // Save to Firebase under user's own path (respects security rules)
@@ -5270,6 +5313,41 @@
             }
         });
         document.getElementById('devSendBtn').addEventListener('click', submitDevFeedback);
+
+        // Dev utility: resolve feedback items from console
+        // Usage: resolveAllFeedback() — marks all items as resolved
+        // Usage: resolveFeedback('feedbackKeyId') — marks one item as resolved
+        window.resolveAllFeedback = async function() {
+            if (!dbRef) { console.error('No dbRef — log in first'); return; }
+            const snap = await dbRef.child('devFeedback').once('value');
+            const entries = snap.val();
+            if (!entries) { console.log('No devFeedback entries found'); return; }
+            const updates = {};
+            let count = 0;
+            Object.keys(entries).forEach(key => {
+                if (!entries[key].resolved) {
+                    updates['devFeedback/' + key + '/resolved'] = true;
+                    count++;
+                }
+            });
+            if (count === 0) { console.log('All entries already resolved'); return; }
+            await dbRef.update(updates);
+            console.log('[DevFeedback] Resolved ' + count + ' entries');
+        };
+        window.resolveFeedback = async function(key) {
+            if (!dbRef) { console.error('No dbRef — log in first'); return; }
+            await dbRef.child('devFeedback/' + key + '/resolved').set(true);
+            console.log('[DevFeedback] Resolved entry ' + key);
+        };
+        window.listOpenFeedback = async function() {
+            if (!dbRef) { console.error('No dbRef — log in first'); return; }
+            const snap = await dbRef.child('devFeedback').once('value');
+            const entries = snap.val();
+            if (!entries) { console.log('No devFeedback entries'); return; }
+            const open = Object.entries(entries).filter(([k, v]) => !v.resolved);
+            console.table(open.map(([k, v]) => ({ key: k, text: v.text, date: v.date, item: v.itemId })));
+            return open.length + ' open items';
+        };
 
         // ===== INITIALIZATION =====
         const engine = new AdaptiveEngine();
