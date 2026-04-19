@@ -1391,7 +1391,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.14.0';
+        const APP_VERSION = 'v1.15.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -3482,167 +3482,175 @@
 
         const SYNONYM_CONCEPTS = [
             { id: 'synonym-happy', type: 'synonym', word: 'happy', explanation: '\'Happy\' and \'joyful\' both mean feeling pleased and cheerful.', variants: [
-                { options: ['sad', 'joyful', 'angry', 'tired'], correct: 1 },
-                { options: ['joyful', 'miserable', 'grumpy', 'sad'], correct: 0 }
+                { options: ['sad', 'joyful', 'angry', 'tired'], correct: 1, sentence: 'Maya was happy when her grandmother arrived for the weekend visit.', optionTags: ['far', 'correct', 'far', 'far'] },
+                { options: ['joyful', 'miserable', 'grumpy', 'sad'], correct: 0, sentence: 'A happy crowd waved flags as the parade marched down the street.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-angry', type: 'synonym', word: 'angry', explanation: '\'Angry\' and \'furious\' both mean very upset or cross.', variants: [
-                { options: ['calm', 'furious', 'happy', 'bored'], correct: 1 },
-                { options: ['furious', 'cheerful', 'peaceful', 'content'], correct: 0 }
+                { options: ['calm', 'furious', 'happy', 'bored'], correct: 1, sentence: 'The teacher grew angry when nobody had finished their homework.', optionTags: ['far', 'correct', 'far', 'far'] },
+                { options: ['furious', 'cheerful', 'peaceful', 'content'], correct: 0, sentence: 'She felt angry that her bicycle had been left out in the rain.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-big', type: 'synonym', word: 'big', explanation: '\'Big\' and \'enormous\' both mean very large in size.', variants: [
-                { options: ['small', 'enormous', 'tiny', 'bright'], correct: 1 },
-                { options: ['enormous', 'minute', 'minuscule', 'petite'], correct: 0 }
+                { options: ['small', 'enormous', 'tiny', 'bright'], correct: 1, sentence: 'A big lorry blocked the narrow lane outside the village shop.', optionTags: ['far', 'correct', 'far', 'far'] },
+                { options: ['enormous', 'minute', 'minuscule', 'petite'], correct: 0, sentence: 'The big oak tree gave shade to the whole picnic area.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-scared', type: 'synonym', word: 'scared', explanation: '\'Scared\' and \'frightened\' both mean feeling afraid.', variants: [
-                { options: ['brave', 'frightened', 'excited', 'confused'], correct: 1 },
-                { options: ['frightened', 'fearless', 'bold', 'daring'], correct: 0 }
+                { options: ['brave', 'frightened', 'excited', 'confused'], correct: 1, sentence: 'The puppy looked scared when it heard the loud thunder outside.', optionTags: ['far', 'correct', 'far', 'far'] },
+                { options: ['frightened', 'fearless', 'bold', 'daring'], correct: 0, sentence: 'He was scared to walk past the dark alley on his way home.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-quiet', type: 'synonym', word: 'quiet', explanation: '\'Quiet\' and \'silent\' both mean making little or no sound.', variants: [
-                { options: ['loud', 'silent', 'noisy', 'cheerful'], correct: 1 },
-                { options: ['silent', 'deafening', 'loud', 'raucous'], correct: 0 }
+                { options: ['loud', 'silent', 'noisy', 'cheerful'], correct: 1, sentence: 'The classroom was quiet during the spelling test that afternoon.', optionTags: ['far', 'correct', 'far', 'far'] },
+                { options: ['silent', 'deafening', 'loud', 'raucous'], correct: 0, sentence: 'A quiet stream wound gently between the smooth grey stones.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-tired', type: 'synonym', word: 'tired', explanation: '\'Tired\' and \'sleepy\' both mean needing rest or sleep.', variants: [
-                { options: ['energetic', 'sleepy', 'alert', 'curious'], correct: 1 },
-                { options: ['sleepy', 'awake', 'refreshed', 'invigorated'], correct: 0 }
+                { options: ['energetic', 'sleepy', 'alert', 'curious'], correct: 1, sentence: 'After football practice the children were tired and ready for dinner.', optionTags: ['far', 'correct', 'far', 'far'] },
+                { options: ['sleepy', 'awake', 'refreshed', 'invigorated'], correct: 0, sentence: 'The tired traveller fell asleep the moment his head touched the pillow.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-bright', type: 'synonym', word: 'bright', explanation: '\'Bright\' and \'shiny\' both mean reflecting light or giving light.', variants: [
-                { options: ['dark', 'shiny', 'dull', 'cold'], correct: 1 },
-                { options: ['shiny', 'matte', 'dull', 'murky'], correct: 0 }
+                { options: ['dark', 'shiny', 'dull', 'cold'], correct: 1, sentence: 'A bright torch lit the path through the dark woodland behind the house.', optionTags: ['far', 'correct', 'far', 'far'] },
+                { options: ['shiny', 'matte', 'dull', 'murky'], correct: 0, sentence: 'The bright morning sunshine reflected off the still surface of the lake.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-brave', type: 'synonym', word: 'brave', explanation: '\'Brave\' and \'courageous\' both mean facing danger without fear.', variants: [
-                { options: ['courageous', 'shy', 'nervous', 'foolish'], correct: 0 },
-                { options: ['fearless', 'cowardly', 'timid', 'hesitant'], correct: 0 }
+                { options: ['courageous', 'shy', 'nervous', 'foolish'], correct: 0, sentence: 'A brave swimmer dived into the river to rescue the struggling child.', optionTags: ['correct', 'far', 'far', 'far'] },
+                { options: ['fearless', 'cowardly', 'timid', 'hesitant'], correct: 0, sentence: 'The brave explorers climbed the icy mountain in the freezing wind.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-beautiful', type: 'synonym', word: 'beautiful', explanation: '\'Beautiful\' and \'lovely\' both mean very pleasing to look at.', variants: [
-                { options: ['lovely', 'ugly', 'strange', 'boring'], correct: 0 },
-                { options: ['stunning', 'hideous', 'plain', 'unattractive'], correct: 0 }
+                { options: ['lovely', 'ugly', 'strange', 'boring'], correct: 0, sentence: 'A beautiful rainbow stretched across the sky after the heavy shower.', optionTags: ['correct', 'far', 'far', 'far'] },
+                { options: ['stunning', 'hideous', 'plain', 'unattractive'], correct: 0, sentence: 'The bride wore a beautiful dress trimmed with delicate white lace.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-slow', type: 'synonym', word: 'slow', explanation: '\'Slow\' and \'sluggish\' both mean moving or acting without speed.', variants: [
-                { options: ['quick', 'sluggish', 'speedy', 'hasty'], correct: 1 },
-                { options: ['sluggish', 'swift', 'rapid', 'brisk'], correct: 0 }
+                { options: ['quick', 'sluggish', 'speedy', 'hasty'], correct: 1, sentence: 'A slow snail crept across the damp leaf in the early morning.', optionTags: ['far', 'correct', 'far', 'far'] },
+                { options: ['sluggish', 'swift', 'rapid', 'brisk'], correct: 0, sentence: 'The slow bus journey took twice as long because of the traffic.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-clever', type: 'synonym', word: 'clever', explanation: '\'Clever\' and \'smart\' both mean intelligent and quick-thinking.', variants: [
-                { options: ['smart', 'foolish', 'clumsy', 'quiet'], correct: 0 },
-                { options: ['intelligent', 'dumb', 'slow', 'dense'], correct: 0 }
+                { options: ['smart', 'foolish', 'clumsy', 'quiet'], correct: 0, sentence: 'The clever fox tricked the hunters by doubling back on its own tracks.', optionTags: ['correct', 'far', 'far', 'far'] },
+                { options: ['intelligent', 'dumb', 'slow', 'dense'], correct: 0, sentence: 'A clever pupil suggested an inventive way to solve the difficult sum.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-kind', type: 'synonym', word: 'kind', explanation: '\'Kind\' and \'gentle\' both mean caring and considerate.', variants: [
-                { options: ['cruel', 'gentle', 'rude', 'wild'], correct: 1 },
-                { options: ['tender', 'harsh', 'unkind', 'cold'], correct: 0 }
+                { options: ['cruel', 'gentle', 'rude', 'wild'], correct: 1, sentence: 'A kind neighbour brought soup round when she heard he was unwell.', optionTags: ['far', 'correct', 'far', 'far'] },
+                { options: ['tender', 'harsh', 'unkind', 'cold'], correct: 0, sentence: 'The kind shopkeeper let the child pay later when she lost her purse.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-wet', type: 'synonym', word: 'wet', explanation: '\'Wet\' and \'damp\' both mean covered or soaked with water.', variants: [
-                { options: ['dry', 'damp', 'warm', 'smooth'], correct: 1 },
-                { options: ['moist', 'arid', 'parched', 'bone-dry'], correct: 0 }
+                { options: ['dry', 'damp', 'warm', 'smooth'], correct: 1, sentence: 'After the storm the grass was wet and squelched under their boots.', optionTags: ['far', 'correct', 'far', 'far'] },
+                { options: ['moist', 'arid', 'parched', 'bone-dry'], correct: 0, sentence: 'The wet towels hung on the line to dry in the afternoon sun.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-dirty', type: 'synonym', word: 'dirty', explanation: '\'Dirty\' and \'messy\' both mean not clean or untidy.', variants: [
-                { options: ['clean', 'messy', 'spotless', 'tidy'], correct: 1 },
-                { options: ['unkempt', 'pristine', 'neat', 'immaculate'], correct: 0 }
+                { options: ['clean', 'messy', 'spotless', 'tidy'], correct: 1, sentence: 'After playing in the garden, his shoes were dirty and covered in mud.', optionTags: ['far', 'correct', 'far', 'far'] },
+                { options: ['unkempt', 'pristine', 'neat', 'immaculate'], correct: 0, sentence: 'The dirty windows blocked most of the light from coming into the kitchen.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-strange', type: 'synonym', word: 'strange', explanation: '\'Strange\' and \'odd\' both mean unusual or surprising.', variants: [
-                { options: ['normal', 'odd', 'usual', 'familiar'], correct: 1 },
-                { options: ['bizarre', 'typical', 'common', 'ordinary'], correct: 0 }
+                { options: ['normal', 'odd', 'usual', 'familiar'], correct: 1, sentence: 'A strange figure appeared at the gate just as the clock struck midnight.', optionTags: ['far', 'correct', 'far', 'far'] },
+                { options: ['bizarre', 'typical', 'common', 'ordinary'], correct: 0, sentence: 'The dog made a strange noise that sounded almost like crying.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-strong', type: 'synonym', word: 'strong', explanation: '\'Strong\' and \'powerful\' both mean having great force or strength.', variants: [
-                { options: ['weak', 'powerful', 'feeble', 'tiny'], correct: 1 },
-                { options: ['mighty', 'fragile', 'delicate', 'puny'], correct: 0 }
+                { options: ['weak', 'powerful', 'feeble', 'tiny'], correct: 1, sentence: 'A strong wind blew the autumn leaves across the school playground.', optionTags: ['far', 'correct', 'far', 'far'] },
+                { options: ['mighty', 'fragile', 'delicate', 'puny'], correct: 0, sentence: 'The strong builder lifted the heavy stones onto his shoulder with ease.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-hungry', type: 'synonym', word: 'hungry', explanation: '\'Hungry\' and \'famished\' both mean wanting food very much.', variants: [
-                { options: ['full', 'famished', 'satisfied', 'content'], correct: 1 },
-                { options: ['starving', 'satiated', 'stuffed', 'nourished'], correct: 0 }
+                { options: ['full', 'famished', 'satisfied', 'content'], correct: 1, sentence: 'The hungry children rushed to the kitchen as soon as they smelled dinner.', optionTags: ['far', 'correct', 'far', 'far'] },
+                { options: ['starving', 'satiated', 'stuffed', 'nourished'], correct: 0, sentence: 'After the long walk they were hungry enough to eat a second helping each.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-empty', type: 'synonym', word: 'empty', explanation: '\'Empty\' and \'vacant\' both mean having nothing inside.', variants: [
-                { options: ['full', 'vacant', 'crowded', 'busy'], correct: 1 },
-                { options: ['blank', 'occupied', 'filled', 'inhabited'], correct: 0 }
+                { options: ['full', 'vacant', 'crowded', 'busy'], correct: 1, sentence: 'The classroom was empty when the children left for the holidays.', optionTags: ['far', 'correct', 'far', 'far'] },
+                { options: ['blank', 'occupied', 'filled', 'inhabited'], correct: 0, sentence: 'Her glass was empty so she went to the kitchen for more water.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-difficult', type: 'synonym', word: 'difficult', explanation: '\'Difficult\' and \'challenging\' both mean hard to do or understand.', variants: [
-                { options: ['easy', 'challenging', 'simple', 'clear'], correct: 1 },
-                { options: ['tough', 'straightforward', 'effortless', 'obvious'], correct: 0 }
+                { options: ['easy', 'challenging', 'simple', 'clear'], correct: 1, sentence: 'The puzzle was so difficult that even the teacher had to think carefully.', optionTags: ['far', 'correct', 'far', 'far'] },
+                { options: ['tough', 'straightforward', 'effortless', 'obvious'], correct: 0, sentence: 'Climbing the steep hill was difficult on such a hot day.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-delighted', type: 'synonym', word: 'delighted', explanation: '\'Delighted\' and \'pleased\' both mean very happy.', variants: [
-                { options: ['miserable', 'angry', 'pleased', 'bored'], correct: 2 },
-                { options: ['thrilled', 'displeased', 'unhappy', 'annoyed'], correct: 0 }
+                { options: ['miserable', 'angry', 'pleased', 'bored'], correct: 2, sentence: 'Grandma was delighted when the grandchildren came to stay for the weekend.', optionTags: ['far', 'far', 'correct', 'far'] },
+                { options: ['thrilled', 'displeased', 'unhappy', 'annoyed'], correct: 0, sentence: 'The class was delighted to discover that the trip had been approved.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] }
         ];
 
         const ANTONYM_CONCEPTS = [
             { id: 'antonym-happy', type: 'antonym', word: 'happy', explanation: '\'Happy\' means pleased; \'sad\' is the opposite — unhappy.', variants: [
-                { options: ['joyful', 'excited', 'sad', 'cheerful'], correct: 2 },
-                { options: ['cheerful', 'miserable', 'joyful', 'delighted'], correct: 1 }
+                { options: ['joyful', 'excited', 'sad', 'cheerful'], correct: 2, sentence: 'The children were happy when they heard about the trip to the zoo.', optionTags: ['close', 'far', 'correct', 'close'] },
+                { options: ['cheerful', 'miserable', 'joyful', 'delighted'], correct: 1, sentence: 'A happy smile spread across her face when she opened the present.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-big', type: 'antonym', word: 'big', explanation: '\'Big\' means of considerable size; \'small\' is the opposite.', variants: [
-                { options: ['large', 'small', 'huge', 'wide'], correct: 1 },
-                { options: ['enormous', 'tiny', 'vast', 'massive'], correct: 1 }
+                { options: ['large', 'small', 'huge', 'wide'], correct: 1, sentence: 'The big elephant lumbered slowly across the African plain.', optionTags: ['close', 'correct', 'close', 'far'] },
+                { options: ['enormous', 'tiny', 'vast', 'massive'], correct: 1, sentence: 'Their big new house had room for all the cousins to stay.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-bright', type: 'antonym', word: 'bright', explanation: '\'Bright\' means full of light; \'dark\' is the opposite.', variants: [
-                { options: ['shiny', 'dark', 'light', 'colorful'], correct: 1 },
-                { options: ['luminous', 'dim', 'radiant', 'glowing'], correct: 1 }
+                { options: ['shiny', 'dark', 'light', 'colorful'], correct: 1, sentence: 'The bright sunshine made the snow sparkle on the mountain tops.', optionTags: ['close', 'correct', 'far', 'far'] },
+                { options: ['luminous', 'dim', 'radiant', 'glowing'], correct: 1, sentence: 'A bright lamp lit every corner of the small reading room.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-quiet', type: 'antonym', word: 'quiet', explanation: '\'Quiet\' means little sound; \'loud\' is the opposite.', variants: [
-                { options: ['silent', 'loud', 'gentle', 'soft'], correct: 1 },
-                { options: ['peaceful', 'noisy', 'calm', 'tranquil'], correct: 1 }
+                { options: ['silent', 'loud', 'gentle', 'soft'], correct: 1, sentence: 'The library was quiet, with only the sound of pages turning.', optionTags: ['close', 'correct', 'far', 'close'] },
+                { options: ['peaceful', 'noisy', 'calm', 'tranquil'], correct: 1, sentence: 'They lived on a quiet street where almost no cars passed by.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-clean', type: 'antonym', word: 'clean', explanation: '\'Clean\' means free from dirt; \'dirty\' is the opposite.', variants: [
-                { options: ['spotless', 'dirty', 'neat', 'tidy'], correct: 1 },
-                { options: ['pure', 'filthy', 'immaculate', 'pristine'], correct: 1 }
+                { options: ['spotless', 'dirty', 'neat', 'tidy'], correct: 1, sentence: 'After scrubbing for an hour, the kitchen was finally clean again.', optionTags: ['close', 'correct', 'far', 'far'] },
+                { options: ['pure', 'filthy', 'immaculate', 'pristine'], correct: 1, sentence: 'The nurse wore a clean uniform every morning before her shift.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-brave', type: 'antonym', word: 'brave', explanation: '\'Brave\' means facing danger without fear; \'timid\' is the opposite.', variants: [
-                { options: ['courageous', 'timid', 'bold', 'strong'], correct: 1 },
-                { options: ['fearless', 'cowardly', 'daring', 'intrepid'], correct: 1 }
+                { options: ['courageous', 'timid', 'bold', 'strong'], correct: 1, sentence: 'The brave firefighter rushed into the burning house to rescue the cat.', optionTags: ['close', 'correct', 'close', 'far'] },
+                { options: ['fearless', 'cowardly', 'daring', 'intrepid'], correct: 1, sentence: 'A brave knight stood his ground against the charging dragon.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-wet', type: 'antonym', word: 'wet', explanation: '\'Wet\' means covered with water; \'dry\' is the opposite.', variants: [
-                { options: ['damp', 'dry', 'moist', 'soaked'], correct: 1 },
-                { options: ['saturated', 'arid', 'drenched', 'parched'], correct: 1 }
+                { options: ['damp', 'dry', 'moist', 'soaked'], correct: 1, sentence: 'Her hair was still wet after she stepped out of the shower.', optionTags: ['close', 'correct', 'close', 'close'] },
+                { options: ['saturated', 'arid', 'drenched', 'sodden'], correct: 1, sentence: 'The wet pavement glistened under the streetlamps after the rain.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-rich', type: 'antonym', word: 'rich', explanation: '\'Rich\' means having lots of money; \'poor\' is the opposite.', variants: [
-                { options: ['wealthy', 'poor', 'happy', 'successful'], correct: 1 },
-                { options: ['affluent', 'destitute', 'prosperous', 'comfortable'], correct: 1 }
+                { options: ['wealthy', 'poor', 'happy', 'successful'], correct: 1, sentence: 'The rich merchant owned three ships and a fine house in the city.', optionTags: ['close', 'correct', 'far', 'far'] },
+                { options: ['affluent', 'destitute', 'prosperous', 'comfortable'], correct: 1, sentence: 'A rich banker donated a large sum of money to the village school.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-strong', type: 'antonym', word: 'strong', explanation: '\'Strong\' means having great power; \'weak\' is the opposite.', variants: [
-                { options: ['powerful', 'weak', 'mighty', 'tough'], correct: 1 },
-                { options: ['muscular', 'fragile', 'robust', 'sturdy'], correct: 1 }
+                { options: ['powerful', 'weak', 'mighty', 'tough'], correct: 1, sentence: 'The strong horse pulled the heavy plough across the muddy field.', optionTags: ['close', 'correct', 'close', 'close'] },
+                { options: ['muscular', 'fragile', 'robust', 'sturdy'], correct: 1, sentence: 'A strong oak tree had stood at the centre of the field for centuries.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-young', type: 'antonym', word: 'young', explanation: '\'Young\' means early in life; \'old\' is the opposite.', variants: [
-                { options: ['small', 'old', 'fresh', 'new'], correct: 1 },
-                { options: ['youthful', 'aged', 'immature', 'juvenile'], correct: 1 }
+                { options: ['small', 'old', 'fresh', 'new'], correct: 1, sentence: 'The young puppy chased its tail in circles on the kitchen floor.', optionTags: ['far', 'correct', 'far', 'far'] },
+                { options: ['youthful', 'aged', 'immature', 'juvenile'], correct: 1, sentence: 'A young student raised her hand to answer the difficult question.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-kind', type: 'antonym', word: 'kind', explanation: '\'Kind\' means caring; \'cruel\' is the opposite.', variants: [
-                { options: ['gentle', 'cruel', 'caring', 'nice'], correct: 1 },
-                { options: ['compassionate', 'vicious', 'benevolent', 'warm'], correct: 1 }
+                { options: ['gentle', 'cruel', 'caring', 'nice'], correct: 1, sentence: 'A kind stranger helped the old man carry his shopping up the stairs.', optionTags: ['close', 'correct', 'close', 'close'] },
+                { options: ['compassionate', 'vicious', 'benevolent', 'warm'], correct: 1, sentence: 'The kind teacher always made time to listen to her pupils\' worries.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-slow', type: 'antonym', word: 'slow', explanation: '\'Slow\' means without speed; \'quick\' is the opposite.', variants: [
-                { options: ['sluggish', 'quick', 'lazy', 'steady'], correct: 1 },
-                { options: ['sluggish', 'swift', 'sluggish', 'leisurely'], correct: 1 }
+                { options: ['sluggish', 'quick', 'lazy', 'steady'], correct: 1, sentence: 'The old tortoise was so slow that the children easily walked past it.', optionTags: ['close', 'correct', 'far', 'far'] },
+                { options: ['sluggish', 'swift', 'lethargic', 'leisurely'], correct: 1, sentence: 'A slow river meandered gently through the meadow toward the sea.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-beautiful', type: 'antonym', word: 'beautiful', explanation: '\'Beautiful\' means pleasing; \'ugly\' is the opposite.', variants: [
-                { options: ['lovely', 'ugly', 'pretty', 'attractive'], correct: 1 },
-                { options: ['gorgeous', 'hideous', 'stunning', 'exquisite'], correct: 1 }
+                { options: ['lovely', 'ugly', 'pretty', 'attractive'], correct: 1, sentence: 'The beautiful garden was filled with roses and singing birds.', optionTags: ['close', 'correct', 'close', 'close'] },
+                { options: ['gorgeous', 'hideous', 'stunning', 'exquisite'], correct: 1, sentence: 'A beautiful sunset painted the evening sky in pink and gold.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-tired', type: 'antonym', word: 'tired', explanation: '\'Tired\' means needing rest; \'energetic\' is the opposite.', variants: [
-                { options: ['sleepy', 'energetic', 'bored', 'weary'], correct: 1 },
-                { options: ['exhausted', 'lively', 'fatigued', 'drained'], correct: 1 }
+                { options: ['sleepy', 'energetic', 'bored', 'weary'], correct: 1, sentence: 'After the long hike, the children were tired and ready for bed.', optionTags: ['close', 'correct', 'far', 'close'] },
+                { options: ['exhausted', 'lively', 'fatigued', 'drained'], correct: 1, sentence: 'The tired farmer sat down on the wall to catch his breath.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-harsh', type: 'antonym', word: 'harsh', explanation: '\'Harsh\' means severe; \'gentle\' is the opposite.', variants: [
-                { options: ['rough', 'gentle', 'severe', 'strict'], correct: 1 },
-                { options: ['rough', 'mild', 'stern', 'rigid'], correct: 1 }
+                { options: ['rough', 'gentle', 'severe', 'strict'], correct: 1, sentence: 'The harsh winter wind cut straight through their thin coats.', optionTags: ['close', 'correct', 'close', 'close'] },
+                { options: ['rough', 'mild', 'stern', 'rigid'], correct: 1, sentence: 'Her harsh voice silenced the chattering pupils at once.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-cheap', type: 'antonym', word: 'cheap', explanation: '\'Cheap\' means low in price; \'expensive\' is the opposite.', variants: [
-                { options: ['affordable', 'expensive', 'worthless', 'inexpensive'], correct: 1 },
-                { options: ['budget', 'costly', 'economical', 'reasonable'], correct: 1 }
+                { options: ['affordable', 'expensive', 'worthless', 'inexpensive'], correct: 1, sentence: 'The market sold cheap fruit on Saturdays so families could afford plenty.', optionTags: ['close', 'correct', 'far', 'close'] },
+                { options: ['budget', 'costly', 'economical', 'reasonable'], correct: 1, sentence: 'They booked a cheap hotel near the station to save money for the trip.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-strange', type: 'antonym', word: 'strange', explanation: '\'Strange\' means unusual; \'normal\' is the opposite.', variants: [
-                { options: ['unusual', 'normal', 'bizarre', 'odd'], correct: 1 },
-                { options: ['peculiar', 'common', 'weird', 'eccentric'], correct: 1 }
+                { options: ['unusual', 'normal', 'bizarre', 'odd'], correct: 1, sentence: 'A strange noise came from the attic just after midnight.', optionTags: ['close', 'correct', 'close', 'close'] },
+                { options: ['peculiar', 'common', 'weird', 'eccentric'], correct: 1, sentence: 'The old shop sold strange clocks that ticked in different rhythms.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-noisy', type: 'antonym', word: 'noisy', explanation: '\'Noisy\' means lots of sound; \'quiet\' is the opposite.', variants: [
-                { options: ['loud', 'quiet', 'rowdy', 'boisterous'], correct: 1 },
-                { options: ['thunderous', 'hushed', 'deafening', 'blaring'], correct: 1 }
+                { options: ['loud', 'quiet', 'rowdy', 'boisterous'], correct: 1, sentence: 'The classroom was noisy as everyone discussed the upcoming trip.', optionTags: ['close', 'correct', 'close', 'close'] },
+                { options: ['thunderous', 'hushed', 'deafening', 'blaring'], correct: 1, sentence: 'The noisy crowd cheered as the team scored the winning goal.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-sharp', type: 'antonym', word: 'sharp', explanation: '\'Sharp\' means fine edge; \'dull\' is the opposite.', variants: [
-                { options: ['keen', 'dull', 'pointed', 'cutting'], correct: 1 },
-                { options: ['piercing', 'blunt', 'acute', 'honed'], correct: 1 }
+                { options: ['keen', 'dull', 'pointed', 'cutting'], correct: 1, sentence: 'Be careful with the sharp knife when you slice the bread.', optionTags: ['close', 'correct', 'close', 'close'] },
+                { options: ['piercing', 'blunt', 'acute', 'honed'], correct: 1, sentence: 'The chef kept his sharp blade in a wooden block on the counter.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-victory', type: 'antonym', word: 'victory', explanation: '\'Victory\' means winning; \'defeat\' is the opposite.', variants: [
-                { options: ['win', 'defeat', 'triumph', 'success'], correct: 1 },
-                { options: ['triumph', 'loss', 'conquest', 'achievement'], correct: 1 }
+                { options: ['win', 'defeat', 'triumph', 'success'], correct: 1, sentence: 'The team celebrated their victory with cheers and a lap of honour.', optionTags: ['close', 'correct', 'close', 'close'] },
+                { options: ['triumph', 'loss', 'conquest', 'achievement'], correct: 1, sentence: 'After hours of debate, the team\'s narrow victory was finally announced.', optionTags: ['close', 'correct', 'close', 'close'] }
+            ] },
+            { id: 'antonym-ancient', type: 'antonym', word: 'ancient', explanation: '\'Ancient\' means very old, from a long time ago; \'modern\' is the opposite.', variants: [
+                { options: ['old', 'modern', 'historic', 'broken'], correct: 1, sentence: 'The museum displayed ancient pots that were thousands of years old.', optionTags: ['close', 'correct', 'close', 'far'] },
+                { options: ['antique', 'contemporary', 'aged', 'prehistoric'], correct: 1, sentence: 'The ancient ruins of the temple still stood proudly on the hilltop.', optionTags: ['close', 'correct', 'close', 'close'] }
+            ] },
+            { id: 'antonym-hollow', type: 'antonym', word: 'hollow', explanation: '\'Hollow\' means empty inside; \'solid\' is the opposite.', variants: [
+                { options: ['empty', 'solid', 'cracked', 'thin'], correct: 1, sentence: 'The squirrel made its nest inside the hollow trunk of the old tree.', optionTags: ['close', 'correct', 'far', 'far'] },
+                { options: ['vacant', 'dense', 'unfilled', 'cavernous'], correct: 1, sentence: 'A hollow drum makes a deeper sound than a solid block of wood.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] }
         ];
 
