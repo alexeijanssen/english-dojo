@@ -1391,7 +1391,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.15.0';
+        const APP_VERSION = 'v1.16.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -3236,11 +3236,11 @@
         const CLOZE_CONCEPTS = [
             { id: 'cloze-0', type: 'cloze', explanation: '\'Ferocious\' means fierce — it describes a dog that barks aggressively.', variants: [
                 { sentence: 'The _____ dog barked loudly at the postman every morning.', options: ['ferocious', 'delicious', 'precious', 'spacious'], correct: 0 },
-                { sentence: 'The _____ warrior led his army into battle with confidence.', options: ['timid', 'brave', 'lazy', 'quiet'], correct: 1 }
+                { sentence: 'A _____ tiger prowled silently through the jungle undergrowth.', options: ['timid', 'ferocious', 'cheerful', 'friendly'], correct: 1 }
             ] },
             { id: 'cloze-1', type: 'cloze', explanation: '\'Went\' is the past tense. Yesterday tells us the action already happened.', variants: [
                 { sentence: 'She _____ to the shop yesterday to buy some milk.', options: ['go', 'goes', 'went', 'going'], correct: 2 },
-                { sentence: 'He _____ his keys, so he couldn\'t open the door.', options: ['lose', 'lost', 'loses', 'losing'], correct: 1 }
+                { sentence: 'They _____ to the park last Saturday to play football.', options: ['go', 'goes', 'went', 'going'], correct: 2 }
             ] },
             { id: 'cloze-2', type: 'cloze', explanation: '\'Were\' is correct because \'children\' is plural, and the action was ongoing.', variants: [
                 { sentence: 'The children _____ playing in the park when it started to rain.', options: ['was', 'were', 'is', 'are'], correct: 1 },
@@ -3248,7 +3248,7 @@
             ] },
             { id: 'cloze-3', type: 'cloze', explanation: '\'Do\' is the present tense for \'I\'. It shows a regular habit.', variants: [
                 { sentence: 'I _____ my homework before dinner every day.', options: ['do', 'did', 'does', 'done'], correct: 0 },
-                { sentence: 'I _____ to school by bus every morning.', options: ['go', 'goes', 'went', 'going'], correct: 0 }
+                { sentence: 'I _____ the washing-up after every evening meal.', options: ['do', 'did', 'does', 'done'], correct: 0 }
             ] },
             { id: 'cloze-4', type: 'cloze', explanation: '\'Lay\' is the past tense of \'lie\'. The cat was resting on the mat.', variants: [
                 { sentence: 'The cat _____ on the mat for three hours this afternoon.', options: ['lay', 'laid', 'lain', 'lies'], correct: 0 },
@@ -3276,31 +3276,31 @@
             ] },
             { id: 'cloze-10', type: 'cloze', explanation: '\'Because\' shows a reason. We went to the beach for a reason — the weather.', variants: [
                 { sentence: 'We went to the beach _____ the weather was beautiful.', options: ['because', 'although', 'until', 'unless'], correct: 0 },
-                { sentence: 'He wanted to go out, _____ it was raining heavily.', options: ['because', 'but', 'so', 'and'], correct: 1 }
+                { sentence: 'She smiled _____ her friend had remembered her birthday.', options: ['because', 'although', 'until', 'unless'], correct: 0 }
             ] },
             { id: 'cloze-11', type: 'cloze', explanation: '\'But\' shows a contrast. The film was exciting, yet it had a problem — length.', variants: [
                 { sentence: 'The film was exciting, _____ it was quite long.', options: ['because', 'but', 'so', 'and'], correct: 1 },
-                { sentence: 'He saved his pocket money _____ he could buy a new game.', options: ['unless', 'although', 'so that', 'while'], correct: 2 }
+                { sentence: 'The cake looked delicious, _____ it tasted rather dry.', options: ['because', 'but', 'so', 'and'], correct: 1 }
             ] },
             { id: 'cloze-12', type: 'cloze', explanation: '\'So that\' shows purpose. She studied with the aim of passing the test.', variants: [
                 { sentence: 'She studied hard _____ she could pass the test.', options: ['unless', 'although', 'so that', 'while'], correct: 2 },
-                { sentence: 'You may have dessert _____ you eat your vegetables.', options: ['when', 'before', 'after', 'unless'], correct: 2 }
+                { sentence: 'He set his alarm early _____ he could catch the first train.', options: ['unless', 'although', 'so that', 'while'], correct: 2 }
             ] },
             { id: 'cloze-13', type: 'cloze', explanation: '\'After\' shows the order of events. First chores, then the park.', variants: [
                 { sentence: 'We can go to the park _____ you finish your chores first.', options: ['when', 'before', 'after', 'unless'], correct: 2 },
-                { sentence: 'She loved ice cream, _____ it made her cold.', options: ['so', 'or', 'yet', 'but'], correct: 3 }
+                { sentence: 'He watered the plants _____ returning from his long holiday.', options: ['when', 'before', 'after', 'unless'], correct: 2 }
             ] },
             { id: 'cloze-14', type: 'cloze', explanation: '\'But\' shows a contrast between what she wanted and what stopped her.', variants: [
                 { sentence: 'I wanted to play football, _____ it was raining too hard.', options: ['so', 'or', 'yet', 'but'], correct: 3 },
-                { sentence: 'The streets were empty _____ everyone was at home sleeping.', options: ['if', 'because', 'while', 'since'], correct: 1 }
+                { sentence: 'He studied all week, _____ he still found the test very difficult.', options: ['so', 'or', 'yet', 'but'], correct: 3 }
             ] },
             { id: 'cloze-15', type: 'cloze', explanation: '\'Because\' explains why the house was dark — the power cut was the reason.', variants: [
                 { sentence: 'The house was dark _____ the power had gone out.', options: ['if', 'because', 'while', 'since'], correct: 1 },
-                { sentence: 'Would you like chocolate _____ vanilla ice cream?', options: ['or', 'and', 'but', 'yet'], correct: 0 }
+                { sentence: 'The teacher praised the class _____ everyone had worked so hard.', options: ['if', 'because', 'while', 'since'], correct: 1 }
             ] },
             { id: 'cloze-16', type: 'cloze', explanation: '\'Or\' shows a choice between two options.', variants: [
                 { sentence: 'You can choose tea _____ coffee with your breakfast.', options: ['or', 'and', 'but', 'yet'], correct: 0 },
-                { sentence: 'We waited _____ the sun came up.', options: ['until', 'after', 'before', 'while'], correct: 0 }
+                { sentence: 'We will watch a film _____ play a board game after supper.', options: ['or', 'and', 'but', 'yet'], correct: 0 }
             ] },
             { id: 'cloze-17', type: 'cloze', explanation: '\'Until\' shows when the action will stop — at the final whistle.', variants: [
                 { sentence: 'The game continued _____ the final whistle blew.', options: ['until', 'after', 'before', 'while'], correct: 0 },
@@ -3734,6 +3734,14 @@
             { id: 'context-unknown-20', type: 'context-clues', targetWord: 'squander', explanation: '"Rather than squander... Oliver saved carefully" — the contrast tells us "squander" means waste recklessly.', variants: [
                 { passage: 'Rather than squander his prize money on things he didn\'t need, Oliver saved it carefully in a bank account for his future education.', question: 'What does "squander" mean?', options: ['Save carefully', 'Waste recklessly', 'Invest wisely', 'Donate'], correct: 1 },
                 { passage: 'Many lottery winners squander their winnings on luxuries and end up broke within years, instead of using the money wisely.', question: 'What does "squander" mean?', options: ['Spend carefully', 'Waste foolishly and carelessly', 'Save for later', 'Invest prudently'], correct: 1, explanation: 'Spending on luxuries and ending up broke — "squander" means to waste foolishly and carelessly.' }
+            ] },
+            { id: 'context-unknown-21', type: 'context-clues', targetWord: 'reluctant', explanation: 'Dragging her feet, pulling her arm back, and protesting — all signs of someone who does not want to do something. "Reluctant" means unwilling.', variants: [
+                { passage: 'The reluctant child dragged her feet as her mother led her towards the dentist, pulling her arm back and protesting every step of the way.', question: 'What does "reluctant" mean?', options: ['Eager and keen', 'Unwilling and hesitant', 'Excited and happy', 'Patient and calm'], correct: 1 },
+                { passage: 'He was reluctant to speak in front of the whole school, and only after many minutes of persuading did he finally agree to read his poem aloud.', question: 'What does "reluctant" mean?', options: ['Keen and willing', 'Hesitant and unwilling', 'Loud and confident', 'Sleepy and bored'], correct: 1, explanation: 'Only after many minutes of persuading did he agree — "reluctant" means hesitant and unwilling to do something.' }
+            ] },
+            { id: 'context-unknown-22', type: 'context-clues', targetWord: 'vigilant', explanation: 'Watching carefully through the night and never letting attention drift — "vigilant" means alert and watchful.', variants: [
+                { passage: 'The vigilant security guard watched the cameras carefully through the night, never once letting his attention drift from the flickering screens.', question: 'What does "vigilant" mean?', options: ['Sleepy and distracted', 'Alert and watchful', 'Kind and gentle', 'Lazy and tired'], correct: 1 },
+                { passage: 'The mother bear remained vigilant as her cubs played near the river, constantly scanning the forest for any sign of danger.', question: 'What does "vigilant" mean?', options: ['Relaxed and careless', 'Watchful and alert for danger', 'Scared and hiding', 'Asleep and dreaming'], correct: 1, explanation: 'Constantly scanning the forest for danger — "vigilant" means watchful, alert, and on guard.' }
             ] }
         ];
 
@@ -3747,8 +3755,8 @@
                 { sentence: '_____ planning to visit the museum tomorrow.', options: ['There', 'Their', 'They\'re'], correct: 2, explanation: '"They\'re" = "they are". "They are planning..."' }
             ] },
             { id: 'homophone-its-it', type: 'homophone', explanation: '"Its" (no apostrophe) shows possession. "It\'s" means "it is".', variants: [
-                { sentence: 'The dog wagged _____ tail happily.', options: ['it\'s', 'its'], correct: 1 },
-                { sentence: 'The tree lost _____ leaves in the autumn wind.', options: ['it\'s', 'its'], correct: 1, explanation: '"Its" shows possession — the leaves belong to the tree.' }
+                { sentence: 'The dog wagged _____ tail happily.', options: ['it\'s', 'its', 'their'], correct: 1 },
+                { sentence: 'The tree lost _____ leaves in the autumn wind.', options: ['it\'s', 'its', 'their'], correct: 1, explanation: '"Its" shows possession — the leaves belong to the tree.' }
             ] },
             { id: 'homophone-it-', type: 'homophone', explanation: '"It\'s" = "it is". "It is a beautiful day."', variants: [
                 { sentence: '_____ a beautiful day outside.', options: ['It\'s', 'Its'], correct: 0 },
@@ -3779,24 +3787,24 @@
                 { sentence: 'The shop is having a _____ this weekend with big discounts.', options: ['sail', 'sale'], correct: 1, explanation: '"Sale" means items are being sold at reduced prices.' }
             ] },
             { id: 'homophone-whose-who', type: 'homophone', explanation: '"Whose" shows possession (belonging to whom). "Who\'s" means "who is".', variants: [
-                { sentence: '_____ coat is hanging by the door.', options: ['Who\'s', 'Whose'], correct: 1 },
-                { sentence: '_____ shoes are these?', options: ['Who\'s', 'Whose'], correct: 1, explanation: '"Whose" asks who something belongs to.' }
+                { sentence: '_____ coat is hanging by the door.', options: ['Who\'s', 'Whose', 'Whos'], correct: 1 },
+                { sentence: '_____ shoes are these?', options: ['Who\'s', 'Whose', 'Whos'], correct: 1, explanation: '"Whose" asks who something belongs to.' }
             ] },
             { id: 'homophone-who-', type: 'homophone', explanation: '"Who\'s" = "who is". "Who is coming to the party?"', variants: [
                 { sentence: '_____ coming to the party tonight?', options: ['Who\'s', 'Whose'], correct: 0 },
                 { sentence: '_____ going to win the race?', options: ['Who\'s', 'Whose'], correct: 0, explanation: '"Who\'s" = "who is".' }
             ] },
             { id: 'homophone-path-past', type: 'homophone', explanation: '"Path" is a track or walkway. "Past" refers to time gone by or going beyond something.', variants: [
-                { sentence: 'The hikers walked along the narrow _____ through the forest.', options: ['path', 'past'], correct: 0 },
-                { sentence: 'We walked _____ the library on our way to school.', options: ['path', 'past'], correct: 1, explanation: '"Past" means beyond or by something.' }
+                { sentence: 'The hikers walked along the narrow _____ through the forest.', options: ['path', 'past', 'passed'], correct: 0 },
+                { sentence: 'We walked _____ the library on our way to school.', options: ['path', 'past', 'passed'], correct: 1, explanation: '"Past" means beyond or by something.' }
             ] },
             { id: 'homophone-whether-weather', type: 'homophone', explanation: '"Whether" introduces a choice between options. "Weather" refers to rain, sun, etc.', variants: [
-                { sentence: 'He didn\'t know _____ to wear the blue or red shirt.', options: ['weather', 'whether'], correct: 1 },
-                { sentence: 'The _____ today is cold and rainy.', options: ['whether', 'weather'], correct: 1, explanation: '"Weather" refers to atmospheric conditions like rain and temperature.' }
+                { sentence: 'He didn\'t know _____ to wear the blue or red shirt.', options: ['weather', 'whether', 'wheather'], correct: 1 },
+                { sentence: 'The _____ today is cold and rainy.', options: ['whether', 'weather', 'wheather'], correct: 1, explanation: '"Weather" refers to atmospheric conditions like rain and temperature.' }
             ] },
             { id: 'homophone-piece-peace', type: 'homophone', explanation: '"Piece" means a part of something. "Peace" means calm or the absence of war.', variants: [
-                { sentence: 'The _____ of the poem was very moving.', options: ['piece', 'peace'], correct: 0 },
-                { sentence: 'She wanted a _____ of cake after dinner.', options: ['peace', 'piece'], correct: 1, explanation: '"Piece" means a part or portion of something.' }
+                { sentence: 'The _____ of the poem was very moving.', options: ['piece', 'peace', 'peas'], correct: 0 },
+                { sentence: 'She wanted a _____ of cake after dinner.', options: ['peace', 'piece', 'peas'], correct: 1, explanation: '"Piece" means a part or portion of something.' }
             ] },
             { id: 'homophone-peace-piece', type: 'homophone', explanation: '"Peace" means calm or the absence of conflict. "Piece" means a part of something.', variants: [
                 { sentence: 'After the war ended, the country was finally at _____.', options: ['piece', 'peace'], correct: 1 },
@@ -3819,7 +3827,7 @@
                 { sentence: 'Does the loud noise _____ your concentration?', options: ['effect', 'affect'], correct: 1, explanation: '"Affect" means to influence or impact.' }
             ] },
             { id: 'homophone-presents-presence', type: 'homophone', explanation: '"Presents" means gifts. "Presence" means being somewhere (your presence in the room).', variants: [
-                { sentence: 'She received a lovely _____ from her grandmother.', options: ['presence', 'presents'], correct: 1 },
+                { sentence: 'She received some lovely _____ from her grandmother.', options: ['presence', 'presents'], correct: 1 },
                 { sentence: 'Your _____ at the party was much appreciated.', options: ['presents', 'presence'], correct: 1, explanation: '"Presence" means being there or existing in a place.' }
             ] },
             { id: 'homophone-past-passed', type: 'homophone', explanation: '"Past" (preposition) = beyond a point. "Passed" (verb) = went by or succeeded. "Paced" (verb) = walked back and forth.', variants: [
@@ -4776,12 +4784,12 @@
                     questionText.textContent = 'Which word is closest in meaning (synonym) to:';
                 } else {
                     // Level 3: full Jargon Rule — gated on meta-concept state
+                    // Once at Level 3 the jargon term is always introduced (in brackets
+                    // if not yet fluent, on its own once fluent/lapsed).
                     if (metaSynonymState === 'fluent' || metaSynonymState === 'lapsed') {
                         questionText.textContent = 'What is the synonym of:';
-                    } else if (metaSynonymState === 'fragile') {
-                        questionText.textContent = 'Which word is closest in meaning (synonym) to:';
                     } else {
-                        questionText.textContent = 'Which word is closest in meaning to:';
+                        questionText.textContent = 'Which word is closest in meaning (synonym) to:';
                     }
                 }
                 console.log('[Gradient] renderSynonymQuestion → concept=' + item.id + ' level=' + scaffoldLevel + ' meta=' + metaSynonymState);
@@ -4823,12 +4831,12 @@
                     questionText.textContent = 'Which word is opposite in meaning (antonym) to:';
                 } else {
                     // Level 3: full Jargon Rule — gated on meta-concept state
+                    // Once at Level 3 the jargon term is always introduced (in brackets
+                    // if not yet fluent, on its own once fluent/lapsed).
                     if (metaAntonymState === 'fluent' || metaAntonymState === 'lapsed') {
                         questionText.textContent = 'What is the antonym of:';
-                    } else if (metaAntonymState === 'fragile') {
-                        questionText.textContent = 'Which word is opposite in meaning (antonym) to:';
                     } else {
-                        questionText.textContent = 'Which word is opposite in meaning to:';
+                        questionText.textContent = 'Which word is opposite in meaning (antonym) to:';
                     }
                 }
                 console.log('[Gradient] renderAntonymQuestion → concept=' + item.id + ' level=' + scaffoldLevel + ' meta=' + metaAntonymState);
@@ -5018,7 +5026,7 @@
 
                 const label = document.createElement('div');
                 label.className = 'feedback-label';
-                label.textContent = isSlowCorrect ? 'Correct — but try to be quicker!' : (isCorrect ? 'Correct!' : 'Incorrect');
+                label.textContent = isSlowCorrect ? 'Correct! Keep practising — recall will come faster.' : (isCorrect ? 'Correct!' : 'Incorrect');
                 feedback.appendChild(label);
 
                 // Special handling for spelling questions with visual diff
