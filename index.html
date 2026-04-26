@@ -1391,7 +1391,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.19.0';
+        const APP_VERSION = 'v1.20.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -3432,19 +3432,19 @@
             ] },
             { id: 'cloze-48', type: 'cloze', explanation: '\'Peak\' is the highest point of a mountain.', variants: [
                 { sentence: 'The _____ of the mountain was covered in snow.', options: ['base', 'peak', 'slope', 'valley'], correct: 1 },
-                { sentence: 'The _____ velvet cushion felt comfortable to sit on.', options: ['rough', 'soft', 'sharp', 'scratchy'], correct: 1 }
+                { sentence: 'The flag was planted at the very _____ of the mountain after the long climb.', options: ['base', 'peak', 'slope', 'valley'], correct: 1 }
             ] },
             { id: 'cloze-49', type: 'cloze', explanation: '\'Soft\' describes something pleasant to touch, like a scarf.', variants: [
                 { sentence: 'She wore a _____ scarf around her neck.', options: ['rough', 'soft', 'sharp', 'bitter'], correct: 1 },
-                { sentence: 'The _____ flew across the sky making a beautiful sound.', options: ['cat', 'bird', 'fish', 'dog'], correct: 1 }
+                { sentence: 'The mother sang in a _____ voice to help the baby fall asleep peacefully.', options: ['rough', 'soft', 'sharp', 'bitter'], correct: 1 }
             ] },
             { id: 'cloze-50', type: 'cloze', explanation: '\'Dog\' is the animal that barks.', variants: [
                 { sentence: 'The _____ barked when someone knocked on the door.', options: ['cat', 'bird', 'dog', 'fish'], correct: 2 },
-                { sentence: 'She _____ the book in one evening because she loved the story.', options: ['read', 'wrote', 'burned', 'lost'], correct: 0 }
+                { sentence: 'The _____ wagged its tail and licked her hand when she came home.', options: ['cat', 'bird', 'dog', 'fish'], correct: 2 }
             ] },
             { id: 'cloze-51', type: 'cloze', explanation: '\'Read\' means to look at and understand written words.', variants: [
                 { sentence: 'He _____ the letter carefully before sending it.', options: ['read', 'wrote', 'tore', 'lost'], correct: 0 },
-                { sentence: 'She _____ across the lake to reach the island.', options: ['walked', 'played', 'swam', 'ran'], correct: 2 }
+                { sentence: 'Last night she _____ every word of the long letter from her grandmother carefully.', options: ['read', 'wrote', 'tore', 'lost'], correct: 0 }
             ] },
             { id: 'cloze-52', type: 'cloze', explanation: '\'Swam\' means moved through water using arms and legs.', variants: [
                 { sentence: 'The children _____ in the shallow end of the swimming pool.', options: ['walked', 'played', 'swam', 'slept'], correct: 2 },
@@ -3564,6 +3564,10 @@
             { id: 'synonym-abundant', type: 'synonym', word: 'abundant', explanation: '\'Abundant\' and \'plentiful\' both mean there is a very large supply — much more than enough.', variants: [
                 { options: ['scarce', 'plentiful', 'small', 'frequent'], correct: 1, sentence: 'The river valley had abundant wildlife including deer, otters and many kinds of birds.', optionTags: ['far', 'correct', 'far', 'close'] },
                 { options: ['plentiful', 'generous', 'frequent', 'rich'], correct: 0, sentence: 'The orchard produced abundant fruit every autumn thanks to the good summer weather.', optionTags: ['correct', 'close', 'close', 'close'] }
+            ] },
+            { id: 'synonym-flourish', type: 'synonym', word: 'flourish', explanation: '\'Flourish\' and \'thrive\' both mean to grow strongly and do well.', variants: [
+                { options: ['bloom', 'thrive', 'wither', 'shrink'], correct: 1, sentence: 'The plants began to flourish in the warm summer sun and rich garden soil.', optionTags: ['close', 'correct', 'far', 'far'] },
+                { options: ['prosper', 'thrive', 'bloom', 'succeed'], correct: 1, sentence: 'Small businesses can flourish when local customers shop in their neighbourhood instead of online.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] }
         ];
 
@@ -3832,7 +3836,7 @@
             ] },
             { id: 'homophone-affect-effect', type: 'homophone', explanation: '"Affect" (verb) = to influence or have an impact on. "Effect" (noun) = a result.', variants: [
                 { sentence: 'The cold weather will _____ the crops.', options: ['affect', 'effect', 'afect'], correct: 0 },
-                { sentence: 'Does the loud noise _____ your concentration?', options: ['effect', 'affect', 'afect'], correct: 1, explanation: '"Affect" means to influence or impact.' }
+                { sentence: 'The new law had a positive _____ on the local community.', options: ['effect', 'affect', 'afect'], correct: 0, explanation: '"Effect" (noun) is the result or consequence of something.' }
             ] },
             { id: 'homophone-presents-presence', type: 'homophone', explanation: '"Presents" means gifts. "Presence" means being somewhere (your presence in the room).', variants: [
                 { sentence: 'She received some lovely _____ from her grandmother.', options: ['presence', 'presents', 'presense'], correct: 1 },
