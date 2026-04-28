@@ -1391,7 +1391,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.21.0';
+        const APP_VERSION = 'v1.22.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -3568,6 +3568,10 @@
             { id: 'synonym-flourish', type: 'synonym', word: 'flourish', explanation: '\'Flourish\' and \'thrive\' both mean to grow strongly and do well.', variants: [
                 { options: ['bloom', 'thrive', 'wither', 'shrink'], correct: 1, sentence: 'The plants began to flourish in the warm summer sun and rich garden soil.', optionTags: ['close', 'correct', 'far', 'far'] },
                 { options: ['prosper', 'thrive', 'bloom', 'succeed'], correct: 1, sentence: 'Small businesses can flourish when local customers shop in their neighbourhood instead of online.', optionTags: ['close', 'correct', 'close', 'close'] }
+            ] },
+            { id: 'synonym-nimble', type: 'synonym', word: 'nimble', explanation: '\'Nimble\' and \'agile\' both mean able to move quickly and easily, with skill and balance.', variants: [
+                { options: ['clumsy', 'agile', 'heavy', 'graceful'], correct: 1, sentence: 'The nimble cat leapt easily from one rooftop to another without making a sound.', optionTags: ['far', 'correct', 'far', 'close'] },
+                { options: ['quick', 'graceful', 'agile', 'dexterous'], correct: 2, sentence: 'The nimble pianist\'s fingers raced across the keys with perfect skill and timing.', optionTags: ['close', 'close', 'correct', 'close'] }
             ] }
         ];
 
