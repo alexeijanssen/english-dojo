@@ -1391,7 +1391,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.22.0';
+        const APP_VERSION = 'v1.23.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -3667,6 +3667,10 @@
             { id: 'antonym-diligent', type: 'antonym', word: 'diligent', explanation: '\'Diligent\' means hardworking and careful; \'lazy\' is the opposite.', variants: [
                 { options: ['hardworking', 'lazy', 'happy', 'tall'], correct: 1, sentence: 'The diligent student finished every piece of homework before dinner each evening.', optionTags: ['close', 'correct', 'far', 'far'] },
                 { options: ['industrious', 'lazy', 'conscientious', 'hardworking'], correct: 1, sentence: 'A diligent farmer tended every row of crops from dawn until the sun set.', optionTags: ['close', 'correct', 'close', 'close'] }
+            ] },
+            { id: 'antonym-cautious', type: 'antonym', word: 'cautious', explanation: '\'Cautious\' means careful and watchful; \'reckless\' is the opposite.', variants: [
+                { options: ['careful', 'reckless', 'tall', 'flat'], correct: 1, sentence: 'The cautious driver slowed down before the icy bend in the road.', optionTags: ['close', 'correct', 'far', 'far'] },
+                { options: ['prudent', 'reckless', 'careful', 'attentive'], correct: 1, sentence: 'A cautious investor checks every detail before deciding where to put her money.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] }
         ];
 
@@ -3800,7 +3804,7 @@
             ] },
             { id: 'homophone-wrote-rote', type: 'homophone', explanation: '"Wrote" is past tense of "write". "Rote" means learning by repetition.', variants: [
                 { sentence: 'She _____ the letter and posted it immediately.', options: ['wrote', 'rote', 'writen'], correct: 0 },
-                { sentence: 'He memorised the poem by _____, repeating it over and over.', options: ['wrote', 'rote', 'writen'], correct: 1, explanation: '"Rote" means mechanical memorisation by repetition.' }
+                { sentence: 'He memorised the poem by _____, repeating it over and over.', options: ['wrote', 'rote', 'roat'], correct: 1, explanation: '"Rote" means mechanical memorisation by repetition.' }
             ] },
             { id: 'homophone-sail-sale', type: 'homophone', explanation: '"Sail" is what a ship does. "Sale" is when items are sold cheaply.', variants: [
                 { sentence: 'The ship set _____ across the ocean at dawn.', options: ['sale', 'sail', 'sayle'], correct: 1 },
@@ -4549,8 +4553,12 @@
                 const { variants, ...conceptFields } = concept;
                 const result = { ...conceptFields, ...variants[variantIdx] };
 
-                // For single-variant repeats, shuffle the options so the answer isn't in the same position
-                if (numVariants === 1 && variantsUsed.length > 0 && result.options && result.options.length > 2) {
+                // Shuffle options on EVERY call so the correct answer's position is non-deterministic.
+                // Bank-wide correct-position bias (antonym 98% pos-1, punctuation 75% pos-0, etc.) made
+                // accuracy data uninterpretable when authored positions clustered at indices 0 or 1.
+                // Fisher-Yates over a copy of result.options; correct index re-derived from the pre-shuffle
+                // correct-answer string so the renderer's lookup keeps pointing at the same option.
+                if (result.options && result.options.length > 1) {
                     const correctAnswer = result.options[result.correct];
                     // Fisher-Yates shuffle
                     const shuffled = [...result.options];
@@ -4560,7 +4568,15 @@
                     }
                     result.options = shuffled;
                     result.correct = shuffled.indexOf(correctAnswer);
-                    console.log('[Variant] Shuffled distractors for', item.id, '→ correct now at index', result.correct);
+                    if (result.optionTags && result.optionTags.length === shuffled.length) {
+                        // optionTags must travel with the options; the renderer keys 'correct' off optionTags
+                        // for the close/correct/far distractor-density signal. Re-permute by string lookup
+                        // against the pre-shuffle options so each tag stays paired to its option string.
+                        const originalOptions = concept.variants[variantIdx].options;
+                        const originalTags = concept.variants[variantIdx].optionTags;
+                        result.optionTags = shuffled.map(opt => originalTags[originalOptions.indexOf(opt)]);
+                    }
+                    console.log('[Shuffle] Options shuffled for', item.id, '→ correct now at index', result.correct);
                 }
 
                 return result;
