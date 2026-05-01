@@ -1391,7 +1391,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.23.0';
+        const APP_VERSION = 'v1.24.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -3766,6 +3766,10 @@
             { id: 'context-unknown-23', type: 'context-clues', targetWord: 'obstinate', explanation: 'Refusing to change his mind despite all the evidence and pleading — "obstinate" means stubborn and unwilling to budge.', variants: [
                 { passage: 'The obstinate boy refused to change his mind, even when his friends showed him the evidence and begged him to listen.', question: 'What does "obstinate" mean?', options: ['Easily persuaded', 'Stubborn and unwilling to change', 'Cheerful and friendly', 'Quick and energetic'], correct: 1 },
                 { passage: 'The obstinate mule planted its hooves firmly in the mud and would not move forward, no matter how hard the farmer pulled the rope.', question: 'What does "obstinate" mean?', options: ['Cooperative and helpful', 'Determined to refuse and not give in', 'Tired and weak', 'Frightened and shy'], correct: 1, explanation: 'Refusing to budge no matter how hard the farmer pulled — "obstinate" means stubborn and refusing to give way.' }
+            ] },
+            { id: 'context-unknown-24', type: 'context-clues', targetWord: 'astute', explanation: 'Spotting the small clue everyone else had missed and using it to solve the case — "astute" means perceptive and sharp-witted.', variants: [
+                { passage: 'The astute detective noticed the tiny scratch on the door handle that everyone else had walked past, and within minutes she had worked out how the thief had broken in.', question: 'What does "astute" mean?', options: ['Sharp-witted and observant', 'Slow and careless', 'Friendly and chatty', 'Tired and forgetful'], correct: 0 },
+                { passage: 'Her astute reading of the chess board allowed her to see three moves ahead, and she trapped her opponent’s queen before he had even noticed the danger.', question: 'What does "astute" mean?', options: ['Lucky and hopeful', 'Confused and unsure', 'Polite and quiet', 'Clever and quick to understand'], correct: 3, explanation: 'Reading the board and spotting danger three moves ahead — "astute" means clever, perceptive, and quick to grasp what others miss.' }
             ] }
         ];
 
@@ -3885,6 +3889,10 @@
             { id: 'homophone-write-right', type: 'homophone', explanation: '"Write" means to make marks (letters or words) on paper or a screen. "Right" means correct (or the opposite of left).', variants: [
                 { sentence: 'Please _____ your full name clearly at the top of the test paper.', options: ['write', 'right', 'rite'], correct: 0 },
                 { sentence: 'I need a pencil so I can _____ down the homework instructions.', options: ['write', 'right', 'rite'], correct: 0, explanation: '"Write" is the verb for putting words onto paper.' }
+            ] },
+            { id: 'homophone-right-write', type: 'homophone', explanation: '"Right" means correct, or the opposite of left. "Write" means to put words on paper.', variants: [
+                { sentence: 'She got every answer _____ on the spelling test and earned a gold star.', options: ['right', 'write', 'rite'], correct: 0 },
+                { sentence: 'Turn _____ at the end of the road and the school is on your left.', options: ['rite', 'write', 'right'], correct: 2, explanation: '"Right" here means the opposite of left — a direction.' }
             ] }
         ];
 
@@ -4609,7 +4617,7 @@
                 } else if (item.type === 'comprehension') {
                     this.renderComprehensionQuestion(container, question);
                 } else if (item.type === 'cloze') {
-                    this.renderClozeQuestion(container, question);
+                    this.renderClozeQuestion(container, question, item);
                 } else if (item.type === 'synonym') {
                     this.renderSynonymQuestion(container, question, item);
                 } else if (item.type === 'antonym') {
@@ -4789,7 +4797,23 @@
                 container.appendChild(options);
             }
 
-            renderClozeQuestion(container, question) {
+            renderClozeQuestion(container, question, item) {
+                // Scaffolding Gradient Phase 3 (kickoff): cloze becomes scaffoldLevel-aware.
+                // Level 1: instructional hint above the cloze stem (max support, plain English).
+                // Level 2 (default): no hint — current rendering preserved bit-for-bit.
+                // Level 3: no hint — matches Level 2 visually for now; future Thursdays will
+                //          add scaffolds (e.g. distractor closeness via optionTags) once cloze
+                //          variants carry that data. Mirrors the synonym/antonym precedent.
+                const scaffoldLevel = (item && typeof item.scaffoldLevel === 'number') ? item.scaffoldLevel : 2;
+
+                if (scaffoldLevel <= 1) {
+                    const hint = document.createElement('div');
+                    hint.className = 'scaffold-hint';
+                    hint.style.cssText = 'background: rgba(108, 92, 231, 0.10); padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-style: italic; color: #2d3436;';
+                    hint.textContent = 'Pick the word that best fits the sentence.';
+                    container.appendChild(hint);
+                }
+
                 const sentence = document.createElement('div');
                 sentence.className = 'cloze-sentence';
                 const parts = question.sentence.split('_____');
@@ -4805,6 +4829,8 @@
                 questionText.className = 'question-text';
                 questionText.textContent = 'Complete the sentence:';
                 container.appendChild(questionText);
+
+                console.log('[Gradient] renderClozeQuestion → concept=' + (item ? item.id : 'unknown') + ' level=' + scaffoldLevel);
 
                 const options = document.createElement('div');
                 options.className = 'options';
