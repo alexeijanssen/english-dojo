@@ -1391,7 +1391,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.25.0';
+        const APP_VERSION = 'v1.25.1';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -1728,7 +1728,7 @@
                             }
                         }
                         if (migrationCount > 0) {
-                            console.log('[Migration] Migrated', migrationCount, 'items from index-based to stable IDs');
+                            console.log('[Migration] Changed', migrationCount, 'items in items map (renamed or pruned)');
                             // Persist migrated IDs immediately so old IDs don't resurface
                             localStorage.setItem(ITEMS_KEY, JSON.stringify(migrated));
                             // Schedule cloud sync after engine init (saveToCloud may not be ready yet)
