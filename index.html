@@ -1391,7 +1391,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.25.1';
+        const APP_VERSION = 'v1.26.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -3588,6 +3588,10 @@
             { id: 'synonym-nimble', type: 'synonym', word: 'nimble', explanation: '\'Nimble\' and \'agile\' both mean able to move quickly and easily, with skill and balance.', variants: [
                 { options: ['clumsy', 'agile', 'heavy', 'graceful'], correct: 1, sentence: 'The nimble cat leapt easily from one rooftop to another without making a sound.', optionTags: ['far', 'correct', 'far', 'close'] },
                 { options: ['quick', 'graceful', 'agile', 'dexterous'], correct: 2, sentence: 'The nimble pianist\'s fingers raced across the keys with perfect skill and timing.', optionTags: ['close', 'close', 'correct', 'close'] }
+            ] },
+            { id: 'synonym-examine', type: 'synonym', word: 'examine', explanation: '\'Examine\' and \'scrutinise\' both mean to look at something very carefully and closely.', variants: [
+                { options: ['scrutinise', 'glance', 'permit', 'gather'], correct: 0, sentence: 'The detective went to examine the evidence carefully under the bright laboratory light.', optionTags: ['correct', 'close', 'far', 'far'] },
+                { options: ['notice', 'glance', 'investigate', 'permit'], correct: 2, sentence: 'Scientists must examine each plant sample under a microscope before recording their findings.', optionTags: ['close', 'close', 'correct', 'far'] }
             ] }
         ];
 
@@ -3682,11 +3686,11 @@
             ] },
             { id: 'antonym-diligent', type: 'antonym', word: 'diligent', explanation: '\'Diligent\' means hardworking and careful; \'lazy\' is the opposite.', variants: [
                 { options: ['hardworking', 'lazy', 'happy', 'tall'], correct: 1, sentence: 'The diligent student finished every piece of homework before dinner each evening.', optionTags: ['close', 'correct', 'far', 'far'] },
-                { options: ['industrious', 'lazy', 'conscientious', 'hardworking'], correct: 1, sentence: 'A diligent farmer tended every row of crops from dawn until the sun set.', optionTags: ['close', 'correct', 'close', 'close'] }
+                { options: ['industrious', 'indolent', 'conscientious', 'hardworking'], correct: 1, sentence: 'A diligent farmer tended every row of crops from dawn until the sun set.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-cautious', type: 'antonym', word: 'cautious', explanation: '\'Cautious\' means careful and watchful; \'reckless\' is the opposite.', variants: [
                 { options: ['careful', 'reckless', 'tall', 'flat'], correct: 1, sentence: 'The cautious driver slowed down before the icy bend in the road.', optionTags: ['close', 'correct', 'far', 'far'] },
-                { options: ['prudent', 'reckless', 'careful', 'attentive'], correct: 1, sentence: 'A cautious investor checks every detail before deciding where to put her money.', optionTags: ['close', 'correct', 'close', 'close'] }
+                { options: ['prudent', 'rash', 'careful', 'attentive'], correct: 1, sentence: 'A cautious investor checks every detail before deciding where to put her money.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] }
         ];
 
