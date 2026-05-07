@@ -1391,7 +1391,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.28.0';
+        const APP_VERSION = 'v1.29.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -2894,7 +2894,7 @@
                 { sentence: 'He wanted to stay longer but he couldnt miss the bus home.', options: ['He wanted to stay longer, but he couldn\'t miss the bus home.', 'He wanted to stay longer but he couldn\'t miss, the bus home.', 'He wanted to stay longer, but he couldnt miss the bus home.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-7', type: 'punctuation', explanation: '\'Whispers\' is just plural — no apostrophe needed.', variants: [
-                { sentence: 'whispers seemed to echo in the darkness.', options: ['whisper\'s seemed to echo in the darkness.', 'whispers\' seemed to echo in the darkness.', 'whispers seemed to echo in the darkness.', 'No change needed'], correct: 3 },
+                { sentence: 'whispers seemed to echo in the darkness.', options: ['whisper\'s seemed to echo in the darkness.', 'whispers\' seemed to echo in the darkness.', 'whisperses seemed to echo in the darkness.', 'No change needed'], correct: 3 },
                 { sentence: 'The student\'s were excited about the school trip.', options: ['The students were excited about the school trip.', 'The student\'s were excited about the school trip.', 'The students\' were excited about the school trip.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-8', type: 'punctuation', explanation: '\'Boy\'s\' = one boy. \'Boys\'\' = several boys.', variants: [
@@ -4638,7 +4638,7 @@
                 } else if (item.type === 'spelling') {
                     this.renderSpellingQuestion(container, question);
                 } else if (item.type === 'punctuation') {
-                    this.renderPunctuationQuestion(container, question);
+                    this.renderPunctuationQuestion(container, question, item);
                 } else if (item.type === 'comprehension') {
                     this.renderComprehensionQuestion(container, question);
                 } else if (item.type === 'cloze') {
@@ -4751,7 +4751,7 @@
                 container.appendChild(options);
             }
 
-            renderPunctuationQuestion(container, question) {
+            renderPunctuationQuestion(container, question, item) {
                 // v1.25.0: renderer trusts the engine. The pre-Build-#21 strip-and-remap
                 // ("Drop 'No change needed' / map correct → question.sentence") was a
                 // defensive measure for an engine that couldn't shuffle options without
@@ -4761,6 +4761,20 @@
                 // mirroring renderComprehensionQuestion / renderClozeQuestion / renderHomophoneQuestion.
                 // This restores "No change needed" as a selectable option — including
                 // when it IS the marked-correct answer (e.g. punctuation-15 variant 0).
+                // Build #29 (v1.29.0): Scaffolding Gradient Phase 3 — punctuation is now
+                // scaffoldLevel-aware. Level 1 prepends an instructional hint above the
+                // stem; Level 2 (default) and Level 3 render bit-for-bit as before.
+                // Mirrors renderClozeQuestion's Build #22 pattern.
+                const scaffoldLevel = (item && typeof item.scaffoldLevel === 'number') ? item.scaffoldLevel : 2;
+
+                if (scaffoldLevel <= 1) {
+                    const hint = document.createElement('div');
+                    hint.className = 'scaffold-hint';
+                    hint.style.cssText = 'background: rgba(108, 92, 231, 0.10); padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-style: italic; color: #2d3436;';
+                    hint.textContent = 'Pick the version with the correct punctuation.';
+                    container.appendChild(hint);
+                }
+
                 const questionText = document.createElement('div');
                 questionText.className = 'question-text';
                 questionText.textContent = 'Which sentence is correctly punctuated?';
