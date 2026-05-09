@@ -1391,7 +1391,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.29.0';
+        const APP_VERSION = 'v1.30.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -3593,6 +3593,10 @@
             { id: 'synonym-examine', type: 'synonym', word: 'examine', explanation: '\'Examine\' and \'scrutinise\' both mean to look at something very carefully and closely.', variants: [
                 { options: ['scrutinise', 'glance', 'permit', 'gather'], correct: 0, sentence: 'The detective went to examine the evidence carefully under the bright laboratory light.', optionTags: ['correct', 'close', 'far', 'far'] },
                 { options: ['notice', 'glance', 'investigate', 'permit'], correct: 2, sentence: 'Scientists must examine each plant sample under a microscope before recording their findings.', optionTags: ['close', 'close', 'correct', 'far'] }
+            ] },
+            { id: 'synonym-swift', type: 'synonym', word: 'swift', explanation: '\'Swift\' and \'rapid\' both mean very quick or fast in motion.', variants: [
+                { options: ['slow', 'rapid', 'gentle', 'silent'], correct: 1, sentence: 'The swift current of the river carried the wooden boat downstream towards the bridge.', optionTags: ['far', 'correct', 'close', 'far'] },
+                { options: ['speedy', 'careful', 'late', 'noisy'], correct: 0, sentence: 'The swift rescue team reached the stranded climbers before the storm broke over the mountain.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] }
         ];
 
