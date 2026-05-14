@@ -1379,7 +1379,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.30.4';
+        const APP_VERSION = 'v1.31.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -1965,6 +1965,17 @@
                     return arr;
                 };
                 shuffle(unseen);
+
+                // Meta-jargon coverage gate (Goal #1, option b — ensure-≥1-per-sample):
+                // If the unseen pool contains any meta concept, hoist one to the front so
+                // it enters this session's new-material slot. Meta concepts must reach
+                // `fragile` state to gate Level-3 jargon-aware renderers (Jargon Rule).
+                // No-op when no meta concepts remain unseen — proportionate, not aggressive.
+                const metaIdx = unseen.findIndex(([, item]) => item.type === 'meta');
+                if (metaIdx > 0) {
+                    const [metaEntry] = unseen.splice(metaIdx, 1);
+                    unseen.unshift(metaEntry);
+                }
 
                 // Build the queue: alternate between unseen and least-seen for variety
                 const queue = [];
