@@ -1379,7 +1379,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.31.0';
+        const APP_VERSION = 'v1.32.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -2104,6 +2104,21 @@
                 const item = this.items[itemId];
                 if (!item) return;
 
+                // Phase 4 (Scaffolding Gradient): Fluent gating on Level-3 success.
+                // Capture the scaffoldLevel the question was rendered at BEFORE any
+                // gradient updates below mutate it. If the child got a correct answer
+                // at Level 3 (GL exam standard) on a synonym/antonym concept, record
+                // it so the Fragile → Fluent gate in updateItemState() can fire.
+                // Other types unaffected. Legacy items default to falsy; the flag is
+                // round-tripped by the existing items-map serialise/deserialise path,
+                // so no ID_MIGRATION entry is needed.
+                const renderedScaffoldLevel = (typeof item.scaffoldLevel === 'number')
+                    ? item.scaffoldLevel
+                    : ((item.state === 'fluent') ? 3 : 1);
+                if (isCorrect && renderedScaffoldLevel === 3 && (item.type === 'synonym' || item.type === 'antonym')) {
+                    item.level3CorrectSeen = true;
+                }
+
                 // Latency floor and ceiling — filter out accidental clicks and tab-switches
                 const LATENCY_FLOOR = 1500;   // 1.5s — too fast to have read the question
                 const LATENCY_CEILING = 120000; // 120s — likely tab-switched or walked away
@@ -2246,8 +2261,15 @@
                             if (!item.promotionSessions.includes(sessionId)) {
                                 item.promotionSessions.push(sessionId);
                             }
+                            // Phase 4 gate: synonym + antonym can only promote to Fluent
+                            // if a Level-3 (GL exam standard) correct has been recorded
+                            // on this concept. Pre-existing Fluent items are grandfathered
+                            // (gate fires only at the Fragile → Fluent boundary going
+                            // forward). Other types are unaffected.
+                            const phase4Gated = (item.type === 'synonym' || item.type === 'antonym');
+                            const phase4Pass = !phase4Gated || item.level3CorrectSeen === true;
                             // Fragile → Fluent: 3+ consecutive correct across 2+ distinct sessions, with fast latency
-                            if (item.consecutiveCorrect >= 3 && item.promotionSessions.length >= 2) {
+                            if (item.consecutiveCorrect >= 3 && item.promotionSessions.length >= 2 && phase4Pass) {
                                 item.state = 'fluent';
                                 item.promotionSessions = [];
                             }
@@ -3499,11 +3521,11 @@
         const SYNONYM_CONCEPTS = [
             { id: 'synonym-happy', type: 'synonym', word: 'happy', explanation: '\'Happy\' and \'joyful\' both mean feeling pleased and cheerful.', variants: [
                 { options: ['sad', 'joyful', 'angry', 'tired'], correct: 1, sentence: 'Maya was happy when her grandmother arrived for the weekend visit.', optionTags: ['far', 'correct', 'far', 'far'] },
-                { options: ['joyful', 'miserable', 'grumpy', 'sad'], correct: 0, sentence: 'A happy crowd waved flags as the parade marched down the street.', optionTags: ['correct', 'far', 'far', 'far'] }
+                { options: ['jubilant', 'miserable', 'grumpy', 'sad'], correct: 0, sentence: 'A happy crowd waved flags as the parade marched down the street.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-angry', type: 'synonym', word: 'angry', explanation: '\'Angry\' and \'furious\' both mean very upset or cross.', variants: [
                 { options: ['calm', 'furious', 'happy', 'bored'], correct: 1, sentence: 'The teacher grew angry when nobody had finished their homework.', optionTags: ['far', 'correct', 'far', 'far'] },
-                { options: ['furious', 'cheerful', 'peaceful', 'content'], correct: 0, sentence: 'She felt angry that her bicycle had been left out in the rain.', optionTags: ['correct', 'far', 'far', 'far'] }
+                { options: ['enraged', 'cheerful', 'peaceful', 'content'], correct: 0, sentence: 'She felt angry that her bicycle had been left out in the rain.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-big', type: 'synonym', word: 'big', explanation: '\'Big\' and \'enormous\' both mean very large in size.', variants: [
                 { options: ['small', 'enormous', 'tiny', 'bright'], correct: 1, sentence: 'A big lorry blocked the narrow lane outside the village shop.', optionTags: ['far', 'correct', 'far', 'far'] },
@@ -4661,7 +4683,7 @@
                 } else if (item.type === 'context-clues') {
                     this.renderContextCluesQuestion(container, question);
                 } else if (item.type === 'homophone') {
-                    this.renderHomophoneQuestion(container, question);
+                    this.renderHomophoneQuestion(container, question, item);
                 } else if (item.type === 'meta') {
                     this.renderMetaQuestion(container, question);
                 }
@@ -5004,7 +5026,21 @@
                 container.appendChild(options);
             }
 
-            renderHomophoneQuestion(container, question) {
+            renderHomophoneQuestion(container, question, item) {
+                // Build #38 (v1.32.0): Scaffolding Gradient Phase 3 — homophone is now
+                // scaffoldLevel-aware. Level 1 prepends an instructional hint above the
+                // stem; Level 2 (default) and Level 3 render bit-for-bit as before.
+                // Mirrors Build #22 (cloze) and Build #29 (punctuation) precedents.
+                const scaffoldLevel = (item && typeof item.scaffoldLevel === 'number') ? item.scaffoldLevel : 2;
+
+                if (scaffoldLevel <= 1) {
+                    const hint = document.createElement('div');
+                    hint.className = 'scaffold-hint';
+                    hint.style.cssText = 'background: rgba(108, 92, 231, 0.10); padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-style: italic; color: #2d3436;';
+                    hint.textContent = 'Pick the word that sounds the same but means something different.';
+                    container.appendChild(hint);
+                }
+
                 const questionText = document.createElement('div');
                 questionText.className = 'question-text';
                 questionText.textContent = 'Choose the correct word to complete the sentence:';
