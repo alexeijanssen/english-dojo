@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>11 Plus Dojo</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -617,7 +617,7 @@
         /* Developer Feedback Bar */
         .dev-feedback-bar {
             position: fixed;
-            bottom: 0;
+            bottom: env(safe-area-inset-bottom, 0);
             left: 0;
             right: 0;
             background: rgba(15, 15, 26, 0.95);
@@ -1148,6 +1148,7 @@
             font-size: 0.9em;
             transition: all 0.3s ease;
             margin-top: 20px;
+            min-height: 44px;
         }
 
         .btn-signout:hover {
@@ -1366,7 +1367,7 @@
     </div>
 
     <!-- Persistent version tag — always visible, every screen -->
-    <div id="persistentVersion" style="position: fixed; bottom: 6px; left: 10px; font-size: 0.6em; color: #6c5ce7; opacity: 0.35; pointer-events: none; z-index: 9999; font-family: monospace;"></div>
+    <div id="persistentVersion" style="position: fixed; bottom: calc(6px + env(safe-area-inset-bottom, 0px)); left: 10px; font-size: 0.6em; color: #6c5ce7; opacity: 0.35; pointer-events: none; z-index: 9999; font-family: monospace;"></div>
 
     <!-- Developer Feedback Bar (only visible when dev account logged in) -->
     <div class="dev-feedback-bar" id="devFeedbackBar">
@@ -1379,7 +1380,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.32.0';
+        const APP_VERSION = 'v1.32.1';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
