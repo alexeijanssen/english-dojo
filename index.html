@@ -1380,7 +1380,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.32.1';
+        const APP_VERSION = 'v1.32.2';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -2923,7 +2923,7 @@
                 { sentence: 'The boys football boots were covered in mud after the match.', options: ['The boy\'s football boots were covered in mud after the match.', 'The boys\' football boots were covered in mud after the match.', 'Either A or B could be correct, depending on meaning.', 'No change needed'], correct: 2 },
                 { sentence: 'The dogs collar was blue and white.', options: ['The dog\'s collar was blue and white.', 'The dogs\' collar was blue and white.', 'The dogs collar was blue and white.', 'No change needed'], correct: 0 }
             ] },
-            { id: 'punct-9', type: 'punctuation', explanation: 'Commas save lives!', variants: [
+            { id: 'punct-9', type: 'punctuation', explanation: 'Use a comma after an introductory word or phrase to separate it from the main part of the sentence.', variants: [
                 { sentence: 'After eating the children went outside to play.', options: ['After eating, the children went outside to play.', 'After eating the children, went outside to play.', 'After, eating the children went outside to play.', 'No change needed'], correct: 0 },
                 { sentence: 'Without thinking she ran across the busy road.', options: ['Without thinking, she ran across the busy road.', 'Without thinking she ran, across the busy road.', 'Without, thinking she ran across the busy road.', 'No change needed'], correct: 0 }
             ] },
@@ -2987,7 +2987,7 @@
                 { sentence: 'She was tired; however, she continued working.', options: ['She was tired. However, she continued working.', 'She was tired, however she continued working.', 'She was tired; however, she continued working.', 'No change needed'], correct: 2 },
                 { sentence: 'The road was icy; therefore, we drove slowly.', options: ['The road was icy, therefore we drove slowly.', 'The road was icy therefore, we drove slowly.', 'The road was icy; therefore, we drove slowly.', 'No change needed'], correct: 2 }
             ] },
-            { id: 'punct-25', type: 'punctuation', explanation: 'One boy owns the skateboard.', variants: [
+            { id: 'punct-25', type: 'punctuation', explanation: 'Use \'s to show that one person or animal owns something. For a singular owner, the apostrophe goes before the final \'s\'.', variants: [
                 { sentence: 'The boys skateboard is in the garage.', options: ['The boy\'s skateboard is in the garage.', 'The boys\' skateboard is in the garage.', 'The boys\'s skateboard is in the garage.', 'No change needed'], correct: 0 },
                 { sentence: 'The dogs bone was buried in the garden.', options: ['The dog\'s bone was buried in the garden.', 'The dogs\' bone was buried in the garden.', 'The dogs bone was buried in the garden.', 'No change needed'], correct: 0 }
             ] },
@@ -3067,7 +3067,7 @@
                 { sentence: 'Shes going to the beach tomorrow.', options: ['She\'s going to the beach tomorrow.', 'Shes going to the beach tomorrow.', 'She\'s going to the beache tomorrow.', 'No change needed'], correct: 0 },
                 { sentence: 'Hes the fastest runner in the school.', options: ['He\'s the fastest runner in the school.', 'Hes the fastest runner in the school.', 'He\'s the fastest runner in the school!', 'No change needed'], correct: 0 }
             ] },
-            { id: 'punct-45', type: 'punctuation', explanation: 'One cat owns the toy.', variants: [
+            { id: 'punct-45', type: 'punctuation', explanation: 'Use \'s to show that one animal owns something. The apostrophe comes before the final \'s\', not after — that pattern is only for plural owners (e.g. the cats\' toys).', variants: [
                 { sentence: 'The cats toy is under the bed.', options: ['The cat\'s toy is under the bed.', 'The cats\' toy is under the bed.', 'The cats toy is under the bed.', 'No change needed'], correct: 0 },
                 { sentence: 'The birds nest was hidden in the tall tree.', options: ['The bird\'s nest was hidden in the tall tree.', 'The birds\' nest was hidden in the tall tree.', 'The birds nest was hidden in the tall tree.', 'No change needed'], correct: 0 }
             ] },
@@ -3268,7 +3268,7 @@
             ] },
             { id: 'comp-32', type: 'comprehension', explanation: 'The passage emphasises how the cooking classes brought diverse neighbours together and created friendships.', variants: [
                 { passage: 'A retired chef began offering free cooking classes at the local community centre. People arrived speaking different languages and knowing different recipes. Over weeks, they taught each other dishes from their home countries. Strangers became friends over shared meals. The classes proved that food could bridge cultural divides and turn a neighbourhood into a community.', question: 'What is the main message of this passage?', options: ['Cooking is a difficult skill', 'Professional chefs are the best teachers', 'Shared activities can build human connection across differences', 'Only certain people enjoy cooking'], correct: 2 },
-                { passage: 'When the old library closed, volunteers turned a disused bus into a mobile reading room. They parked it in different neighbourhoods each week. Children who had never owned a book could borrow one. Elderly residents who lived alone came aboard just to chat. The bus became more than a library — it became a meeting place for people who might never have spoken otherwise.', question: 'What is the main theme of this passage?', options: ['Buses are better than libraries', 'Reading is only for children', 'A shared resource can bring a community together', 'Old people need more buses'], correct: 2 }
+                { passage: 'When the old library closed, volunteers turned a disused bus into a mobile reading room. They parked it in different neighbourhoods each week. Children who had never owned a book could borrow one. Elderly residents who lived alone came aboard just to chat. The bus became more than a library — it became a meeting place for people who might never have spoken otherwise.', question: 'What is the main theme of this passage?', options: ['Buses are better than libraries', 'Reading is only for children', 'A shared resource can bring a community together', 'Old people need more buses'], correct: 2, explanation: 'Like the cooking classes, the mobile library bus shows how a shared activity can bring a community together across differences in age and background.' }
             ] }
         ];
 
@@ -3530,23 +3530,23 @@
             ] },
             { id: 'synonym-big', type: 'synonym', word: 'big', explanation: '\'Big\' and \'enormous\' both mean very large in size.', variants: [
                 { options: ['small', 'enormous', 'tiny', 'bright'], correct: 1, sentence: 'A big lorry blocked the narrow lane outside the village shop.', optionTags: ['far', 'correct', 'far', 'far'] },
-                { options: ['enormous', 'minute', 'minuscule', 'petite'], correct: 0, sentence: 'The big oak tree gave shade to the whole picnic area.', optionTags: ['correct', 'far', 'far', 'far'] }
+                { options: ['colossal', 'minute', 'minuscule', 'petite'], correct: 0, sentence: 'The big oak tree gave shade to the whole picnic area.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-scared', type: 'synonym', word: 'scared', explanation: '\'Scared\' and \'frightened\' both mean feeling afraid.', variants: [
                 { options: ['brave', 'frightened', 'excited', 'confused'], correct: 1, sentence: 'The puppy looked scared when it heard the loud thunder outside.', optionTags: ['far', 'correct', 'far', 'far'] },
-                { options: ['frightened', 'fearless', 'bold', 'daring'], correct: 0, sentence: 'He was scared to walk past the dark alley on his way home.', optionTags: ['correct', 'far', 'far', 'far'] }
+                { options: ['petrified', 'fearless', 'bold', 'daring'], correct: 0, sentence: 'He was scared to walk past the dark alley on his way home.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-quiet', type: 'synonym', word: 'quiet', explanation: '\'Quiet\' and \'silent\' both mean making little or no sound.', variants: [
                 { options: ['loud', 'silent', 'noisy', 'cheerful'], correct: 1, sentence: 'The classroom was quiet during the spelling test that afternoon.', optionTags: ['far', 'correct', 'far', 'far'] },
-                { options: ['silent', 'deafening', 'loud', 'raucous'], correct: 0, sentence: 'A quiet stream wound gently between the smooth grey stones.', optionTags: ['correct', 'far', 'far', 'far'] }
+                { options: ['hushed', 'deafening', 'loud', 'raucous'], correct: 0, sentence: 'A quiet stream wound gently between the smooth grey stones.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-tired', type: 'synonym', word: 'tired', explanation: '\'Tired\' and \'sleepy\' both mean needing rest or sleep.', variants: [
                 { options: ['energetic', 'sleepy', 'alert', 'curious'], correct: 1, sentence: 'After football practice the children were tired and ready for dinner.', optionTags: ['far', 'correct', 'far', 'far'] },
-                { options: ['sleepy', 'awake', 'refreshed', 'invigorated'], correct: 0, sentence: 'The tired traveller fell asleep the moment his head touched the pillow.', optionTags: ['correct', 'far', 'far', 'far'] }
+                { options: ['weary', 'awake', 'refreshed', 'invigorated'], correct: 0, sentence: 'The tired traveller fell asleep the moment his head touched the pillow.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-bright', type: 'synonym', word: 'bright', explanation: '\'Bright\' and \'shiny\' both mean reflecting light or giving light.', variants: [
                 { options: ['dark', 'shiny', 'dull', 'cold'], correct: 1, sentence: 'A bright torch lit the path through the dark woodland behind the house.', optionTags: ['far', 'correct', 'far', 'far'] },
-                { options: ['shiny', 'matte', 'dull', 'murky'], correct: 0, sentence: 'The bright morning sunshine reflected off the still surface of the lake.', optionTags: ['correct', 'far', 'far', 'far'] }
+                { options: ['luminous', 'matte', 'dull', 'murky'], correct: 0, sentence: 'The bright morning sunshine reflected off the still surface of the lake.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-brave', type: 'synonym', word: 'brave', explanation: '\'Brave\' and \'courageous\' both mean facing danger without fear.', variants: [
                 { options: ['courageous', 'shy', 'nervous', 'foolish'], correct: 0, sentence: 'A brave swimmer dived into the river to rescue the struggling child.', optionTags: ['correct', 'far', 'far', 'far'] },
@@ -3558,7 +3558,7 @@
             ] },
             { id: 'synonym-slow', type: 'synonym', word: 'slow', explanation: '\'Slow\' and \'sluggish\' both mean moving or acting without speed.', variants: [
                 { options: ['quick', 'sluggish', 'speedy', 'hasty'], correct: 1, sentence: 'A slow snail crept across the damp leaf in the early morning.', optionTags: ['far', 'correct', 'far', 'far'] },
-                { options: ['sluggish', 'swift', 'rapid', 'brisk'], correct: 0, sentence: 'The slow bus journey took twice as long because of the traffic.', optionTags: ['correct', 'far', 'far', 'far'] }
+                { options: ['lethargic', 'swift', 'rapid', 'brisk'], correct: 0, sentence: 'The slow bus journey took twice as long because of the traffic.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
             { id: 'synonym-clever', type: 'synonym', word: 'clever', explanation: '\'Clever\' and \'smart\' both mean intelligent and quick-thinking.', variants: [
                 { options: ['smart', 'foolish', 'clumsy', 'quiet'], correct: 0, sentence: 'The clever fox tricked the hunters by doubling back on its own tracks.', optionTags: ['correct', 'far', 'far', 'far'] },
@@ -3602,15 +3602,15 @@
             ] },
             { id: 'synonym-abundant', type: 'synonym', word: 'abundant', explanation: '\'Abundant\' and \'plentiful\' both mean there is a very large supply — much more than enough.', variants: [
                 { options: ['scarce', 'plentiful', 'small', 'frequent'], correct: 1, sentence: 'The river valley had abundant wildlife including deer, otters and many kinds of birds.', optionTags: ['far', 'correct', 'far', 'close'] },
-                { options: ['plentiful', 'generous', 'frequent', 'rich'], correct: 0, sentence: 'The orchard produced abundant fruit every autumn thanks to the good summer weather.', optionTags: ['correct', 'close', 'close', 'close'] }
+                { options: ['copious', 'generous', 'frequent', 'rich'], correct: 0, sentence: 'The orchard produced abundant fruit every autumn thanks to the good summer weather.', optionTags: ['correct', 'close', 'close', 'close'] }
             ] },
             { id: 'synonym-flourish', type: 'synonym', word: 'flourish', explanation: '\'Flourish\' and \'thrive\' both mean to grow strongly and do well.', variants: [
                 { options: ['bloom', 'thrive', 'wither', 'shrink'], correct: 1, sentence: 'The plants began to flourish in the warm summer sun and rich garden soil.', optionTags: ['close', 'correct', 'far', 'far'] },
-                { options: ['prosper', 'thrive', 'bloom', 'succeed'], correct: 1, sentence: 'Small businesses can flourish when local customers shop in their neighbourhood instead of online.', optionTags: ['close', 'correct', 'close', 'close'] }
+                { options: ['prosper', 'blossom', 'bloom', 'succeed'], correct: 1, sentence: 'Small businesses can flourish when local customers shop in their neighbourhood instead of online.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'synonym-nimble', type: 'synonym', word: 'nimble', explanation: '\'Nimble\' and \'agile\' both mean able to move quickly and easily, with skill and balance.', variants: [
                 { options: ['clumsy', 'agile', 'heavy', 'graceful'], correct: 1, sentence: 'The nimble cat leapt easily from one rooftop to another without making a sound.', optionTags: ['far', 'correct', 'far', 'close'] },
-                { options: ['quick', 'graceful', 'agile', 'dexterous'], correct: 2, sentence: 'The nimble pianist\'s fingers raced across the keys with perfect skill and timing.', optionTags: ['close', 'close', 'correct', 'close'] }
+                { options: ['quick', 'graceful', 'lithe', 'dexterous'], correct: 2, sentence: 'The nimble pianist\'s fingers raced across the keys with perfect skill and timing.', optionTags: ['close', 'close', 'correct', 'close'] }
             ] },
             { id: 'synonym-examine', type: 'synonym', word: 'examine', explanation: '\'Examine\' and \'scrutinise\' both mean to look at something very carefully and closely.', variants: [
                 { options: ['scrutinise', 'glance', 'permit', 'gather'], correct: 0, sentence: 'The detective went to examine the evidence carefully under the bright laboratory light.', optionTags: ['correct', 'close', 'far', 'far'] },
