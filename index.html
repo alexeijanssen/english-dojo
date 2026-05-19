@@ -1380,7 +1380,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.32.2';
+        const APP_VERSION = 'v1.32.3';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -2688,7 +2688,7 @@
                 { sections: ['She felt nervious about', 'the interview next week', 'but tried to stay calm', 'and confident.'], correct: 0 }
             ] },
             { id: 'spelling-unknown-3', type: 'spelling', explanation: 'No spelling mistakes!', variants: [
-                { sections: ['The recipe', 'called for four cups of', 'flour and', 'one egg'], correct: -1 }
+                { sections: ['The recipe', 'called for four cups of', 'flour and', 'one egg.'], correct: -1 }
             ,
                 { sections: ['The library has many wonderful', 'books that children enjoy reading', 'during their free time after', 'lessons end.'], correct: -1 }
             ] },
@@ -2733,7 +2733,7 @@
                 { sections: ['I will definately come to', 'your party next Saturday', 'and bring a nice present', 'for you.'], correct: 0 }
             ] },
             { id: 'spelling-unknown-4', type: 'spelling', explanation: 'No spelling mistakes!', variants: [
-                { sections: ['No spelling', 'mistakes appear in this', 'sentence at', 'all'], correct: -1 }
+                { sections: ['No spelling', 'mistakes appear in this', 'sentence at', 'all.'], correct: -1 }
             ,
                 { sections: ['Music lessons are exciting and', 'help students learn instruments', 'like piano guitar and violin', 'every week.'], correct: -1 }
             ] },
@@ -3016,8 +3016,8 @@
                 { sentence: 'Its going to rain later this afternoon.', options: ['It\'s going to rain later this afternoon.', 'Its going to rain later this afternoon.', 'Its\' going to rain later this afternoon.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-32', type: 'punctuation', explanation: 'Use a semicolon or period between closely related independent clauses.', variants: [
-                { sentence: 'The team celebrated they had won the championship.', options: ['The team celebrated, and they had won the championship.', 'The team celebrated; they had won the championship.', 'The team celebrated. They had won the championship.', 'No change needed'], correct: 1 },
-                { sentence: 'She finished the book she started the next one.', options: ['She finished the book, and she started the next one.', 'She finished the book; she started the next one.', 'She finished the book. She started the next one.', 'No change needed'], correct: 1 }
+                { sentence: 'The team celebrated they had won the championship.', options: ['The team celebrated, and they had won the championship.', 'The team celebrated; they had won the championship.', 'The team celebrated, they had won the championship.', 'No change needed'], correct: 1 },
+                { sentence: 'She finished the book she started the next one.', options: ['She finished the book, and she started the next one.', 'She finished the book; she started the next one.', 'She finished the book, she started the next one.', 'No change needed'], correct: 1 }
             ] },
             { id: 'punct-33', type: 'punctuation', explanation: 'Use commas to separate items in a list. In British English, you do not need a comma before \'and\'.', variants: [
                 { sentence: 'She brought apples oranges and bananas.', options: ['She brought apples, oranges, and bananas.', 'She brought apples oranges, and bananas.', 'She brought apples, oranges and bananas.', 'No change needed'], correct: 2 },
@@ -3084,8 +3084,8 @@
                 { sentence: 'Come on lets go to the park before it rains.', options: ['Come on, let\'s go to the park before it rains.', 'Come on lets\' go to the park before it rains.', 'Come on. Lets go to the park before it rains.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-49', type: 'punctuation', explanation: 'Use a comma and coordinating conjunction or semicolon.', variants: [
-                { sentence: 'The boys are playing football the girls are dancing.', options: ['The boys are playing football, and the girls are dancing.', 'The boys are playing football; the girls are dancing.', 'The boys are playing football. The girls are dancing.', 'No change needed'], correct: 0 },
-                { sentence: 'The cat sat on the mat the dog lay by the fire.', options: ['The cat sat on the mat, and the dog lay by the fire.', 'The cat sat on the mat; the dog lay by the fire.', 'The cat sat on the mat. The dog lay by the fire.', 'No change needed'], correct: 0 }
+                { sentence: 'The boys are playing football the girls are dancing.', options: ['The boys are playing football, and the girls are dancing.', 'The boys are playing football, the girls are dancing.', 'The boys are playing football. The girls are dancing.', 'No change needed'], correct: 0 },
+                { sentence: 'The cat sat on the mat the dog lay by the fire.', options: ['The cat sat on the mat, and the dog lay by the fire.', 'The cat sat on the mat, the dog lay by the fire.', 'The cat sat on the mat. The dog lay by the fire.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-50', type: 'punctuation', explanation: 'No comma before "because" in this case.', variants: [
                 { sentence: 'She was very happy because she had won first place.', options: ['She was very happy, because she had won first place.', 'She was very happy because she had won first place.', 'She was very happy. Because she had won first place.', 'No change needed'], correct: 1 },
@@ -3108,8 +3108,8 @@
                 { sentence: 'We need eggs flour sugar and butter.', options: ['We need eggs, flour, sugar, and butter.', 'We need eggs flour, sugar, and butter.', 'We need eggs, flour, sugar and butter.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-55', type: 'punctuation', explanation: 'Use a semicolon or period between independent clauses.', variants: [
-                { sentence: 'The doors are locked nobody can enter.', options: ['The doors are locked; nobody can enter.', 'The doors are locked, nobody can enter.', 'The doors are locked. Nobody can enter.', 'No change needed'], correct: 0 },
-                { sentence: 'The lights went out everyone screamed.', options: ['The lights went out; everyone screamed.', 'The lights went out, everyone screamed.', 'The lights went out. Everyone screamed.', 'No change needed'], correct: 0 }
+                { sentence: 'The doors are locked nobody can enter.', options: ['The doors are locked; nobody can enter.', 'The doors are locked, nobody can enter.', 'The doors are locked. nobody can enter.', 'No change needed'], correct: 0 },
+                { sentence: 'The lights went out everyone screamed.', options: ['The lights went out; everyone screamed.', 'The lights went out, everyone screamed.', 'The lights went out. everyone screamed.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-56', type: 'punctuation', explanation: 'Introductory words need commas.', variants: [
                 { sentence: 'Well I suppose we should go now.', options: ['Well, I suppose we should go now.', 'Well; I suppose we should go now.', 'Well. I suppose we should go now.', 'No change needed'], correct: 0 },
@@ -3132,8 +3132,8 @@
                 { sentence: 'School ends at 3:30 pm every day.', options: ['School ends at 3:30 PM every day.', 'School ends at 3:30 pm every day.', 'School ends at 3:30pm every day.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-61', type: 'punctuation', explanation: 'Use a period or semicolon with transitional words.', variants: [
-                { sentence: 'I think therefore I am.', options: ['I think; therefore, I am.', 'I think. Therefore, I am.', 'I think, therefore I am.', 'No change needed'], correct: 1 },
-                { sentence: 'She was late however she still passed the test.', options: ['She was late; however, she still passed the test.', 'She was late. However, she still passed the test.', 'She was late, however she still passed the test.', 'No change needed'], correct: 1 }
+                { sentence: 'I think therefore I am.', options: ['I think therefore, I am.', 'I think. Therefore, I am.', 'I think, therefore I am.', 'No change needed'], correct: 1 },
+                { sentence: 'She was late however she still passed the test.', options: ['She was late however, she still passed the test.', 'She was late. However, she still passed the test.', 'She was late, however she still passed the test.', 'No change needed'], correct: 1 }
             ] },
         ];
 
@@ -3722,6 +3722,10 @@
             { id: 'antonym-eager', type: 'antonym', word: 'eager', explanation: '\'Eager\' means very keen and enthusiastic about doing something; \'reluctant\' is the plain-English opposite. A Tier-3 antonym is \'apathetic\' — showing no interest or energy at all.', variants: [
                 { options: ['enthusiastic', 'reluctant', 'happy', 'tall'], correct: 1, sentence: 'The eager students raised their hands the moment the teacher finished asking the question.', optionTags: ['close', 'correct', 'far', 'far'] },
                 { options: ['keen', 'enthusiastic', 'apathetic', 'excited'], correct: 2, sentence: 'An eager apprentice arrived an hour early to set out every tool before the workshop began.', optionTags: ['close', 'close', 'correct', 'close'] }
+            ] },
+            { id: 'antonym-bold', type: 'antonym', word: 'bold', explanation: '\'Bold\' means confident and unafraid; \'timid\' is the plain-English opposite. A Tier-3 antonym is \'craven\' — completely lacking courage.', variants: [
+                { options: ['daring', 'timid', 'happy', 'tall'], correct: 1, sentence: 'The bold knight stepped forward when everyone else drew back from the dragon.', optionTags: ['close', 'correct', 'far', 'far'] },
+                { options: ['fearless', 'audacious', 'craven', 'brave'], correct: 2, sentence: 'A bold explorer pressed on through the storm while the rest of the party turned back.', optionTags: ['close', 'close', 'correct', 'close'] }
             ] }
         ];
 
