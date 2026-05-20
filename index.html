@@ -1380,7 +1380,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.32.3';
+        const APP_VERSION = 'v1.32.4';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -2371,7 +2371,7 @@
             ] },
             { id: 'vocab-beguiled', type: 'vocab', word: 'beguiled', explanation: '\'Beguiled\' can mean to pass time in a pleasant way.', variants: [
                 { sentence: 'She beguiled the evening away by reading', options: ['Wasted', 'Passed pleasantly', 'Ruined', 'Slept through'], correct: 1 },
-                { sentence: 'He beguiled the long train journey with interesting stories.', options: ['Made tiresome', 'Passed pleasantly', 'Complained about', 'Slept during'], correct: 1 }
+                { sentence: 'He beguiled the long train journey with interesting stories.', options: ['Made tiresome', 'Whiled away', 'Complained about', 'Slept during'], correct: 1 }
             ] },
             { id: 'vocab-fain', type: 'vocab', word: 'fain', explanation: '\'Fain\' is an old-fashioned word meaning forced or obliged.', variants: [
                 { sentence: 'It was so dark that Scrooge was fain to grope with his hands', options: ['Forced', 'Happy', 'Unable', 'Afraid'], correct: 0 },
@@ -2407,7 +2407,7 @@
             ] },
             { id: 'vocab-subtle', type: 'vocab', word: 'subtle', explanation: 'Subtle means not obvious or easily noticed.', variants: [
                 { sentence: 'The artist made a subtle change to the painting that only careful observers would notice.', options: ['obvious and loud', 'delicate and not easily noticed', 'large and bold', 'confusing and unclear'], correct: 1 },
-                { sentence: 'There was a subtle hint of vanilla in the dessert.', options: ['Strong flavor', 'Delicate and barely noticeable', 'Overpowering', 'Missing'], correct: 1 }
+                { sentence: 'There was a subtle hint of vanilla in the dessert.', options: ['Strong flavour', 'Delicate and barely noticeable', 'Overpowering', 'Missing'], correct: 1 }
             ] },
             { id: 'vocab-meticulous', type: 'vocab', word: 'meticulous', explanation: 'Meticulous means very careful and precise, paying close attention to detail.', variants: [
                 { sentence: 'The meticulous scientist checked every detail of her experiment three times.', options: ['quick and impatient', 'very careful and precise', 'careless and messy', 'friendly and outgoing'], correct: 1 },
@@ -3015,7 +3015,7 @@
                 { sentence: 'Its a beautiful day outside!', options: ['It\'s a beautiful day outside!', 'Its a beautiful day outside!', 'Its\' a beautiful day outside!', 'No change needed'], correct: 0 },
                 { sentence: 'Its going to rain later this afternoon.', options: ['It\'s going to rain later this afternoon.', 'Its going to rain later this afternoon.', 'Its\' going to rain later this afternoon.', 'No change needed'], correct: 0 }
             ] },
-            { id: 'punct-32', type: 'punctuation', explanation: 'Use a semicolon or period between closely related independent clauses.', variants: [
+            { id: 'punct-32', type: 'punctuation', explanation: 'Use a semicolon to join two closely related independent clauses without a coordinating conjunction.', variants: [
                 { sentence: 'The team celebrated they had won the championship.', options: ['The team celebrated, and they had won the championship.', 'The team celebrated; they had won the championship.', 'The team celebrated, they had won the championship.', 'No change needed'], correct: 1 },
                 { sentence: 'She finished the book she started the next one.', options: ['She finished the book, and she started the next one.', 'She finished the book; she started the next one.', 'She finished the book, she started the next one.', 'No change needed'], correct: 1 }
             ] },
@@ -3083,7 +3083,7 @@
                 { sentence: 'Before we go lets check the map.', options: ['Before we go, let\'s check the map.', 'Before we go lets\' check the map.', 'Before we go. Lets check the map.', 'No change needed'], correct: 0 },
                 { sentence: 'Come on lets go to the park before it rains.', options: ['Come on, let\'s go to the park before it rains.', 'Come on lets\' go to the park before it rains.', 'Come on. Lets go to the park before it rains.', 'No change needed'], correct: 0 }
             ] },
-            { id: 'punct-49', type: 'punctuation', explanation: 'Use a comma and coordinating conjunction or semicolon.', variants: [
+            { id: 'punct-49', type: 'punctuation', explanation: 'Use a comma and a coordinating conjunction (and, but, or) to join two independent clauses.', variants: [
                 { sentence: 'The boys are playing football the girls are dancing.', options: ['The boys are playing football, and the girls are dancing.', 'The boys are playing football, the girls are dancing.', 'The boys are playing football. The girls are dancing.', 'No change needed'], correct: 0 },
                 { sentence: 'The cat sat on the mat the dog lay by the fire.', options: ['The cat sat on the mat, and the dog lay by the fire.', 'The cat sat on the mat, the dog lay by the fire.', 'The cat sat on the mat. The dog lay by the fire.', 'No change needed'], correct: 0 }
             ] },
@@ -3107,7 +3107,7 @@
                 { sentence: 'She loves to read write and paint.', options: ['She loves to read, write, and paint.', 'She loves to read write, and paint.', 'She loves to read, write and paint.', 'No change needed'], correct: 0 },
                 { sentence: 'We need eggs flour sugar and butter.', options: ['We need eggs, flour, sugar, and butter.', 'We need eggs flour, sugar, and butter.', 'We need eggs, flour, sugar and butter.', 'No change needed'], correct: 0 }
             ] },
-            { id: 'punct-55', type: 'punctuation', explanation: 'Use a semicolon or period between independent clauses.', variants: [
+            { id: 'punct-55', type: 'punctuation', explanation: 'Use a semicolon to join two closely related independent clauses without a coordinating conjunction.', variants: [
                 { sentence: 'The doors are locked nobody can enter.', options: ['The doors are locked; nobody can enter.', 'The doors are locked, nobody can enter.', 'The doors are locked. nobody can enter.', 'No change needed'], correct: 0 },
                 { sentence: 'The lights went out everyone screamed.', options: ['The lights went out; everyone screamed.', 'The lights went out, everyone screamed.', 'The lights went out. everyone screamed.', 'No change needed'], correct: 0 }
             ] },
@@ -3131,7 +3131,7 @@
                 { sentence: 'The meeting starts at 9:00 am sharp.', options: ['The meeting starts at 9:00 AM sharp.', 'The meeting starts at 9:00 am sharp.', 'The meeting starts at 9:00am sharp.', 'No change needed'], correct: 0 },
                 { sentence: 'School ends at 3:30 pm every day.', options: ['School ends at 3:30 PM every day.', 'School ends at 3:30 pm every day.', 'School ends at 3:30pm every day.', 'No change needed'], correct: 0 }
             ] },
-            { id: 'punct-61', type: 'punctuation', explanation: 'Use a period or semicolon with transitional words.', variants: [
+            { id: 'punct-61', type: 'punctuation', explanation: 'When a transitional word (however, therefore, moreover) joins two complete sentences, end the first with a period and start the second with a capitalised transitional, followed by a comma.', variants: [
                 { sentence: 'I think therefore I am.', options: ['I think therefore, I am.', 'I think. Therefore, I am.', 'I think, therefore I am.', 'No change needed'], correct: 1 },
                 { sentence: 'She was late however she still passed the test.', options: ['She was late however, she still passed the test.', 'She was late. However, she still passed the test.', 'She was late, however she still passed the test.', 'No change needed'], correct: 1 }
             ] },
@@ -3619,6 +3619,10 @@
             { id: 'synonym-swift', type: 'synonym', word: 'swift', explanation: '\'Swift\' and \'rapid\' both mean very quick or fast in motion.', variants: [
                 { options: ['slow', 'rapid', 'gentle', 'silent'], correct: 1, sentence: 'The swift current of the river carried the wooden boat downstream towards the bridge.', optionTags: ['far', 'correct', 'close', 'far'] },
                 { options: ['speedy', 'careful', 'late', 'noisy'], correct: 0, sentence: 'The swift rescue team reached the stranded climbers before the storm broke over the mountain.', optionTags: ['correct', 'far', 'far', 'far'] }
+            ] },
+            { id: 'synonym-modest', type: 'synonym', word: 'modest', explanation: '\'Modest\' and \'humble\' both mean not boastful or showy. A Tier-3 synonym is \'unassuming\' — quietly without pretension or display.', variants: [
+                { options: ['proud', 'humble', 'loud', 'careless'], correct: 1, sentence: 'The modest scientist accepted the award with a quiet smile and thanked her colleagues warmly.', optionTags: ['far', 'correct', 'far', 'far'] },
+                { options: ['unpretentious', 'unassuming', 'unobtrusive', 'restrained'], correct: 1, sentence: 'A modest farmhouse stood at the edge of the field, blending in with the trees and stone walls.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] }
         ];
 
