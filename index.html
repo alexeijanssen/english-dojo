@@ -1380,7 +1380,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.32.4';
+        const APP_VERSION = 'v1.33.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -3833,6 +3833,10 @@
             { id: 'context-clues-pristine', type: 'context-clues', targetWord: 'pristine', explanation: 'A 700-year-old vase with unbroken glaze and crisp patterns shows something untouched by damage or wear — "pristine" means in perfect, original condition.', variants: [
                 { passage: 'The museum\'s prized vase was pristine, its glaze unbroken and its painted patterns as crisp as the day it left the kiln seven hundred years ago.', question: 'What does "pristine" most likely mean?', options: ['Damaged and chipped', 'In perfect, untouched condition', 'Very colourful', 'Extremely valuable'], correct: 1 },
                 { passage: 'The fresh snowfall left the garden pristine — no footprints, no tyre tracks, no leaves disturbed, just a smooth white sheet stretching from fence to fence.', question: 'What does "pristine" mean in this passage?', options: ['Untouched and perfectly clean', 'Cold and slippery', 'Recently painted', 'Carefully decorated'], correct: 0, explanation: 'No footprints, no tracks, no leaves disturbed — "pristine" means untouched, undisturbed, and perfectly clean.' }
+            ] },
+            { id: 'context-clues-melancholy', type: 'context-clues', targetWord: 'melancholy', explanation: 'Sarah is staring at the rain and thinking about her grandmother who has died — "melancholy" means a deep, gloomy sadness.', variants: [
+                { passage: 'Sarah felt melancholy as she stared out at the rain, thinking about her grandmother who had passed away the previous autumn and the long walks they would never take again.', question: 'What does "melancholy" most likely mean?', options: ['Sad and gloomy', 'Excited and cheerful', 'Curious and amazed', 'Calm and untroubled'], correct: 0 },
+                { passage: 'A melancholy mood settled over the empty house once the last guests had left and the music had faded — every quiet room seemed to hold a memory just out of reach.', question: 'What does "melancholy" mean in this passage?', options: ['Loud and lively', 'Sorrowful and reflective', 'Briefly disappointed', 'Cold and damp'], correct: 1, explanation: 'The empty house, faded music, and memories just out of reach — "melancholy" means a deep, sorrowful mood mixed with quiet reflection.' }
             ] }
         ];
 
@@ -4005,7 +4009,8 @@
             ] },
             { id: 'meta-alliteration', type: 'meta', term: 'alliteration', explanation: 'Alliteration is when words close together start with the same sound. For example: "Peter Piper picked a peck."', variants: [
                 { question: 'When nearby words start with the same sound, this is called:', options: ['alliteration', 'onomatopoeia', 'rhyme', 'personification'], correct: 0 },
-                { question: '"Silly Sally sang softly." This is an example of:', options: ['a metaphor', 'onomatopoeia', 'alliteration', 'personification'], correct: 2 }
+                { question: '"Silly Sally sang softly." This is an example of:', options: ['a metaphor', 'onomatopoeia', 'alliteration', 'personification'], correct: 2 },
+                { question: 'Which line uses alliteration?', options: ['The cat sat quietly on the mat', 'Big brown bears bounce on branches', 'She ran quickly to the shop', 'The light shone over the lake'], correct: 1 }
             ] },
             { id: 'meta-onomatopoeia', type: 'meta', term: 'onomatopoeia', explanation: 'Onomatopoeia is when a word sounds like the thing it describes. For example: "buzz," "crash," "sizzle."', variants: [
                 { question: 'A word that sounds like the noise it describes is called:', options: ['alliteration', 'onomatopoeia', 'a simile', 'personification'], correct: 1 },
@@ -4690,7 +4695,7 @@
                 } else if (item.type === 'antonym') {
                     this.renderAntonymQuestion(container, question, item);
                 } else if (item.type === 'context-clues') {
-                    this.renderContextCluesQuestion(container, question);
+                    this.renderContextCluesQuestion(container, question, item);
                 } else if (item.type === 'homophone') {
                     this.renderHomophoneQuestion(container, question, item);
                 } else if (item.type === 'meta') {
@@ -5004,7 +5009,21 @@
                 container.appendChild(options);
             }
 
-            renderContextCluesQuestion(container, question) {
+            renderContextCluesQuestion(container, question, item) {
+                // Build #43 (v1.33.0): Scaffolding Gradient Phase 3 — context-clues is now
+                // scaffoldLevel-aware. Level 1 prepends an instructional hint above the
+                // passage; Level 2 (default) and Level 3 render bit-for-bit as before.
+                // Mirrors Build #22 (cloze), Build #29 (punctuation), Build #38 (homophone) precedents.
+                const scaffoldLevel = (item && typeof item.scaffoldLevel === 'number') ? item.scaffoldLevel : 2;
+
+                if (scaffoldLevel <= 1) {
+                    const hint = document.createElement('div');
+                    hint.className = 'scaffold-hint';
+                    hint.style.cssText = 'background: rgba(108, 92, 231, 0.10); padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-style: italic; color: #2d3436;';
+                    hint.textContent = 'Pick the word that fits the meaning shown by the surrounding sentence.';
+                    container.appendChild(hint);
+                }
+
                 const passage = document.createElement('div');
                 passage.className = 'passage';
                 // Highlight the target word in the passage
