@@ -1380,7 +1380,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.33.1';
+        const APP_VERSION = 'v1.34.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -1753,6 +1753,7 @@
                         // so every sync path (saveToCloud, beforeunload, retry) includes them.
                         // Without this, loadFromCloud() overwrites localStorage with cloud data
                         // lacking scaffoldLevel, and the in-memory migration never reaches Firebase.
+                        // Persistence anchor — preserved bit-for-bit across 35+ consecutive builds per Decision #3 (see SYSTEM_CYCLE.md).
                         localStorage.setItem(ITEMS_KEY, JSON.stringify(existingMigrated));
                         return existingMigrated;
                     } catch (e) {
@@ -3520,19 +3521,19 @@
         ];
 
         const SYNONYM_CONCEPTS = [
-            { id: 'synonym-happy', type: 'synonym', word: 'happy', explanation: '\'Happy\' and \'joyful\' both mean feeling pleased and cheerful.', variants: [
+            { id: 'synonym-happy', type: 'synonym', word: 'happy', explanation: '\'Happy\' and \'joyful\' both mean feeling pleased and cheerful. A Tier-3 synonym is \'jubilant\' — feeling triumphant or extremely joyful.', variants: [
                 { options: ['sad', 'joyful', 'angry', 'tired'], correct: 1, sentence: 'Maya was happy when her grandmother arrived for the weekend visit.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['jubilant', 'miserable', 'grumpy', 'sad'], correct: 0, sentence: 'A happy crowd waved flags as the parade marched down the street.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
-            { id: 'synonym-angry', type: 'synonym', word: 'angry', explanation: '\'Angry\' and \'furious\' both mean very upset or cross.', variants: [
+            { id: 'synonym-angry', type: 'synonym', word: 'angry', explanation: '\'Angry\' and \'furious\' both mean very upset or cross. A Tier-3 synonym is \'enraged\' — filled with intense, often uncontrollable anger.', variants: [
                 { options: ['calm', 'furious', 'happy', 'bored'], correct: 1, sentence: 'The teacher grew angry when nobody had finished their homework.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['enraged', 'cheerful', 'peaceful', 'content'], correct: 0, sentence: 'She felt angry that her bicycle had been left out in the rain.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
-            { id: 'synonym-big', type: 'synonym', word: 'big', explanation: '\'Big\' and \'enormous\' both mean very large in size.', variants: [
+            { id: 'synonym-big', type: 'synonym', word: 'big', explanation: '\'Big\' and \'enormous\' both mean very large in size. A Tier-3 synonym is \'colossal\' — strikingly large, on a grand scale.', variants: [
                 { options: ['small', 'enormous', 'tiny', 'bright'], correct: 1, sentence: 'A big lorry blocked the narrow lane outside the village shop.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['colossal', 'minute', 'minuscule', 'petite'], correct: 0, sentence: 'The big oak tree gave shade to the whole picnic area.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
-            { id: 'synonym-scared', type: 'synonym', word: 'scared', explanation: '\'Scared\' and \'frightened\' both mean feeling afraid.', variants: [
+            { id: 'synonym-scared', type: 'synonym', word: 'scared', explanation: '\'Scared\' and \'frightened\' both mean feeling afraid. A Tier-3 synonym is \'petrified\' — so frightened that one cannot move or think clearly.', variants: [
                 { options: ['brave', 'frightened', 'excited', 'confused'], correct: 1, sentence: 'The puppy looked scared when it heard the loud thunder outside.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['petrified', 'fearless', 'bold', 'daring'], correct: 0, sentence: 'He was scared to walk past the dark alley on his way home.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
@@ -3544,7 +3545,7 @@
                 { options: ['energetic', 'sleepy', 'alert', 'curious'], correct: 1, sentence: 'After football practice the children were tired and ready for dinner.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['weary', 'awake', 'refreshed', 'invigorated'], correct: 0, sentence: 'The tired traveller fell asleep the moment his head touched the pillow.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
-            { id: 'synonym-bright', type: 'synonym', word: 'bright', explanation: '\'Bright\' and \'shiny\' both mean reflecting light or giving light.', variants: [
+            { id: 'synonym-bright', type: 'synonym', word: 'bright', explanation: '\'Bright\' and \'shiny\' both mean reflecting light or giving light. A Tier-3 synonym is \'luminous\' — softly glowing, giving off light of its own.', variants: [
                 { options: ['dark', 'shiny', 'dull', 'cold'], correct: 1, sentence: 'A bright torch lit the path through the dark woodland behind the house.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['luminous', 'matte', 'dull', 'murky'], correct: 0, sentence: 'The bright morning sunshine reflected off the still surface of the lake.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
@@ -4688,7 +4689,7 @@
                 } else if (item.type === 'punctuation') {
                     this.renderPunctuationQuestion(container, question, item);
                 } else if (item.type === 'comprehension') {
-                    this.renderComprehensionQuestion(container, question);
+                    this.renderComprehensionQuestion(container, question, item);
                 } else if (item.type === 'cloze') {
                     this.renderClozeQuestion(container, question, item);
                 } else if (item.type === 'synonym') {
@@ -4842,7 +4843,23 @@
                 container.appendChild(options);
             }
 
-            renderComprehensionQuestion(container, question) {
+            renderComprehensionQuestion(container, question, item) {
+                // Scaffolding Gradient Phase 3 (Build #45): comprehension becomes scaffoldLevel-aware.
+                // Level 1: instructional hint PREPENDED ABOVE THE PASSAGE — the child reads the hint
+                //          before encountering the passage (placement diverges from prior Phase 3
+                //          landings because comprehension is the only type with a passage block).
+                // Level 2 (default) and Level 3: render bit-for-bit unchanged.
+                // Mirrors the Build #29 / #38 / #43 pattern; hint placement is the only divergence.
+                const scaffoldLevel = (item && typeof item.scaffoldLevel === 'number') ? item.scaffoldLevel : 2;
+
+                if (scaffoldLevel <= 1) {
+                    const hint = document.createElement('div');
+                    hint.className = 'scaffold-hint';
+                    hint.style.cssText = 'background: rgba(108, 92, 231, 0.10); padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-style: italic; color: #2d3436;';
+                    hint.textContent = 'Read the passage carefully. Pick the answer that the passage best supports.';
+                    container.appendChild(hint);
+                }
+
                 const passage = document.createElement('div');
                 passage.className = 'passage';
                 passage.textContent = question.passage;
