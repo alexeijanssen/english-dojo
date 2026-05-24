@@ -230,9 +230,9 @@
 
         .timer {
             font-family: 'Fredoka', sans-serif;
-            font-size: 2.2em;
-            font-weight: 700;
-            color: #6c5ce7;
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #b0b0c0;
             text-align: center;
             min-width: 150px;
         }
@@ -579,7 +579,7 @@
             }
 
             .timer {
-                font-size: 2em;
+                font-size: 1.3em;
             }
         }
 
@@ -1380,7 +1380,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.34.0';
+        const APP_VERSION = 'v1.34.1';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -2917,7 +2917,7 @@
                 { sentence: 'He wanted to stay longer but he couldnt miss the bus home.', options: ['He wanted to stay longer, but he couldn\'t miss the bus home.', 'He wanted to stay longer but he couldn\'t miss, the bus home.', 'He wanted to stay longer, but he couldnt miss the bus home.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-7', type: 'punctuation', explanation: '\'Whispers\' is just plural — no apostrophe needed.', variants: [
-                { sentence: 'whispers seemed to echo in the darkness.', options: ['whisper\'s seemed to echo in the darkness.', 'whispers\' seemed to echo in the darkness.', 'whisperses seemed to echo in the darkness.', 'No change needed'], correct: 3 },
+                { sentence: 'Whispers seemed to echo in the darkness.', options: ['Whispers seemed to echo in the darkness.', 'Whisper\'s seemed to echo in the darkness.', 'Whispers\' seemed to echo in the darkness.', 'Whisperses seemed to echo in the darkness.'], correct: 0 },
                 { sentence: 'The student\'s were excited about the school trip.', options: ['The students were excited about the school trip.', 'The student\'s were excited about the school trip.', 'The students\' were excited about the school trip.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-8', type: 'punctuation', explanation: '\'Boy\'s\' = one boy. \'Boys\'\' = several boys.', variants: [
