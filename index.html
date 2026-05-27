@@ -1380,7 +1380,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.34.1';
+        const APP_VERSION = 'v1.34.3';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -2932,7 +2932,7 @@
                 { sentence: 'However the teacher was not impressed with the homework.', options: ['However, the teacher was not impressed with the homework.', 'However the teacher, was not impressed with the homework.', 'However the teacher was not, impressed with the homework.', 'No change needed'], correct: 0 },
                 { sentence: 'Unfortunately the match was cancelled due to heavy rain.', options: ['Unfortunately, the match was cancelled due to heavy rain.', 'Unfortunately the match, was cancelled due to heavy rain.', 'Unfortunately the match was cancelled, due to heavy rain.', 'No change needed'], correct: 0 }
             ] },
-            { id: 'punct-11', type: 'punctuation', explanation: 'Both should be \'its\'.', variants: [
+            { id: 'punct-11', type: 'punctuation', explanation: 'Both should be \'its\' — the possessive form has no apostrophe; \'it\'s\' is the contraction of \'it is\'.', variants: [
                 { sentence: 'The dog wagged it\'s tail happily when its owner returned.', options: ['The dog wagged its tail happily when its owner returned.', 'The dog wagged its tail happily when it\'s owner returned.', 'The dog wagged it\'s tail happily when it\'s owner returned.', 'No change needed'], correct: 0 },
                 { sentence: 'The bird spread it\'s wings and flew back to it\'s nest.', options: ['The bird spread its wings and flew back to its nest.', 'The bird spread its wings and flew back to it\'s nest.', 'The bird spread it\'s wings and flew back to its nest.', 'No change needed'], correct: 0 }
             ] },
@@ -3537,11 +3537,11 @@
                 { options: ['brave', 'frightened', 'excited', 'confused'], correct: 1, sentence: 'The puppy looked scared when it heard the loud thunder outside.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['petrified', 'fearless', 'bold', 'daring'], correct: 0, sentence: 'He was scared to walk past the dark alley on his way home.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
-            { id: 'synonym-quiet', type: 'synonym', word: 'quiet', explanation: '\'Quiet\' and \'silent\' both mean making little or no sound.', variants: [
+            { id: 'synonym-quiet', type: 'synonym', word: 'quiet', explanation: '\'Quiet\' and \'silent\' both mean making little or no sound. A Tier-3 synonym is \'hushed\' — softly muted, as if quietened deliberately.', variants: [
                 { options: ['loud', 'silent', 'noisy', 'cheerful'], correct: 1, sentence: 'The classroom was quiet during the spelling test that afternoon.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['hushed', 'deafening', 'loud', 'raucous'], correct: 0, sentence: 'A quiet stream wound gently between the smooth grey stones.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
-            { id: 'synonym-tired', type: 'synonym', word: 'tired', explanation: '\'Tired\' and \'sleepy\' both mean needing rest or sleep.', variants: [
+            { id: 'synonym-tired', type: 'synonym', word: 'tired', explanation: '\'Tired\' and \'sleepy\' both mean needing rest or sleep. A Tier-3 synonym is \'weary\' — drained by sustained effort or strain.', variants: [
                 { options: ['energetic', 'sleepy', 'alert', 'curious'], correct: 1, sentence: 'After football practice the children were tired and ready for dinner.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['weary', 'awake', 'refreshed', 'invigorated'], correct: 0, sentence: 'The tired traveller fell asleep the moment his head touched the pillow.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
@@ -3601,7 +3601,7 @@
                 { options: ['miserable', 'angry', 'pleased', 'bored'], correct: 2, sentence: 'Grandma was delighted when the grandchildren came to stay for the weekend.', optionTags: ['far', 'far', 'correct', 'far'] },
                 { options: ['thrilled', 'displeased', 'unhappy', 'annoyed'], correct: 0, sentence: 'The class was delighted to discover that the trip had been approved.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
-            { id: 'synonym-abundant', type: 'synonym', word: 'abundant', explanation: '\'Abundant\' and \'plentiful\' both mean there is a very large supply — much more than enough.', variants: [
+            { id: 'synonym-abundant', type: 'synonym', word: 'abundant', explanation: '\'Abundant\' and \'plentiful\' both mean there is a very large supply — much more than enough. A Tier-3 synonym is \'copious\' — produced in great quantity, more than ample.', variants: [
                 { options: ['scarce', 'plentiful', 'small', 'frequent'], correct: 1, sentence: 'The river valley had abundant wildlife including deer, otters and many kinds of birds.', optionTags: ['far', 'correct', 'far', 'close'] },
                 { options: ['copious', 'generous', 'frequent', 'rich'], correct: 0, sentence: 'The orchard produced abundant fruit every autumn thanks to the good summer weather.', optionTags: ['correct', 'close', 'close', 'close'] }
             ] },
@@ -3624,6 +3624,10 @@
             { id: 'synonym-modest', type: 'synonym', word: 'modest', explanation: '\'Modest\' and \'humble\' both mean not boastful or showy. A Tier-3 synonym is \'unassuming\' — quietly without pretension or display.', variants: [
                 { options: ['proud', 'humble', 'loud', 'careless'], correct: 1, sentence: 'The modest scientist accepted the award with a quiet smile and thanked her colleagues warmly.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['unpretentious', 'unassuming', 'unobtrusive', 'restrained'], correct: 1, sentence: 'A modest farmhouse stood at the edge of the field, blending in with the trees and stone walls.', optionTags: ['close', 'correct', 'close', 'close'] }
+            ] },
+            { id: 'synonym-careful', type: 'synonym', word: 'careful', explanation: '\'Careful\' and \'cautious\' both mean taking thought to avoid harm or mistakes. A Tier-3 synonym is \'meticulous\' — paying extreme attention to every detail.', variants: [
+                { options: ['wary', 'cautious', 'reckless', 'jolly'], correct: 1, sentence: 'The careful driver checked the mirrors twice before pulling out of the busy junction.', optionTags: ['close', 'correct', 'far', 'far'] },
+                { options: ['attentive', 'thorough', 'meticulous', 'painstaking'], correct: 2, sentence: 'Her careful notes on every experiment helped the team replicate the results exactly.', optionTags: ['close', 'close', 'correct', 'close'] }
             ] }
         ];
 
@@ -3716,11 +3720,11 @@
                 { options: ['empty', 'solid', 'cracked', 'thin'], correct: 1, sentence: 'The squirrel made its nest inside the hollow trunk of the old tree.', optionTags: ['close', 'correct', 'far', 'far'] },
                 { options: ['vacant', 'dense', 'unfilled', 'cavernous'], correct: 1, sentence: 'A hollow drum makes a deeper sound than a solid block of wood.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
-            { id: 'antonym-diligent', type: 'antonym', word: 'diligent', explanation: '\'Diligent\' means hardworking and careful; \'lazy\' is the opposite.', variants: [
+            { id: 'antonym-diligent', type: 'antonym', word: 'diligent', explanation: '\'Diligent\' means hardworking and careful; \'lazy\' is the plain-English opposite. A Tier-3 antonym is \'indolent\' — habitually avoiding work or activity.', variants: [
                 { options: ['hardworking', 'lazy', 'happy', 'tall'], correct: 1, sentence: 'The diligent student finished every piece of homework before dinner each evening.', optionTags: ['close', 'correct', 'far', 'far'] },
                 { options: ['industrious', 'indolent', 'conscientious', 'hardworking'], correct: 1, sentence: 'A diligent farmer tended every row of crops from dawn until the sun set.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
-            { id: 'antonym-cautious', type: 'antonym', word: 'cautious', explanation: '\'Cautious\' means careful and watchful; \'reckless\' is the opposite.', variants: [
+            { id: 'antonym-cautious', type: 'antonym', word: 'cautious', explanation: '\'Cautious\' means careful and watchful; \'reckless\' is the plain-English opposite. A Tier-3 antonym is \'rash\' — acting too quickly without thinking through the consequences.', variants: [
                 { options: ['careful', 'reckless', 'tall', 'flat'], correct: 1, sentence: 'The cautious driver slowed down before the icy bend in the road.', optionTags: ['close', 'correct', 'far', 'far'] },
                 { options: ['prudent', 'rash', 'careful', 'attentive'], correct: 1, sentence: 'A cautious investor checks every detail before deciding where to put her money.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
@@ -3731,6 +3735,10 @@
             { id: 'antonym-bold', type: 'antonym', word: 'bold', explanation: '\'Bold\' means confident and unafraid; \'timid\' is the plain-English opposite. A Tier-3 antonym is \'craven\' — completely lacking courage.', variants: [
                 { options: ['daring', 'timid', 'happy', 'tall'], correct: 1, sentence: 'The bold knight stepped forward when everyone else drew back from the dragon.', optionTags: ['close', 'correct', 'far', 'far'] },
                 { options: ['fearless', 'audacious', 'craven', 'brave'], correct: 2, sentence: 'A bold explorer pressed on through the storm while the rest of the party turned back.', optionTags: ['close', 'close', 'correct', 'close'] }
+            ] },
+            { id: 'antonym-frequent', type: 'antonym', word: 'frequent', explanation: '\'Frequent\' means happening often; \'rare\' is the plain-English opposite. A Tier-3 antonym is \'sporadic\' — happening only occasionally and at irregular intervals.', variants: [
+                { options: ['common', 'rare', 'happy', 'tall'], correct: 1, sentence: 'The frequent visits from her grandmother became the highlight of every weekend.', optionTags: ['close', 'correct', 'far', 'far'] },
+                { options: ['regular', 'habitual', 'sporadic', 'recurring'], correct: 2, sentence: 'A frequent traveller, my uncle visited cities all over Europe in a single year.', optionTags: ['close', 'close', 'correct', 'close'] }
             ] }
         ];
 
