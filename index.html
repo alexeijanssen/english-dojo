@@ -1380,7 +1380,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.34.3';
+        const APP_VERSION = 'v1.35.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -3080,7 +3080,7 @@
                 { sentence: 'The team won the game; the players celebrated.', options: ['The team won the game. The players celebrated.', 'The team won the game, the players celebrated.', 'The team won the game; the players celebrated.', 'No change needed'], correct: 2 },
                 { sentence: 'The bell rang; the children rushed outside.', options: ['The bell rang. The children rushed outside.', 'The bell rang, the children rushed outside.', 'The bell rang; the children rushed outside.', 'No change needed'], correct: 2 }
             ] },
-            { id: 'punct-48', type: 'punctuation', explanation: '"Let\'s" means "let us".', variants: [
+            { id: 'punct-48', type: 'punctuation', explanation: '"Let\'s" means "let us" — the apostrophe replaces the missing \'u\'. Contractions always show what letters were dropped.', variants: [
                 { sentence: 'Before we go lets check the map.', options: ['Before we go, let\'s check the map.', 'Before we go lets\' check the map.', 'Before we go. Lets check the map.', 'No change needed'], correct: 0 },
                 { sentence: 'Come on lets go to the park before it rains.', options: ['Come on, let\'s go to the park before it rains.', 'Come on lets\' go to the park before it rains.', 'Come on. Lets go to the park before it rains.', 'No change needed'], correct: 0 }
             ] },
@@ -3605,7 +3605,7 @@
                 { options: ['scarce', 'plentiful', 'small', 'frequent'], correct: 1, sentence: 'The river valley had abundant wildlife including deer, otters and many kinds of birds.', optionTags: ['far', 'correct', 'far', 'close'] },
                 { options: ['copious', 'generous', 'frequent', 'rich'], correct: 0, sentence: 'The orchard produced abundant fruit every autumn thanks to the good summer weather.', optionTags: ['correct', 'close', 'close', 'close'] }
             ] },
-            { id: 'synonym-flourish', type: 'synonym', word: 'flourish', explanation: '\'Flourish\' and \'thrive\' both mean to grow strongly and do well.', variants: [
+            { id: 'synonym-flourish', type: 'synonym', word: 'flourish', explanation: '\'Flourish\' and \'thrive\' both mean to grow strongly and do well. A Tier-3 synonym is \'blossom\' — to develop or grow successfully into full bloom.', variants: [
                 { options: ['bloom', 'thrive', 'wither', 'shrink'], correct: 1, sentence: 'The plants began to flourish in the warm summer sun and rich garden soil.', optionTags: ['close', 'correct', 'far', 'far'] },
                 { options: ['prosper', 'blossom', 'bloom', 'succeed'], correct: 1, sentence: 'Small businesses can flourish when local customers shop in their neighbourhood instead of online.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
@@ -3668,7 +3668,7 @@
                 { options: ['powerful', 'weak', 'mighty', 'tough'], correct: 1, sentence: 'The strong horse pulled the heavy plough across the muddy field.', optionTags: ['close', 'correct', 'close', 'close'] },
                 { options: ['muscular', 'fragile', 'robust', 'sturdy'], correct: 1, sentence: 'A strong oak tree had stood at the centre of the field for centuries.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
-            { id: 'antonym-young', type: 'antonym', word: 'young', explanation: '\'Young\' means early in life; \'old\' is the opposite.', variants: [
+            { id: 'antonym-young', type: 'antonym', word: 'young', explanation: '\'Young\' means early in life; \'old\' is the opposite. A Tier-3 antonym is \'aged\' — having lived for a long time, with the marks of age.', variants: [
                 { options: ['small', 'old', 'fresh', 'new'], correct: 1, sentence: 'The young puppy chased its tail in circles on the kitchen floor.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['youthful', 'aged', 'immature', 'juvenile'], correct: 1, sentence: 'A young student raised her hand to answer the difficult question.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
@@ -4693,7 +4693,7 @@
                 if (item.type === 'vocab') {
                     this.renderVocabQuestion(container, question);
                 } else if (item.type === 'spelling') {
-                    this.renderSpellingQuestion(container, question);
+                    this.renderSpellingQuestion(container, question, item);
                 } else if (item.type === 'punctuation') {
                     this.renderPunctuationQuestion(container, question, item);
                 } else if (item.type === 'comprehension') {
@@ -4744,7 +4744,7 @@
                 container.appendChild(options);
             }
 
-            renderSpellingQuestion(container, question) {
+            renderSpellingQuestion(container, question, item) {
                 // Guard: if question data is malformed, skip to next question
                 if (!question || !question.sections || !Array.isArray(question.sections)) {
                     console.error('[Render] Spelling question has no sections:', this.currentItemId, question);
@@ -4757,6 +4757,24 @@
                         this.showNextQuestion();
                     }, 1000);
                     return;
+                }
+
+                // Scaffolding Gradient Phase 3 (Build #49, v1.35.0): spelling becomes scaffoldLevel-aware.
+                // Closes the Phase 3 ladder at 6/6 (cloze + punctuation + homophone + context-clues + comprehension + spelling).
+                // Level 1: instructional hint above the labelled-bracket A/B/C/D display — the child
+                //          scans the four sections with the hint in view; the hint names the
+                //          'or N' affordance because Year-6 children may not realise the "no error"
+                //          option is selectable at maximum support.
+                // Level 2 (default) and Level 3: render bit-for-bit unchanged.
+                // Mirrors the Build #22 / #29 / #38 / #43 / #45 pattern.
+                const scaffoldLevel = (item && typeof item.scaffoldLevel === 'number') ? item.scaffoldLevel : 2;
+
+                if (scaffoldLevel <= 1) {
+                    const hint = document.createElement('div');
+                    hint.className = 'scaffold-hint';
+                    hint.style.cssText = 'background: rgba(108, 92, 231, 0.10); padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-style: italic; color: #2d3436;';
+                    hint.textContent = 'Look at each labelled section. Find the one with a spelling mistake, or pick N if every section is spelled correctly.';
+                    container.appendChild(hint);
                 }
 
                 // GL-style layout: sentence text with bracket dividers below
