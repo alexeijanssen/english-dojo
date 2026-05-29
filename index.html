@@ -1380,7 +1380,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.35.0';
+        const APP_VERSION = 'v1.35.1';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -2484,7 +2484,7 @@
             ] },
             { id: 'vocab-serene', type: 'vocab', word: 'serene', explanation: 'Serene means calm, peaceful, and untroubled.', variants: [
                 { sentence: 'The serene garden was a peaceful place where she could escape her worries.', options: ['calm and peaceful', 'chaotic and loud', 'dark and frightening', 'crowded and busy'], correct: 0 },
-                { sentence: 'The serene lake reflected the mountains perfectly.', options: ['Turbulent', 'Calm and peaceful', 'Foggy', 'Crowded'], correct: 1 }
+                { sentence: 'The serene lake reflected the mountains perfectly.', options: ['Turbulent', 'Tranquil and still', 'Foggy', 'Crowded'], correct: 1 }
             ] },
             { id: 'vocab-vestige', type: 'vocab', word: 'vestige', explanation: 'A vestige is a remaining trace or small part of something that once existed.', variants: [
                 { sentence: 'Only a small vestige of the old castle remained after centuries of decay.', options: ['a remaining trace or small part', 'a complete structure', 'a brand new building', 'a hidden treasure'], correct: 0 },
@@ -2516,7 +2516,7 @@
             ] },
             { id: 'vocab-opulent', type: 'vocab', word: 'opulent', explanation: 'Opulent means luxurious, rich, and decorated with expensive things.', variants: [
                 { sentence: 'The opulent palace was decorated with gold, jewels, and the finest furnishings.', options: ['luxurious and richly decorated', 'simple and plain', 'dark and gloomy', 'cold and empty'], correct: 0 },
-                { sentence: 'The opulent estate featured marble floors and crystal chandeliers.', options: ['Modest', 'Luxurious and richly decorated', 'Rundown', 'Sparse'], correct: 1 }
+                { sentence: 'The opulent estate featured marble floors and crystal chandeliers.', options: ['Modest', 'Lavishly furnished', 'Rundown', 'Sparse'], correct: 1 }
             ] },
             { id: 'vocab-demure', type: 'vocab', word: 'demure', explanation: 'Demure means quiet, modest, and reserved.', variants: [
                 { sentence: 'The demure girl spoke quietly and politely without any boastfulness.', options: ['quiet and modest', 'loud and boisterous', 'angry and hostile', 'silly and immature'], correct: 0 },
@@ -2524,7 +2524,7 @@
             ] },
             { id: 'vocab-incongruous', type: 'vocab', word: 'incongruous', explanation: 'Incongruous means not matching or fitting well together; out of place.', variants: [
                 { sentence: 'Wearing a swimsuit to a fancy ball would be incongruous and completely out of place.', options: ['out of place and inappropriate', 'appropriate and suitable', 'comfortable and practical', 'fashionable and trendy'], correct: 0 },
-                { sentence: 'His cheerful jokes seemed incongruous given the serious situation.', options: ['Suitable', 'Out of place and inappropriate', 'Expected', 'Helpful'], correct: 1 }
+                { sentence: 'His cheerful jokes seemed incongruous given the serious situation.', options: ['Suitable', 'Mismatched with its surroundings', 'Expected', 'Helpful'], correct: 1 }
             ] },
             { id: 'vocab-turbulent', type: 'vocab', word: 'turbulent', explanation: 'Turbulent means characterized by conflict, disorder, or rough motion.', variants: [
                 { sentence: 'The turbulent waters tossed the small boat back and forth violently.', options: ['chaotic and disturbed', 'calm and smooth', 'cold and freezing', 'warm and pleasant'], correct: 0 },
@@ -2540,7 +2540,7 @@
             ] },
             { id: 'vocab-raucous', type: 'vocab', word: 'raucous', explanation: 'Raucous means loud, harsh, and unpleasantly noisy.', variants: [
                 { sentence: 'The raucous laughter from the comedy club could be heard out on the street.', options: ['loud and harsh', 'quiet and gentle', 'musical and pleasant', 'boring and dull'], correct: 0 },
-                { sentence: 'The raucous party next door kept them awake all night.', options: ['Quiet', 'Loud and harsh', 'Peaceful', 'Elegant'], correct: 1 }
+                { sentence: 'The raucous party next door kept them awake all night.', options: ['Quiet', 'Boisterous and grating', 'Peaceful', 'Elegant'], correct: 1 }
             ] },
             { id: 'vocab-lucid', type: 'vocab', word: 'lucid', explanation: 'Lucid means clear, easily understood, and transparent.', variants: [
                 { sentence: 'The lucid explanation made the difficult maths concept easy to understand.', options: ['clear and easy to understand', 'confusing and unclear', 'long and boring', 'short and vague'], correct: 0 },
@@ -3012,7 +3012,7 @@
                 { sentence: 'The report was finished; therefore the manager approved it.', options: ['The report was finished, therefore the manager approved it.', 'The report was finished. Therefore, the manager approved it.', 'The report was finished; therefore, the manager approved it.', 'No change needed'], correct: 2 },
                 { sentence: 'It was raining heavily; therefore we stayed inside all day.', options: ['It was raining heavily, therefore we stayed inside all day.', 'It was raining heavily; therefore, we stayed inside all day.', 'It was raining heavily. Therefore we stayed inside all day.', 'No change needed'], correct: 1 }
             ] },
-            { id: 'punct-31', type: 'punctuation', explanation: '"It\'s" means "it is".', variants: [
+            { id: 'punct-31', type: 'punctuation', explanation: '"It\'s" is a contraction of "it is" — the apostrophe stands in for the missing letter. Possessive "its" never takes an apostrophe, just like "his" and "hers".', variants: [
                 { sentence: 'Its a beautiful day outside!', options: ['It\'s a beautiful day outside!', 'Its a beautiful day outside!', 'Its\' a beautiful day outside!', 'No change needed'], correct: 0 },
                 { sentence: 'Its going to rain later this afternoon.', options: ['It\'s going to rain later this afternoon.', 'Its going to rain later this afternoon.', 'Its\' going to rain later this afternoon.', 'No change needed'], correct: 0 }
             ] },
@@ -3581,7 +3581,7 @@
                 { options: ['normal', 'odd', 'usual', 'familiar'], correct: 1, sentence: 'A strange figure appeared at the gate just as the clock struck midnight.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['bizarre', 'typical', 'common', 'ordinary'], correct: 0, sentence: 'The dog made a strange noise that sounded almost like crying.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
-            { id: 'synonym-strong', type: 'synonym', word: 'strong', explanation: '\'Strong\' and \'powerful\' both mean having great force or strength.', variants: [
+            { id: 'synonym-strong', type: 'synonym', word: 'strong', explanation: '\'Strong\' and \'powerful\' both mean having great force or strength. A Tier-3 synonym is \'formidable\' — powerfully strong enough to inspire respect or even fear.', variants: [
                 { options: ['weak', 'powerful', 'feeble', 'tiny'], correct: 1, sentence: 'A strong wind blew the autumn leaves across the school playground.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['mighty', 'fragile', 'delicate', 'puny'], correct: 0, sentence: 'The strong builder lifted the heavy stones onto his shoulder with ease.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
@@ -3644,7 +3644,7 @@
                 { options: ['shiny', 'dark', 'light', 'colourful'], correct: 1, sentence: 'The bright sunshine made the snow sparkle on the mountain tops.', optionTags: ['close', 'correct', 'far', 'far'] },
                 { options: ['luminous', 'dim', 'radiant', 'glowing'], correct: 1, sentence: 'A bright lamp lit every corner of the small reading room.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
-            { id: 'antonym-quiet', type: 'antonym', word: 'quiet', explanation: '\'Quiet\' means little sound; \'loud\' is the opposite.', variants: [
+            { id: 'antonym-quiet', type: 'antonym', word: 'quiet', explanation: '\'Quiet\' means little sound; \'loud\' is the opposite. A Tier-3 antonym is \'clamorous\' — making a loud and persistent outcry or noise.', variants: [
                 { options: ['silent', 'loud', 'gentle', 'soft'], correct: 1, sentence: 'The library was quiet, with only the sound of pages turning.', optionTags: ['close', 'correct', 'far', 'close'] },
                 { options: ['peaceful', 'noisy', 'calm', 'tranquil'], correct: 1, sentence: 'They lived on a quiet street where almost no cars passed by.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
