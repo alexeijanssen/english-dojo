@@ -1380,7 +1380,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.35.1';
+        const APP_VERSION = 'v1.36.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -3549,7 +3549,7 @@
                 { options: ['dark', 'shiny', 'dull', 'cold'], correct: 1, sentence: 'A bright torch lit the path through the dark woodland behind the house.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['luminous', 'matte', 'dull', 'murky'], correct: 0, sentence: 'The bright morning sunshine reflected off the still surface of the lake.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
-            { id: 'synonym-brave', type: 'synonym', word: 'brave', explanation: '\'Brave\' and \'courageous\' both mean facing danger without fear.', variants: [
+            { id: 'synonym-brave', type: 'synonym', word: 'brave', explanation: '\'Brave\' and \'courageous\' both mean facing danger without fear. A Tier-3 synonym is \'intrepid\' — fearlessly resolute in the face of danger or difficulty.', variants: [
                 { options: ['courageous', 'shy', 'nervous', 'foolish'], correct: 0, sentence: 'A brave swimmer dived into the river to rescue the struggling child.', optionTags: ['correct', 'far', 'far', 'far'] },
                 { options: ['fearless', 'cowardly', 'timid', 'hesitant'], correct: 0, sentence: 'The brave explorers climbed the icy mountain in the freezing wind.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
@@ -3648,7 +3648,7 @@
                 { options: ['silent', 'loud', 'gentle', 'soft'], correct: 1, sentence: 'The library was quiet, with only the sound of pages turning.', optionTags: ['close', 'correct', 'far', 'close'] },
                 { options: ['peaceful', 'noisy', 'calm', 'tranquil'], correct: 1, sentence: 'They lived on a quiet street where almost no cars passed by.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
-            { id: 'antonym-clean', type: 'antonym', word: 'clean', explanation: '\'Clean\' means free from dirt; \'dirty\' is the opposite.', variants: [
+            { id: 'antonym-clean', type: 'antonym', word: 'clean', explanation: '\'Clean\' means free from dirt; \'dirty\' is the opposite. A Tier-3 antonym is \'squalid\' — extremely dirty and unpleasant, often from neglect.', variants: [
                 { options: ['spotless', 'dirty', 'neat', 'tidy'], correct: 1, sentence: 'After scrubbing for an hour, the kitchen was finally clean again.', optionTags: ['close', 'correct', 'far', 'far'] },
                 { options: ['pure', 'filthy', 'immaculate', 'pristine'], correct: 1, sentence: 'The nurse wore a clean uniform every morning before her shift.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
@@ -4870,12 +4870,16 @@
             }
 
             renderComprehensionQuestion(container, question, item) {
-                // Scaffolding Gradient Phase 3 (Build #45): comprehension becomes scaffoldLevel-aware.
-                // Level 1: instructional hint PREPENDED ABOVE THE PASSAGE — the child reads the hint
-                //          before encountering the passage (placement diverges from prior Phase 3
-                //          landings because comprehension is the only type with a passage block).
-                // Level 2 (default) and Level 3: render bit-for-bit unchanged.
-                // Mirrors the Build #29 / #38 / #43 pattern; hint placement is the only divergence.
+                // Scaffolding Gradient Phase 3 (Build #45 / #51): comprehension is scaffoldLevel-aware.
+                // Level 1: instructional hint prepended above the passage (only type with a passage).
+                // Level 2 (default): standard .passage CSS — full breathing room (25px padding,
+                //          1.8 line-height, 25px margin-bottom).
+                // Level 3 (Build #51 — first type in the autumn L3 differentiation programme):
+                //          GL-paper density — inline-style overrides compress padding/line-height/
+                //          margin on .passage. Background/radius/colour preserved so the block stays
+                //          recognisable; only the spacing scaffold is withdrawn. First L2/L3 visual
+                //          split on comprehension. Comprehension has no malformed-data guard
+                //          (cloze/spelling do); L3 branch sits inline with passage construction.
                 const scaffoldLevel = (item && typeof item.scaffoldLevel === 'number') ? item.scaffoldLevel : 2;
 
                 if (scaffoldLevel <= 1) {
@@ -4888,8 +4892,18 @@
 
                 const passage = document.createElement('div');
                 passage.className = 'passage';
+                // Phase 3 Level-3 surface differentiation — comprehension (first type in the L3
+                // programme). Withdraw the .passage breathing room so the child meets the question
+                // at GL-paper density. Level 2 retains the full .passage CSS; only Level 3 is
+                // compressed.
+                if (scaffoldLevel === 3) {
+                    passage.style.padding = '15px 18px';
+                    passage.style.marginBottom = '12px';
+                    passage.style.lineHeight = '1.55';
+                }
                 passage.textContent = question.passage;
                 container.appendChild(passage);
+                console.log('[Gradient] renderComprehensionQuestion → concept=' + (item ? item.id : 'unknown') + ' level=' + scaffoldLevel);
 
                 const questionText = document.createElement('div');
                 questionText.className = 'question-text';
