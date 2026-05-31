@@ -438,48 +438,53 @@
             transform: scale(0.98);
         }
 
-        .points-popup {
-            position: fixed;
-            pointer-events: none;
-            font-weight: 700;
-            font-size: 1.5em;
-            animation: popupFloat 2s ease-out forwards;
+        .btn-session-exit {
+            background: transparent;
+            border: none;
+            color: #9090a0;
+            font-size: 1.4em;
+            padding: 8px 12px;
+            min-width: 44px;
+            min-height: 44px;
+            cursor: pointer;
+            line-height: 1;
         }
 
-        .points-popup.bonus {
-            color: #ffd700;
+        .btn-session-exit:hover {
+            color: #ffffff;
         }
 
-        .points-popup.normal {
-            color: #6c5ce7;
+        .session-exit-confirm {
+            text-align: center;
+            padding: 40px 20px;
+            color: #b0b0c0;
         }
 
-        @keyframes popupFloat {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-60px) scale(1.2);
-            }
+        .session-exit-confirm p {
+            margin-bottom: 24px;
+            font-size: 1.05em;
         }
 
-        .confetti {
-            position: fixed;
-            pointer-events: none;
-            animation: confettiFall 3s ease-out forwards;
+        .btn-exit-yes, .btn-exit-no {
+            padding: 10px 20px;
+            margin: 0 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1em;
+            border: 1px solid #444;
+            background: transparent;
+            color: #e0e0e8;
         }
 
-        @keyframes confettiFall {
-            0% {
-                opacity: 1;
-                transform: translateY(0) rotateZ(0);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(600px) rotateZ(360deg);
-            }
+        .btn-exit-yes:hover {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .btn-exit-no:hover {
+            border-color: #6c5ce7;
+            color: #ffffff;
         }
 
         /* Complete Screen */
@@ -525,13 +530,6 @@
             font-size: 1.8em;
             font-weight: 700;
             color: #6c5ce7;
-        }
-
-        .encouragement {
-            font-size: 1.2em;
-            color: #b0b0c0;
-            margin-bottom: 30px;
-            line-height: 1.6;
         }
 
         .btn-restart {
@@ -1326,10 +1324,17 @@
                     <span id="sessionPoints">0</span> <span style="font-size:0.7em;opacity:0.6;">pts</span>
                     <span id="streakIcon" style="margin-left:8px;"></span><span id="currentStreakNumber"></span>
                 </div>
+                <button class="btn-session-exit" id="btnSessionExit" aria-label="End session">×</button>
             </div>
 
             <div class="question-container" id="questionContainer">
                 <!-- Dynamically populated -->
+            </div>
+
+            <div class="session-exit-confirm" id="sessionExitConfirm" hidden>
+                <p>End session early? Your progress so far will be saved.</p>
+                <button class="btn-exit-yes" id="btnExitYes">Yes, end</button>
+                <button class="btn-exit-no" id="btnExitNo">No, keep going</button>
             </div>
 
             <button class="btn-next" id="nextBtn">Next</button>
@@ -1359,8 +1364,6 @@
                     </div>
                 </div>
 
-                <div class="encouragement" id="encouragement"></div>
-
                 <button class="btn-restart">Back to Home</button>
             </div>
         </div>
@@ -1380,7 +1383,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.36.0';
+        const APP_VERSION = 'v1.36.1';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -4065,6 +4068,19 @@
                         this.goToSubjects();
                     });
                 }
+
+                const btnSessionExit = document.getElementById('btnSessionExit');
+                if (btnSessionExit) {
+                    btnSessionExit.addEventListener('click', () => this.requestSessionExit());
+                }
+                const btnExitYes = document.getElementById('btnExitYes');
+                if (btnExitYes) {
+                    btnExitYes.addEventListener('click', () => this.confirmSessionExit());
+                }
+                const btnExitNo = document.getElementById('btnExitNo');
+                if (btnExitNo) {
+                    btnExitNo.addEventListener('click', () => this.cancelSessionExit());
+                }
             }
 
             render() {
@@ -5228,11 +5244,6 @@
                 const isSlowCorrect = isCorrect && latency >= fluentThreshold && latency >= 1500;
 
                 this.showFeedback(isCorrect, explanation, isSlowCorrect);
-                this.showPointsPopup(points, isCorrect && this.sessionStats.currentStreak > 0 && this.sessionStats.currentStreak % 5 === 0);
-
-                if (isCorrect && this.sessionStats.currentStreak > 0 && this.sessionStats.currentStreak % 5 === 0) {
-                    this.triggerConfetti();
-                }
 
                 // Update session header live
                 document.getElementById('sessionPoints').textContent = this.sessionStats.pointsEarned;
@@ -5309,61 +5320,21 @@
                     feedback.appendChild(contextDiv);
                 }
 
-                // Teaching-phase-specific encouragement
+                // Teaching-phase recovery feedback (quiet utility — testing-effect framing)
                 const itemId = this.currentItemId;
                 const currentItem = itemId ? this.engine.items[itemId] : null;
                 if (currentItem && (currentItem.state === 'fragile' || currentItem.state === 'teaching') && currentItem.lapseCount > 0) {
                     const extraDiv = document.createElement('div');
                     extraDiv.className = 'teaching-feedback-extra';
                     if (isCorrect) {
-                        const encouragements = [
-                            'Brilliant! You remembered after learning it. That\u2019s real progress!',
-                            'See? The lesson helped! Keep building on this.',
-                            'Well done \u2014 you\u2019ve turned a mistake into knowledge!',
-                            'That\u2019s the power of learning from mistakes. You\u2019ve got this!'
-                        ];
-                        extraDiv.textContent = '\uD83C\uDF1F ' + encouragements[Math.floor(Math.random() * encouragements.length)];
+                        extraDiv.textContent = 'You\'d missed this one before. The lesson held.';
                     } else {
-                        const retryMessages = [
-                            'Don\u2019t worry \u2014 this idea needs a bit more practice. We\u2019ll practise it again later with a different question.',
-                            'Tricky one! Your brain is still working on it. Next time you\u2019ll be closer.',
-                            'Keep going \u2014 every attempt makes the connection stronger in your brain.'
-                        ];
-                        extraDiv.textContent = '\uD83D\uDCAA ' + retryMessages[Math.floor(Math.random() * retryMessages.length)];
+                        extraDiv.textContent = 'Still settling. You\'ll see this one again.';
                     }
                     feedback.appendChild(extraDiv);
                 }
 
                 container.appendChild(feedback);
-            }
-
-            showPointsPopup(points, isBonus) {
-                const popup = document.createElement('div');
-                popup.className = 'points-popup ' + (isBonus ? 'bonus' : 'normal');
-                popup.textContent = '+' + points;
-
-                const x = Math.random() * window.innerWidth * 0.6 + window.innerWidth * 0.2;
-                const y = window.innerHeight / 2;
-                popup.style.left = x + 'px';
-                popup.style.top = y + 'px';
-
-                document.body.appendChild(popup);
-
-                setTimeout(() => popup.remove(), 2000);
-            }
-
-            triggerConfetti() {
-                for (let i = 0; i < 30; i++) {
-                    const confetti = document.createElement('div');
-                    confetti.className = 'confetti';
-                    confetti.textContent = ['⭐', '🌟', '✨'][Math.floor(Math.random() * 3)];
-                    confetti.style.left = Math.random() * window.innerWidth + 'px';
-                    confetti.style.top = '-10px';
-                    confetti.style.fontSize = (10 + Math.random() * 10) + 'px';
-                    document.body.appendChild(confetti);
-
-                    setTimeout(() => confetti.remove(), 3000);
-                }
             }
 
             handleNextQuestion() {
@@ -5436,19 +5407,6 @@
                 document.getElementById('completePoints').textContent = this.sessionStats.pointsEarned;
                 document.getElementById('completeStreak').textContent = this.sessionStats.bestStreak;
 
-                let encouragement = '';
-                if (accuracy >= 90) {
-                    encouragement = 'Absolutely brilliant! You\'re a true English master! Keep this momentum going.';
-                } else if (accuracy >= 75) {
-                    encouragement = 'Excellent work! You\'re making real progress. A few more sessions and you\'ll be unstoppable!';
-                } else if (accuracy >= 60) {
-                    encouragement = 'Great effort! Every mistake is a chance to learn. You\'re improving each session!';
-                } else {
-                    encouragement = 'Good try! Keep practising and you\'ll see improvement. Every expert was once a beginner!';
-                }
-
-                document.getElementById('encouragement').textContent = encouragement;
-
                 this.showScreen('complete');
             }
 
@@ -5475,6 +5433,28 @@
 
             goToSubjects() {
                 showScreen('subjectScreen');
+            }
+
+            requestSessionExit() {
+                document.getElementById('questionContainer').style.display = 'none';
+                document.getElementById('nextBtn').classList.remove('show');
+                document.getElementById('sessionExitConfirm').hidden = false;
+            }
+
+            cancelSessionExit() {
+                document.getElementById('sessionExitConfirm').hidden = true;
+                document.getElementById('questionContainer').style.display = '';
+                if (this.answered) {
+                    document.getElementById('nextBtn').classList.add('show');
+                }
+            }
+
+            confirmSessionExit() {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                this.engine.saveGlobalStats();
+                document.getElementById('sessionExitConfirm').hidden = true;
+                document.getElementById('questionContainer').style.display = '';
+                this.goToSubjects();
             }
         }
 
