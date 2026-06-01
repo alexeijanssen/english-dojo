@@ -1383,7 +1383,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.36.1';
+        const APP_VERSION = 'v1.36.2';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -2915,7 +2915,7 @@
                 { sentence: '"Why me" The mysterious figure gave a cryptic smile.', options: ['"Why me?" The mysterious figure gave a cryptic smile.', '"Why me." The mysterious figure gave a cryptic smile.', '"Why me," The mysterious figure gave a cryptic smile.', 'No change needed'], correct: 0 },
                 { sentence: '"How did you get here" The boy looked around in confusion.', options: ['"How did you get here?" The boy looked around in confusion.', '"How did you get here." The boy looked around in confusion.', '"How did you get here," The boy looked around in confusion.', 'No change needed'], correct: 0 }
             ] },
-            { id: 'punct-6', type: 'punctuation', explanation: 'Comma needed and apostrophe.', variants: [
+            { id: 'punct-6', type: 'punctuation', explanation: 'When \'but\' joins two complete sentences, place a comma before it. Apostrophes in contractions like \'couldn\'t\' stand in for the missing letter (couldn\'t = could not).', variants: [
                 { sentence: 'Rachel ventured forth but she couldnt shake the feeling of being watched.', options: ['Rachel ventured forth, but she couldn\'t shake the feeling of being watched.', 'Rachel ventured forth but she couldn\'t shake, the feeling of being watched.', 'Rachel ventured forth but, she couldn\'t shake the feeling of being watched.', 'No change needed'], correct: 0 },
                 { sentence: 'He wanted to stay longer but he couldnt miss the bus home.', options: ['He wanted to stay longer, but he couldn\'t miss the bus home.', 'He wanted to stay longer but he couldn\'t miss, the bus home.', 'He wanted to stay longer, but he couldnt miss the bus home.', 'No change needed'], correct: 0 }
             ] },
@@ -3123,7 +3123,7 @@
                 { sentence: 'The book which won an award is available now.', options: ['The book which won an award, is available now.', 'The book, which won an award, is available now.', 'The book which won an award is available now.', 'No change needed'], correct: 1 },
                 { sentence: 'The painting which hung in the hall was very old.', options: ['The painting which hung in the hall, was very old.', 'The painting, which hung in the hall, was very old.', 'The painting which hung in the hall was very old.', 'No change needed'], correct: 1 }
             ] },
-            { id: 'punct-58', type: 'punctuation', explanation: 'Multiple sisters own friends.', variants: [
+            { id: 'punct-58', type: 'punctuation', explanation: 'For a plural noun ending in \'s\' that owns something, put the apostrophe AFTER the \'s\' (sisters\' friends = the friends belonging to multiple sisters). One sister would be \'sister\'s friends\'.', variants: [
                 { sentence: 'My sisters\' friends are coming over tonight.', options: ['My sisters\' friends are coming over tonight.', 'My sister\'s friends are coming over tonight.', 'My sisters friends are coming over tonight.', 'No change needed'], correct: 0 },
                 { sentence: 'The teachers\' meeting lasted for two hours.', options: ['The teachers\' meeting lasted for two hours.', 'The teacher\'s meeting lasted for two hours.', 'The teachers meeting lasted for two hours.', 'No change needed'], correct: 0 }
             ] },
@@ -3131,7 +3131,7 @@
                 { sentence: 'She asked me to help so I did.', options: ['She asked me to help, so I did.', 'She asked me to help so I did.', 'She asked me to help; so I did.', 'No change needed'], correct: 0 },
                 { sentence: 'It was getting late so we decided to leave.', options: ['It was getting late, so we decided to leave.', 'It was getting late so we decided to leave.', 'It was getting late; so we decided to leave.', 'No change needed'], correct: 0 }
             ] },
-            { id: 'punct-60', type: 'punctuation', explanation: 'Use a space before AM/PM.', variants: [
+            { id: 'punct-60', type: 'punctuation', explanation: 'Times use capital AM or PM, separated from the number by a space (9:00 AM, not 9:00am or 9:00 am). The space and the capitals follow standard British style for clock times.', variants: [
                 { sentence: 'The meeting starts at 9:00 am sharp.', options: ['The meeting starts at 9:00 AM sharp.', 'The meeting starts at 9:00 am sharp.', 'The meeting starts at 9:00am sharp.', 'No change needed'], correct: 0 },
                 { sentence: 'School ends at 3:30 pm every day.', options: ['School ends at 3:30 PM every day.', 'School ends at 3:30 pm every day.', 'School ends at 3:30pm every day.', 'No change needed'], correct: 0 }
             ] },
@@ -3564,7 +3564,7 @@
                 { options: ['quick', 'sluggish', 'speedy', 'hasty'], correct: 1, sentence: 'A slow snail crept across the damp leaf in the early morning.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['lethargic', 'swift', 'rapid', 'brisk'], correct: 0, sentence: 'The slow bus journey took twice as long because of the traffic.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
-            { id: 'synonym-clever', type: 'synonym', word: 'clever', explanation: '\'Clever\' and \'smart\' both mean intelligent and quick-thinking.', variants: [
+            { id: 'synonym-clever', type: 'synonym', word: 'clever', explanation: '\'Clever\' and \'smart\' both mean intelligent and quick-thinking. A Tier-3 synonym is \'astute\' — sharply observant and quick to grasp what is really going on.', variants: [
                 { options: ['smart', 'foolish', 'clumsy', 'quiet'], correct: 0, sentence: 'The clever fox tricked the hunters by doubling back on its own tracks.', optionTags: ['correct', 'far', 'far', 'far'] },
                 { options: ['intelligent', 'dumb', 'slow', 'dense'], correct: 0, sentence: 'A clever pupil suggested an inventive way to solve the difficult sum.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
@@ -3675,7 +3675,7 @@
                 { options: ['small', 'old', 'fresh', 'new'], correct: 1, sentence: 'The young puppy chased its tail in circles on the kitchen floor.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['youthful', 'aged', 'immature', 'juvenile'], correct: 1, sentence: 'A young student raised her hand to answer the difficult question.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
-            { id: 'antonym-kind', type: 'antonym', word: 'kind', explanation: '\'Kind\' means caring; \'cruel\' is the opposite.', variants: [
+            { id: 'antonym-kind', type: 'antonym', word: 'kind', explanation: '\'Kind\' means caring; \'cruel\' is the opposite. A Tier-3 antonym is \'callous\' — showing no concern or sympathy for the feelings of others.', variants: [
                 { options: ['gentle', 'cruel', 'caring', 'nice'], correct: 1, sentence: 'A kind stranger helped the old man carry his shopping up the stairs.', optionTags: ['close', 'correct', 'close', 'close'] },
                 { options: ['compassionate', 'vicious', 'benevolent', 'warm'], correct: 1, sentence: 'The kind teacher always made time to listen to her pupils\' worries.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
@@ -3849,6 +3849,10 @@
             { id: 'context-clues-melancholy', type: 'context-clues', targetWord: 'melancholy', explanation: 'Sarah is staring at the rain and thinking about her grandmother who has died — "melancholy" means a deep, gloomy sadness.', variants: [
                 { passage: 'Sarah felt melancholy as she stared out at the rain, thinking about her grandmother who had passed away the previous autumn and the long walks they would never take again.', question: 'What does "melancholy" most likely mean?', options: ['Sad and gloomy', 'Excited and cheerful', 'Curious and amazed', 'Calm and untroubled'], correct: 0 },
                 { passage: 'A melancholy mood settled over the empty house once the last guests had left and the music had faded — every quiet room seemed to hold a memory just out of reach.', question: 'What does "melancholy" mean in this passage?', options: ['Loud and lively', 'Sorrowful and reflective', 'Briefly disappointed', 'Cold and damp'], correct: 1, explanation: 'The empty house, faded music, and memories just out of reach — "melancholy" means a deep, sorrowful mood mixed with quiet reflection.' }
+            ] },
+            { id: 'context-clues-arduous', type: 'context-clues', targetWord: 'arduous', explanation: 'Twelve hours of climbing with lungs burning and legs trembling describes a journey that takes great effort — "arduous" means involving long, demanding effort.', variants: [
+                { passage: 'The arduous climb up the mountain took twelve hours, and by the end, every climber\'s lungs were burning and their legs trembling with each step.', question: 'What does "arduous" most likely mean?', options: ['Involving long, demanding effort', 'Short and easy', 'Beautiful and scenic', 'Dangerous and rocky'], correct: 0 },
+                { passage: 'Writing the dissertation proved arduous — months of careful research, late nights at the desk, and draft after draft before it was finally ready.', question: 'What does "arduous" mean in this passage?', options: ['Quickly finished', 'Demanding and exhausting', 'Surprisingly enjoyable', 'Poorly organised'], correct: 1, explanation: 'Months of research, late nights, and many drafts — "arduous" means requiring sustained, demanding effort over time.' }
             ] }
         ];
 
