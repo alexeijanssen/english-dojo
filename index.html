@@ -1383,7 +1383,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.36.2';
+        const APP_VERSION = 'v1.36.3';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -3600,7 +3600,7 @@
                 { options: ['easy', 'challenging', 'simple', 'clear'], correct: 1, sentence: 'The puzzle was so difficult that even the teacher had to think carefully.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['tough', 'straightforward', 'effortless', 'obvious'], correct: 0, sentence: 'Climbing the steep hill was difficult on such a hot day.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
-            { id: 'synonym-delighted', type: 'synonym', word: 'delighted', explanation: '\'Delighted\' and \'pleased\' both mean very happy.', variants: [
+            { id: 'synonym-delighted', type: 'synonym', word: 'delighted', explanation: '\'Delighted\' and \'pleased\' both mean very happy. A Tier-3 synonym is \'jubilant\' — feeling or showing great happiness and triumph.', variants: [
                 { options: ['miserable', 'angry', 'pleased', 'bored'], correct: 2, sentence: 'Grandma was delighted when the grandchildren came to stay for the weekend.', optionTags: ['far', 'far', 'correct', 'far'] },
                 { options: ['thrilled', 'displeased', 'unhappy', 'annoyed'], correct: 0, sentence: 'The class was delighted to discover that the trip had been approved.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
@@ -3691,7 +3691,7 @@
                 { options: ['sleepy', 'energetic', 'bored', 'weary'], correct: 1, sentence: 'After the long hike, the children were tired and ready for bed.', optionTags: ['close', 'correct', 'far', 'close'] },
                 { options: ['exhausted', 'lively', 'fatigued', 'drained'], correct: 1, sentence: 'The tired farmer sat down on the wall to catch his breath.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
-            { id: 'antonym-harsh', type: 'antonym', word: 'harsh', explanation: '\'Harsh\' means severe; \'gentle\' is the opposite.', variants: [
+            { id: 'antonym-harsh', type: 'antonym', word: 'harsh', explanation: '\'Harsh\' means severe or rough; \'gentle\' is the plain-English opposite. A Tier-3 antonym is \'acrimonious\' — bitter or sharp in tone, especially in disagreement or argument.', variants: [
                 { options: ['rough', 'gentle', 'severe', 'strict'], correct: 1, sentence: 'The harsh winter wind cut straight through their thin coats.', optionTags: ['close', 'correct', 'close', 'close'] },
                 { options: ['rough', 'mild', 'stern', 'rigid'], correct: 1, sentence: 'Her harsh voice silenced the chattering pupils at once.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
@@ -4890,6 +4890,13 @@
             }
 
             renderComprehensionQuestion(container, question, item) {
+                // Guard: if question data is malformed, skip render. Mirrors the
+                // renderSpellingQuestion head-guard pattern (Build #54).
+                if (!question || !question.passage || !Array.isArray(question.options)) {
+                    console.warn('[Gradient] renderComprehensionQuestion: malformed item data, skipping render — concept=' + (item ? item.id : 'unknown'));
+                    return;
+                }
+
                 // Scaffolding Gradient Phase 3 (Build #45 / #51): comprehension is scaffoldLevel-aware.
                 // Level 1: instructional hint prepended above the passage (only type with a passage).
                 // Level 2 (default): standard .passage CSS — full breathing room (25px padding,
@@ -4898,8 +4905,8 @@
                 //          GL-paper density — inline-style overrides compress padding/line-height/
                 //          margin on .passage. Background/radius/colour preserved so the block stays
                 //          recognisable; only the spacing scaffold is withdrawn. First L2/L3 visual
-                //          split on comprehension. Comprehension has no malformed-data guard
-                //          (cloze/spelling do); L3 branch sits inline with passage construction.
+                //          split on comprehension. Head-guard for malformed data added in
+                //          Build #54 (mirrors spelling); L3 branch sits inline with passage construction.
                 const scaffoldLevel = (item && typeof item.scaffoldLevel === 'number') ? item.scaffoldLevel : 2;
 
                 if (scaffoldLevel <= 1) {
