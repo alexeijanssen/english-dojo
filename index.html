@@ -1383,7 +1383,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.36.6';
+        const APP_VERSION = 'v1.37.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -4860,6 +4860,17 @@
                 // scaffoldLevel-aware. Level 1 prepends an instructional hint above the
                 // stem; Level 2 (default) and Level 3 render bit-for-bit as before.
                 // Mirrors renderClozeQuestion's Build #22 pattern.
+                // Build #58 (v1.37.0): Phase 3 Level-3 surface differentiation — punctuation
+                // is the sixth audit-frequency type to receive L3 GL-paper-density
+                // compression. Mirrors Build #52's comprehension precedent in spirit, but
+                // targets the .option labelled-bracket A/B/C/D segments themselves since
+                // punctuation has no .passage-equivalent stem wrapper — the options ARE
+                // the stem (each is a candidate sentence). Constraint #11 flag: the
+                // analyst's reference of a single stem container does not match the
+                // on-disk render shape; the L3 override is applied per-option in the
+                // forEach loop, preserving background/border/radius from the .option class
+                // while withdrawing spatial padding and tightening line-height. One new
+                // scaffoldLevel === 3 guard inside the loop (count 1 → 2).
                 const scaffoldLevel = (item && typeof item.scaffoldLevel === 'number') ? item.scaffoldLevel : 2;
 
                 if (scaffoldLevel <= 1) {
@@ -4881,6 +4892,10 @@
                 question.options.forEach((option, idx) => {
                     const opt = document.createElement('div');
                     opt.className = 'option';
+                    if (scaffoldLevel === 3) {
+                        opt.style.padding = '15px 18px';
+                        opt.style.lineHeight = '1.55';
+                    }
                     opt.innerHTML = '<span class="option-label">' + String.fromCharCode(65 + idx) + '.</span>' + option;
                     opt.addEventListener('click', () => this.handleAnswer(idx, question.correct, question.explanation));
                     options.appendChild(opt);
