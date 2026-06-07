@@ -248,7 +248,7 @@
             align-items: center;
             gap: 8px;
             font-size: 1.1em;
-            color: #ff6b6b;
+            color: #ff8e3c;
             font-weight: 600;
         }
 
@@ -891,6 +891,20 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
+        /* Level-1 scaffold hint surface — six render call sites (spelling, cloze x2,
+           comprehension, context-clues, homophone). Refactored from six identical
+           inline cssText strings to this class on 7 June 2026 (Build #59, UX-017).
+           Pre-refactor colour #2d3436 failed WCAG AA at ~1.37:1 on the composite
+           background; #d0d0e0 (matching .passage and .intro-hint-rule) is ~11:1 (AAA). */
+        .scaffold-hint {
+            background: rgba(108, 92, 231, 0.1);
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            font-style: italic;
+            color: #d0d0e0;
+        }
+
         .intro-hint-icon {
             font-size: 1.2em;
             flex-shrink: 0;
@@ -1383,7 +1397,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.37.0';
+        const APP_VERSION = 'v1.37.1';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -4792,7 +4806,6 @@
                 if (scaffoldLevel <= 1) {
                     const hint = document.createElement('div');
                     hint.className = 'scaffold-hint';
-                    hint.style.cssText = 'background: rgba(108, 92, 231, 0.10); padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-style: italic; color: #2d3436;';
                     hint.textContent = 'Look at each labelled section. Find the one with a spelling mistake, or pick N if every section is spelled correctly.';
                     container.appendChild(hint);
                 }
@@ -4876,7 +4889,6 @@
                 if (scaffoldLevel <= 1) {
                     const hint = document.createElement('div');
                     hint.className = 'scaffold-hint';
-                    hint.style.cssText = 'background: rgba(108, 92, 231, 0.10); padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-style: italic; color: #2d3436;';
                     hint.textContent = 'Pick the version with the correct punctuation.';
                     container.appendChild(hint);
                 }
@@ -4927,7 +4939,6 @@
                 if (scaffoldLevel <= 1) {
                     const hint = document.createElement('div');
                     hint.className = 'scaffold-hint';
-                    hint.style.cssText = 'background: rgba(108, 92, 231, 0.10); padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-style: italic; color: #2d3436;';
                     hint.textContent = 'Read the passage carefully. Pick the answer that the passage best supports.';
                     container.appendChild(hint);
                 }
@@ -4978,7 +4989,6 @@
                 if (scaffoldLevel <= 1) {
                     const hint = document.createElement('div');
                     hint.className = 'scaffold-hint';
-                    hint.style.cssText = 'background: rgba(108, 92, 231, 0.10); padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-style: italic; color: #2d3436;';
                     hint.textContent = 'Pick the word that best fits the sentence.';
                     container.appendChild(hint);
                 }
@@ -5119,7 +5129,6 @@
                 if (scaffoldLevel <= 1) {
                     const hint = document.createElement('div');
                     hint.className = 'scaffold-hint';
-                    hint.style.cssText = 'background: rgba(108, 92, 231, 0.10); padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-style: italic; color: #2d3436;';
                     hint.textContent = 'Pick the word that fits the meaning shown by the surrounding sentence.';
                     container.appendChild(hint);
                 }
@@ -5164,7 +5173,6 @@
                 if (scaffoldLevel <= 1) {
                     const hint = document.createElement('div');
                     hint.className = 'scaffold-hint';
-                    hint.style.cssText = 'background: rgba(108, 92, 231, 0.10); padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-style: italic; color: #2d3436;';
                     hint.textContent = 'Pick the word that sounds the same but means something different.';
                     container.appendChild(hint);
                 }
