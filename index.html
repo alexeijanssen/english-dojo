@@ -1397,7 +1397,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.37.1';
+        const APP_VERSION = 'v1.37.2';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -2680,7 +2680,7 @@
             ,
                 { sections: ['I felt terrible when my', 'embarressment was complete', 'and everyone laughed at', 'me in class.'], correct: 1 }
             ] },
-            { id: 'spelling-government', type: 'spelling', misspelled: 'goverment', correction: 'government', explanation: 'goverNment.', variants: [
+            { id: 'spelling-government', type: 'spelling', misspelled: 'goverment', correction: 'government', explanation: 'The silent letter rule: \'government\' has an inner \'n\' that is easy to miss in speech but always written. The same pattern appears in \'environment\' and \'permanent\'.', variants: [
                 { sections: ['The goverment', 'announced new measures to', 'protect endangered wildlife', 'species.'], correct: 0 }
             ,
                 { sections: ['The Prime Minister leads', 'the goverment and makes', 'important decisions for the', 'whole country.'], correct: 1 }
@@ -3590,9 +3590,9 @@
                 { options: ['dry', 'damp', 'warm', 'smooth'], correct: 1, sentence: 'After the storm the grass was wet and squelched under their boots.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['moist', 'arid', 'parched', 'bone-dry'], correct: 0, sentence: 'The wet towels hung on the line to dry in the afternoon sun.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
-            { id: 'synonym-dirty', type: 'synonym', word: 'dirty', explanation: '\'Dirty\' and \'messy\' both mean not clean or untidy.', variants: [
+            { id: 'synonym-dirty', type: 'synonym', word: 'dirty', explanation: '\'Dirty\' and \'messy\' both mean not clean or untidy. A Tier-3 synonym is \'grimy\' — coated in ingrained dirt or soot.', variants: [
                 { options: ['clean', 'messy', 'spotless', 'tidy'], correct: 1, sentence: 'After playing in the garden, his shoes were dirty and covered in mud.', optionTags: ['far', 'correct', 'far', 'far'] },
-                { options: ['unkempt', 'pristine', 'neat', 'immaculate'], correct: 0, sentence: 'The dirty windows blocked most of the light from coming into the kitchen.', optionTags: ['correct', 'far', 'far', 'far'] }
+                { options: ['grimy', 'grubby', 'soiled', 'sullied'], correct: 0, sentence: 'The dirty windows blocked most of the light from coming into the kitchen.', optionTags: ['correct', 'close', 'close', 'close'] }
             ] },
             { id: 'synonym-strange', type: 'synonym', word: 'strange', explanation: '\'Strange\' and \'odd\' both mean unusual or out-of-the-ordinary. A Tier-3 synonym is \'outlandish\' — bizarrely unusual or unfamiliar, often in a way that draws attention.', variants: [
                 { options: ['normal', 'odd', 'usual', 'familiar'], correct: 1, sentence: 'A strange figure appeared at the gate just as the clock struck midnight.', optionTags: ['far', 'correct', 'far', 'far'] },
@@ -3713,9 +3713,9 @@
                 { options: ['affordable', 'expensive', 'worthless', 'inexpensive'], correct: 1, sentence: 'The market sold cheap fruit on Saturdays so families could afford plenty.', optionTags: ['close', 'correct', 'far', 'close'] },
                 { options: ['budget', 'costly', 'economical', 'reasonable'], correct: 1, sentence: 'They booked a cheap hotel near the station to save money for the trip.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
-            { id: 'antonym-strange', type: 'antonym', word: 'strange', explanation: '\'Strange\' means unusual; \'normal\' is the opposite.', variants: [
+            { id: 'antonym-strange', type: 'antonym', word: 'strange', explanation: '\'Strange\' means out-of-the-ordinary; \'normal\' is the plain-English opposite. A Tier-3 antonym is \'commonplace\' — happening so often as to be ordinary and unremarkable.', variants: [
                 { options: ['unusual', 'normal', 'bizarre', 'odd'], correct: 1, sentence: 'A strange noise came from the attic just after midnight.', optionTags: ['close', 'correct', 'close', 'close'] },
-                { options: ['peculiar', 'common', 'weird', 'eccentric'], correct: 1, sentence: 'The old shop sold strange clocks that ticked in different rhythms.', optionTags: ['close', 'correct', 'close', 'close'] }
+                { options: ['peculiar', 'commonplace', 'weird', 'eccentric'], correct: 1, sentence: 'The old shop sold strange clocks that ticked in different rhythms.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-noisy', type: 'antonym', word: 'noisy', explanation: '\'Noisy\' means lots of sound; \'quiet\' is the opposite.', variants: [
                 { options: ['loud', 'quiet', 'rowdy', 'boisterous'], correct: 1, sentence: 'The classroom was noisy as everyone discussed the upcoming trip.', optionTags: ['close', 'correct', 'close', 'close'] },
