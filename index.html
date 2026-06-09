@@ -1397,7 +1397,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.37.2';
+        const APP_VERSION = 'v1.37.3';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -2923,7 +2923,7 @@
             ] },
             { id: 'punct-4', type: 'punctuation', explanation: 'Direct speech needs speech marks.', variants: [
                 { sentence: 'The stranger smiled cryptically. You\'re the chosen one he declared.', options: ['"You\'re the chosen one," he declared.', 'The stranger smiled cryptically "You\'re the chosen one" he declared.', 'The stranger smiled cryptically. You\'re "the chosen one," he declared.', 'No change needed'], correct: 0 },
-                { sentence: 'She told me I should finish my homework first.', options: ['She told me, "I should finish your homework first."', 'She told me "I should finish your homework first."', 'She told me. "I should finish your homework first."', 'No change needed'], correct: 0 }
+                { sentence: 'She told me I should finish my homework first.', options: ['She told me, "You should finish your homework first."', 'She told me "You should finish your homework first."', 'She told me. "You should finish your homework first."', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-5', type: 'punctuation', explanation: '\'Why me\' is a question, needs question mark.', variants: [
                 { sentence: '"Why me" The mysterious figure gave a cryptic smile.', options: ['"Why me?" The mysterious figure gave a cryptic smile.', '"Why me." The mysterious figure gave a cryptic smile.', '"Why me," The mysterious figure gave a cryptic smile.', 'No change needed'], correct: 0 },
@@ -2938,7 +2938,7 @@
                 { sentence: 'The student\'s were excited about the school trip.', options: ['The students were excited about the school trip.', 'The student\'s were excited about the school trip.', 'The students\' were excited about the school trip.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-8', type: 'punctuation', explanation: '\'Boy\'s\' = one boy. \'Boys\'\' = several boys.', variants: [
-                { sentence: 'The boys football boots were covered in mud after the match.', options: ['The boy\'s football boots were covered in mud after the match.', 'The boys\' football boots were covered in mud after the match.', 'Either A or B could be correct, depending on meaning.', 'No change needed'], correct: 2 },
+                { sentence: 'The boys football boots were covered in mud after the match.', options: ['The boy\'s football boots were covered in mud after the match.', 'The boys\' football boots were covered in mud after the match.', 'Either the singular or plural possessive could be correct, depending on meaning.', 'No change needed'], correct: 2 },
                 { sentence: 'The dogs collar was blue and white.', options: ['The dog\'s collar was blue and white.', 'The dogs\' collar was blue and white.', 'The dogs collar was blue and white.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-9', type: 'punctuation', explanation: 'Use a comma after an introductory word or phrase to separate it from the main part of the sentence.', variants: [
@@ -2978,7 +2978,7 @@
                 { sentence: 'For the picnic we need plates cups napkins and forks.', options: ['For the picnic we need plates, cups, napkins, and forks.', 'For the picnic we need plates cups, napkins and forks.', 'For the picnic, we need plates, cups, napkins and forks.', 'No change needed'], correct: 2 }
             ] },
             { id: 'punct-18', type: 'punctuation', explanation: 'Semicolons separate related independent clauses.', variants: [
-                { sentence: 'The children played; they laughed; they sang.', options: ['The children played, they laughed, they sang.', 'The children played. They laughed. They sang.', 'The children played; they laughed; they sang.', 'No change needed'], correct: 2 },
+                { sentence: 'The children played; they laughed; they sang.', options: ['The children played, they laughed, they sang.', 'The children played. They laughed. They sang.', 'The children played; they laughed; they sang.', 'No change needed'], correct: 3 },
                 { sentence: 'The music was very loud everyone had to shout.', options: ['The music was very loud; everyone had to shout.', 'The music was very loud, everyone had to shout.', 'The music was very loud. Everyone had to shout.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-19', type: 'punctuation', explanation: 'Non-essential relative clauses need commas on both sides.', variants: [
@@ -2998,12 +2998,12 @@
                 { sentence: 'The teachers car park was full this morning.', options: ['The teachers\' car park was full this morning.', 'The teacher\'s car park was full this morning.', 'The teachers car park was full this morning.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-23', type: 'punctuation', explanation: 'Apostrophes replace missing letters in contractions: "can\'t" = "cannot", "you\'re" = "you are".', variants: [
-                { sentence: 'I can\'t believe you\'re leaving already!', options: ['I can\'t believe your\'e leaving already!', 'I can\'t believe you\'re leaving already!', 'I cant\'t believe you\'re leaving already!', 'No change needed'], correct: 1 },
+                { sentence: 'I can\'t believe you\'re leaving already!', options: ['I can\'t believe your\'e leaving already!', 'I can\'t believe you\'re leaving already!', 'I cant\'t believe you\'re leaving already!', 'No change needed'], correct: 3 },
                 { sentence: 'We shouldnt have left without telling them were going.', options: ['We shouldn\'t have left without telling them we\'re going.', 'We should\'nt have left without telling them were going.', 'We shouldnt have left without telling them we\'re going.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-24', type: 'punctuation', explanation: 'Semicolon before conjunctive adverbs like "however".', variants: [
-                { sentence: 'She was tired; however, she continued working.', options: ['She was tired. However, she continued working.', 'She was tired, however she continued working.', 'She was tired; however, she continued working.', 'No change needed'], correct: 2 },
-                { sentence: 'The road was icy; therefore, we drove slowly.', options: ['The road was icy, therefore we drove slowly.', 'The road was icy therefore, we drove slowly.', 'The road was icy; therefore, we drove slowly.', 'No change needed'], correct: 2 }
+                { sentence: 'She was tired; however, she continued working.', options: ['She was tired. However, she continued working.', 'She was tired, however she continued working.', 'She was tired; however, she continued working.', 'No change needed'], correct: 3 },
+                { sentence: 'The road was icy; therefore, we drove slowly.', options: ['The road was icy, therefore we drove slowly.', 'The road was icy therefore, we drove slowly.', 'The road was icy; therefore, we drove slowly.', 'No change needed'], correct: 3 }
             ] },
             { id: 'punct-25', type: 'punctuation', explanation: 'Use \'s to show that one person or animal owns something. For a singular owner, the apostrophe goes before the final \'s\'.', variants: [
                 { sentence: 'The boys skateboard is in the garage.', options: ['The boy\'s skateboard is in the garage.', 'The boys\' skateboard is in the garage.', 'The boys\'s skateboard is in the garage.', 'No change needed'], correct: 0 },
@@ -3018,8 +3018,8 @@
                 { sentence: 'He wanted to play outside yet the rain would not stop.', options: ['He wanted to play outside, yet the rain would not stop.', 'He wanted to play outside; yet the rain would not stop.', 'He wanted to play outside. Yet the rain would not stop.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-28', type: 'punctuation', explanation: 'Plural nouns don\'t need apostrophes.', variants: [
-                { sentence: 'The teachers are discussing our grades now.', options: ['The teachers\' are discussing our grades now.', 'The teacher\'s are discussing our grades now.', 'The teachers are discussing our grades now.', 'No change needed'], correct: 2 },
-                { sentence: 'The rabbits are eating the carrots in the field.', options: ['The rabbit\'s are eating the carrots in the field.', 'The rabbits\' are eating the carrots in the field.', 'The rabbits are eating the carrots in the field.', 'No change needed'], correct: 2 }
+                { sentence: 'The teachers are discussing our grades now.', options: ['The teachers\' are discussing our grades now.', 'The teacher\'s are discussing our grades now.', 'The teachers are discussing our grades now.', 'No change needed'], correct: 3 },
+                { sentence: 'The rabbits are eating the carrots in the field.', options: ['The rabbit\'s are eating the carrots in the field.', 'The rabbits\' are eating the carrots in the field.', 'The rabbits are eating the carrots in the field.', 'No change needed'], correct: 3 }
             ] },
             { id: 'punct-29', type: 'punctuation', explanation: 'Use "who" for people, not "which".', variants: [
                 { sentence: 'James which is my best friend came to visit.', options: ['James, which is my best friend, came to visit.', 'James, who is my best friend, came to visit.', 'James who is my best friend came to visit.', 'No change needed'], correct: 1 },
@@ -3042,8 +3042,8 @@
                 { sentence: 'He packed his bag with books pens and pencils.', options: ['He packed his bag with books, pens, and pencils.', 'He packed his bag with books pens, and pencils.', 'He packed his bag with books, pens and pencils.', 'No change needed'], correct: 2 }
             ] },
             { id: 'punct-34', type: 'punctuation', explanation: 'Semicolons join related independent clauses.', variants: [
-                { sentence: 'The musicians played; the dancers performed; the singers sang.', options: ['The musicians played. The dancers performed. The singers sang.', 'The musicians played, the dancers performed, the singers sang.', 'The musicians played; the dancers performed; the singers sang.', 'No change needed'], correct: 2 },
-                { sentence: 'The sun set; the stars appeared; the moon rose high.', options: ['The sun set. The stars appeared. The moon rose high.', 'The sun set, the stars appeared, the moon rose high.', 'The sun set; the stars appeared; the moon rose high.', 'No change needed'], correct: 2 }
+                { sentence: 'The musicians played; the dancers performed; the singers sang.', options: ['The musicians played. The dancers performed. The singers sang.', 'The musicians played, the dancers performed, the singers sang.', 'The musicians played; the dancers performed; the singers sang.', 'No change needed'], correct: 3 },
+                { sentence: 'The sun set; the stars appeared; the moon rose high.', options: ['The sun set. The stars appeared. The moon rose high.', 'The sun set, the stars appeared, the moon rose high.', 'The sun set; the stars appeared; the moon rose high.', 'No change needed'], correct: 3 }
             ] },
             { id: 'punct-35', type: 'punctuation', explanation: 'Introductory phrases need commas.', variants: [
                 { sentence: 'After finishing his homework he went outside to play.', options: ['After finishing his homework, he went outside to play.', 'After finishing his homework; he went outside to play.', 'After finishing his homework. He went outside to play.', 'No change needed'], correct: 0 },
@@ -3094,8 +3094,8 @@
                 { sentence: 'He visited London; the capital of England.', options: ['He visited London, the capital of England.', 'He visited London; the capital of England.', 'He visited London. The capital of England.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-47', type: 'punctuation', explanation: 'Semicolons join closely related independent clauses.', variants: [
-                { sentence: 'The team won the game; the players celebrated.', options: ['The team won the game. The players celebrated.', 'The team won the game, the players celebrated.', 'The team won the game; the players celebrated.', 'No change needed'], correct: 2 },
-                { sentence: 'The bell rang; the children rushed outside.', options: ['The bell rang. The children rushed outside.', 'The bell rang, the children rushed outside.', 'The bell rang; the children rushed outside.', 'No change needed'], correct: 2 }
+                { sentence: 'The team won the game; the players celebrated.', options: ['The team won the game. The players celebrated.', 'The team won the game, the players celebrated.', 'The team won the game; the players celebrated.', 'No change needed'], correct: 3 },
+                { sentence: 'The bell rang; the children rushed outside.', options: ['The bell rang. The children rushed outside.', 'The bell rang, the children rushed outside.', 'The bell rang; the children rushed outside.', 'No change needed'], correct: 3 }
             ] },
             { id: 'punct-48', type: 'punctuation', explanation: '"Let\'s" means "let us" — the apostrophe replaces the missing \'u\'. Contractions always show what letters were dropped.', variants: [
                 { sentence: 'Before we go lets check the map.', options: ['Before we go, let\'s check the map.', 'Before we go lets\' check the map.', 'Before we go. Lets check the map.', 'No change needed'], correct: 0 },
@@ -3106,12 +3106,12 @@
                 { sentence: 'The cat sat on the mat the dog lay by the fire.', options: ['The cat sat on the mat, and the dog lay by the fire.', 'The cat sat on the mat, the dog lay by the fire.', 'The cat sat on the mat. The dog lay by the fire.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-50', type: 'punctuation', explanation: 'No comma before "because" in this case.', variants: [
-                { sentence: 'She was very happy because she had won first place.', options: ['She was very happy, because she had won first place.', 'She was very happy because she had won first place.', 'She was very happy. Because she had won first place.', 'No change needed'], correct: 1 },
-                { sentence: 'He smiled because his team had won the match.', options: ['He smiled, because his team had won the match.', 'He smiled because his team had won the match.', 'He smiled. Because his team had won the match.', 'No change needed'], correct: 1 }
+                { sentence: 'She was very happy because she had won first place.', options: ['She was very happy, because she had won first place.', 'She was very happy because she had won first place.', 'She was very happy. Because she had won first place.', 'No change needed'], correct: 3 },
+                { sentence: 'He smiled because his team had won the match.', options: ['He smiled, because his team had won the match.', 'He smiled because his team had won the match.', 'He smiled. Because his team had won the match.', 'No change needed'], correct: 3 }
             ] },
             { id: 'punct-51', type: 'punctuation', explanation: 'No comma needed with a single verb and compound object.', variants: [
-                { sentence: 'Writing a book is difficult but rewarding.', options: ['Writing a book is difficult, but rewarding.', 'Writing a book is difficult; but rewarding.', 'Writing a book is difficult but rewarding.', 'No change needed'], correct: 2 },
-                { sentence: 'The test was long but fair.', options: ['The test was long, but fair.', 'The test was long; but fair.', 'The test was long but fair.', 'No change needed'], correct: 2 }
+                { sentence: 'Writing a book is difficult but rewarding.', options: ['Writing a book is difficult, but rewarding.', 'Writing a book is difficult; but rewarding.', 'Writing a book is difficult but rewarding.', 'No change needed'], correct: 3 },
+                { sentence: 'The test was long but fair.', options: ['The test was long, but fair.', 'The test was long; but fair.', 'The test was long but fair.', 'No change needed'], correct: 3 }
             ] },
             { id: 'punct-52', type: 'punctuation', explanation: 'Questions need question marks.', variants: [
                 { sentence: 'Have you seen the movie Inception', options: ['Have you seen the movie "Inception"?', 'Have you seen the movie Inception?', 'Have you seen the movie "Inception".', 'No change needed'], correct: 1 },
@@ -3121,9 +3121,9 @@
                 { sentence: 'The teacher asked Is everyone ready.', options: ['The teacher asked, "Is everyone ready?"', 'The teacher asked "Is everyone ready?"', 'The teacher asked. "Is everyone ready?"', 'No change needed'], correct: 0 },
                 { sentence: 'Dad asked Have you finished your homework yet.', options: ['Dad asked, "Have you finished your homework yet?"', 'Dad asked "Have you finished your homework yet?"', 'Dad asked. "Have you finished your homework yet?"', 'No change needed'], correct: 0 }
             ] },
-            { id: 'punct-54', type: 'punctuation', explanation: 'Use commas between items in a series.', variants: [
-                { sentence: 'She loves to read write and paint.', options: ['She loves to read, write, and paint.', 'She loves to read write, and paint.', 'She loves to read, write and paint.', 'No change needed'], correct: 0 },
-                { sentence: 'We need eggs flour sugar and butter.', options: ['We need eggs, flour, sugar, and butter.', 'We need eggs flour, sugar, and butter.', 'We need eggs, flour, sugar and butter.', 'No change needed'], correct: 0 }
+            { id: 'punct-54', type: 'punctuation', explanation: 'Use commas to separate items in a list. In British English, you do not need a comma before \'and\'.', variants: [
+                { sentence: 'She loves to read write and paint.', options: ['She loves to read, write, and paint.', 'She loves to read write, and paint.', 'She loves to read, write and paint.', 'No change needed'], correct: 2 },
+                { sentence: 'We need eggs flour sugar and butter.', options: ['We need eggs, flour, sugar, and butter.', 'We need eggs flour, sugar, and butter.', 'We need eggs, flour, sugar and butter.', 'No change needed'], correct: 2 }
             ] },
             { id: 'punct-55', type: 'punctuation', explanation: 'Use a semicolon to join two closely related independent clauses without a coordinating conjunction.', variants: [
                 { sentence: 'The doors are locked nobody can enter.', options: ['The doors are locked; nobody can enter.', 'The doors are locked, nobody can enter.', 'The doors are locked. nobody can enter.', 'No change needed'], correct: 0 },
@@ -3138,8 +3138,8 @@
                 { sentence: 'The painting which hung in the hall was very old.', options: ['The painting which hung in the hall, was very old.', 'The painting, which hung in the hall, was very old.', 'The painting which hung in the hall was very old.', 'No change needed'], correct: 1 }
             ] },
             { id: 'punct-58', type: 'punctuation', explanation: 'For a plural noun ending in \'s\' that owns something, put the apostrophe AFTER the \'s\' (sisters\' friends = the friends belonging to multiple sisters). One sister would be \'sister\'s friends\'.', variants: [
-                { sentence: 'My sisters\' friends are coming over tonight.', options: ['My sisters\' friends are coming over tonight.', 'My sister\'s friends are coming over tonight.', 'My sisters friends are coming over tonight.', 'No change needed'], correct: 0 },
-                { sentence: 'The teachers\' meeting lasted for two hours.', options: ['The teachers\' meeting lasted for two hours.', 'The teacher\'s meeting lasted for two hours.', 'The teachers meeting lasted for two hours.', 'No change needed'], correct: 0 }
+                { sentence: 'My sisters\' friends are coming over tonight.', options: ['My sisters\' friends are coming over tonight.', 'My sister\'s friends are coming over tonight.', 'My sisters friends are coming over tonight.', 'No change needed'], correct: 3 },
+                { sentence: 'The teachers\' meeting lasted for two hours.', options: ['The teachers\' meeting lasted for two hours.', 'The teacher\'s meeting lasted for two hours.', 'The teachers meeting lasted for two hours.', 'No change needed'], correct: 3 }
             ] },
             { id: 'punct-59', type: 'punctuation', explanation: 'Use a comma before "so" when joining independent clauses.', variants: [
                 { sentence: 'She asked me to help so I did.', options: ['She asked me to help, so I did.', 'She asked me to help so I did.', 'She asked me to help; so I did.', 'No change needed'], correct: 0 },
