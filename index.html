@@ -1397,7 +1397,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.37.3';
+        const APP_VERSION = 'v1.37.4';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -2978,7 +2978,7 @@
                 { sentence: 'For the picnic we need plates cups napkins and forks.', options: ['For the picnic we need plates, cups, napkins, and forks.', 'For the picnic we need plates cups, napkins and forks.', 'For the picnic, we need plates, cups, napkins and forks.', 'No change needed'], correct: 2 }
             ] },
             { id: 'punct-18', type: 'punctuation', explanation: 'Semicolons separate related independent clauses.', variants: [
-                { sentence: 'The children played; they laughed; they sang.', options: ['The children played, they laughed, they sang.', 'The children played. They laughed. They sang.', 'The children played; they laughed; they sang.', 'No change needed'], correct: 3 },
+                { sentence: 'The children played; they laughed; they sang.', options: ['The children played, they laughed, they sang.', 'The children played. They laughed. They sang.', 'The children played; They laughed; they sang.', 'No change needed'], correct: 3 },
                 { sentence: 'The music was very loud everyone had to shout.', options: ['The music was very loud; everyone had to shout.', 'The music was very loud, everyone had to shout.', 'The music was very loud. Everyone had to shout.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-19', type: 'punctuation', explanation: 'Non-essential relative clauses need commas on both sides.', variants: [
@@ -2998,12 +2998,12 @@
                 { sentence: 'The teachers car park was full this morning.', options: ['The teachers\' car park was full this morning.', 'The teacher\'s car park was full this morning.', 'The teachers car park was full this morning.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-23', type: 'punctuation', explanation: 'Apostrophes replace missing letters in contractions: "can\'t" = "cannot", "you\'re" = "you are".', variants: [
-                { sentence: 'I can\'t believe you\'re leaving already!', options: ['I can\'t believe your\'e leaving already!', 'I can\'t believe you\'re leaving already!', 'I cant\'t believe you\'re leaving already!', 'No change needed'], correct: 3 },
+                { sentence: 'I can\'t believe you\'re leaving already!', options: ['I can\'t believe your\'e leaving already!', 'I can\'t believe your leaving already!', 'I cant\'t believe you\'re leaving already!', 'No change needed'], correct: 3 },
                 { sentence: 'We shouldnt have left without telling them were going.', options: ['We shouldn\'t have left without telling them we\'re going.', 'We should\'nt have left without telling them were going.', 'We shouldnt have left without telling them we\'re going.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-24', type: 'punctuation', explanation: 'Semicolon before conjunctive adverbs like "however".', variants: [
-                { sentence: 'She was tired; however, she continued working.', options: ['She was tired. However, she continued working.', 'She was tired, however she continued working.', 'She was tired; however, she continued working.', 'No change needed'], correct: 3 },
-                { sentence: 'The road was icy; therefore, we drove slowly.', options: ['The road was icy, therefore we drove slowly.', 'The road was icy therefore, we drove slowly.', 'The road was icy; therefore, we drove slowly.', 'No change needed'], correct: 3 }
+                { sentence: 'She was tired; however, she continued working.', options: ['She was tired. However, she continued working.', 'She was tired, however she continued working.', 'She was tired; however she continued working.', 'No change needed'], correct: 3 },
+                { sentence: 'The road was icy; therefore, we drove slowly.', options: ['The road was icy, therefore we drove slowly.', 'The road was icy therefore, we drove slowly.', 'The road was icy; therefore we drove slowly.', 'No change needed'], correct: 3 }
             ] },
             { id: 'punct-25', type: 'punctuation', explanation: 'Use \'s to show that one person or animal owns something. For a singular owner, the apostrophe goes before the final \'s\'.', variants: [
                 { sentence: 'The boys skateboard is in the garage.', options: ['The boy\'s skateboard is in the garage.', 'The boys\' skateboard is in the garage.', 'The boys\'s skateboard is in the garage.', 'No change needed'], correct: 0 },
@@ -3018,8 +3018,8 @@
                 { sentence: 'He wanted to play outside yet the rain would not stop.', options: ['He wanted to play outside, yet the rain would not stop.', 'He wanted to play outside; yet the rain would not stop.', 'He wanted to play outside. Yet the rain would not stop.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-28', type: 'punctuation', explanation: 'Plural nouns don\'t need apostrophes.', variants: [
-                { sentence: 'The teachers are discussing our grades now.', options: ['The teachers\' are discussing our grades now.', 'The teacher\'s are discussing our grades now.', 'The teachers are discussing our grades now.', 'No change needed'], correct: 3 },
-                { sentence: 'The rabbits are eating the carrots in the field.', options: ['The rabbit\'s are eating the carrots in the field.', 'The rabbits\' are eating the carrots in the field.', 'The rabbits are eating the carrots in the field.', 'No change needed'], correct: 3 }
+                { sentence: 'The teachers are discussing our grades now.', options: ['The teachers\' are discussing our grades now.', 'The teacher\'s are discussing our grades now.', 'The teachers are discussing our grade\'s now.', 'No change needed'], correct: 3 },
+                { sentence: 'The rabbits are eating the carrots in the field.', options: ['The rabbit\'s are eating the carrots in the field.', 'The rabbits\' are eating the carrots in the field.', 'The rabbits are eating the carrot\'s in the field.', 'No change needed'], correct: 3 }
             ] },
             { id: 'punct-29', type: 'punctuation', explanation: 'Use "who" for people, not "which".', variants: [
                 { sentence: 'James which is my best friend came to visit.', options: ['James, which is my best friend, came to visit.', 'James, who is my best friend, came to visit.', 'James who is my best friend came to visit.', 'No change needed'], correct: 1 },
@@ -3042,8 +3042,8 @@
                 { sentence: 'He packed his bag with books pens and pencils.', options: ['He packed his bag with books, pens, and pencils.', 'He packed his bag with books pens, and pencils.', 'He packed his bag with books, pens and pencils.', 'No change needed'], correct: 2 }
             ] },
             { id: 'punct-34', type: 'punctuation', explanation: 'Semicolons join related independent clauses.', variants: [
-                { sentence: 'The musicians played; the dancers performed; the singers sang.', options: ['The musicians played. The dancers performed. The singers sang.', 'The musicians played, the dancers performed, the singers sang.', 'The musicians played; the dancers performed; the singers sang.', 'No change needed'], correct: 3 },
-                { sentence: 'The sun set; the stars appeared; the moon rose high.', options: ['The sun set. The stars appeared. The moon rose high.', 'The sun set, the stars appeared, the moon rose high.', 'The sun set; the stars appeared; the moon rose high.', 'No change needed'], correct: 3 }
+                { sentence: 'The musicians played; the dancers performed; the singers sang.', options: ['The musicians played. The dancers performed. The singers sang.', 'The musicians played, the dancers performed, the singers sang.', 'The musicians played; the dancers performed; The singers sang.', 'No change needed'], correct: 3 },
+                { sentence: 'The sun set; the stars appeared; the moon rose high.', options: ['The sun set. The stars appeared. The moon rose high.', 'The sun set, the stars appeared, the moon rose high.', 'The sun set; the stars appeared; The moon rose high.', 'No change needed'], correct: 3 }
             ] },
             { id: 'punct-35', type: 'punctuation', explanation: 'Introductory phrases need commas.', variants: [
                 { sentence: 'After finishing his homework he went outside to play.', options: ['After finishing his homework, he went outside to play.', 'After finishing his homework; he went outside to play.', 'After finishing his homework. He went outside to play.', 'No change needed'], correct: 0 },
@@ -3094,8 +3094,8 @@
                 { sentence: 'He visited London; the capital of England.', options: ['He visited London, the capital of England.', 'He visited London; the capital of England.', 'He visited London. The capital of England.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-47', type: 'punctuation', explanation: 'Semicolons join closely related independent clauses.', variants: [
-                { sentence: 'The team won the game; the players celebrated.', options: ['The team won the game. The players celebrated.', 'The team won the game, the players celebrated.', 'The team won the game; the players celebrated.', 'No change needed'], correct: 3 },
-                { sentence: 'The bell rang; the children rushed outside.', options: ['The bell rang. The children rushed outside.', 'The bell rang, the children rushed outside.', 'The bell rang; the children rushed outside.', 'No change needed'], correct: 3 }
+                { sentence: 'The team won the game; the players celebrated.', options: ['The team won the game. The players celebrated.', 'The team won the game, the players celebrated.', 'The team won the game; The players celebrated.', 'No change needed'], correct: 3 },
+                { sentence: 'The bell rang; the children rushed outside.', options: ['The bell rang. The children rushed outside.', 'The bell rang, the children rushed outside.', 'The bell rang; The children rushed outside.', 'No change needed'], correct: 3 }
             ] },
             { id: 'punct-48', type: 'punctuation', explanation: '"Let\'s" means "let us" — the apostrophe replaces the missing \'u\'. Contractions always show what letters were dropped.', variants: [
                 { sentence: 'Before we go lets check the map.', options: ['Before we go, let\'s check the map.', 'Before we go lets\' check the map.', 'Before we go. Lets check the map.', 'No change needed'], correct: 0 },
@@ -3106,12 +3106,12 @@
                 { sentence: 'The cat sat on the mat the dog lay by the fire.', options: ['The cat sat on the mat, and the dog lay by the fire.', 'The cat sat on the mat, the dog lay by the fire.', 'The cat sat on the mat. The dog lay by the fire.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-50', type: 'punctuation', explanation: 'No comma before "because" in this case.', variants: [
-                { sentence: 'She was very happy because she had won first place.', options: ['She was very happy, because she had won first place.', 'She was very happy because she had won first place.', 'She was very happy. Because she had won first place.', 'No change needed'], correct: 3 },
-                { sentence: 'He smiled because his team had won the match.', options: ['He smiled, because his team had won the match.', 'He smiled because his team had won the match.', 'He smiled. Because his team had won the match.', 'No change needed'], correct: 3 }
+                { sentence: 'She was very happy because she had won first place.', options: ['She was very happy, because she had won first place.', 'She was very happy; because she had won first place.', 'She was very happy. Because she had won first place.', 'No change needed'], correct: 3 },
+                { sentence: 'He smiled because his team had won the match.', options: ['He smiled, because his team had won the match.', 'He smiled; because his team had won the match.', 'He smiled. Because his team had won the match.', 'No change needed'], correct: 3 }
             ] },
             { id: 'punct-51', type: 'punctuation', explanation: 'No comma needed with a single verb and compound object.', variants: [
-                { sentence: 'Writing a book is difficult but rewarding.', options: ['Writing a book is difficult, but rewarding.', 'Writing a book is difficult; but rewarding.', 'Writing a book is difficult but rewarding.', 'No change needed'], correct: 3 },
-                { sentence: 'The test was long but fair.', options: ['The test was long, but fair.', 'The test was long; but fair.', 'The test was long but fair.', 'No change needed'], correct: 3 }
+                { sentence: 'Writing a book is difficult but rewarding.', options: ['Writing a book is difficult, but rewarding.', 'Writing a book is difficult; but rewarding.', 'Writing a book is difficult but, rewarding.', 'No change needed'], correct: 3 },
+                { sentence: 'The test was long but fair.', options: ['The test was long, but fair.', 'The test was long; but fair.', 'The test was long but, fair.', 'No change needed'], correct: 3 }
             ] },
             { id: 'punct-52', type: 'punctuation', explanation: 'Questions need question marks.', variants: [
                 { sentence: 'Have you seen the movie Inception', options: ['Have you seen the movie "Inception"?', 'Have you seen the movie Inception?', 'Have you seen the movie "Inception".', 'No change needed'], correct: 1 },
@@ -3138,8 +3138,8 @@
                 { sentence: 'The painting which hung in the hall was very old.', options: ['The painting which hung in the hall, was very old.', 'The painting, which hung in the hall, was very old.', 'The painting which hung in the hall was very old.', 'No change needed'], correct: 1 }
             ] },
             { id: 'punct-58', type: 'punctuation', explanation: 'For a plural noun ending in \'s\' that owns something, put the apostrophe AFTER the \'s\' (sisters\' friends = the friends belonging to multiple sisters). One sister would be \'sister\'s friends\'.', variants: [
-                { sentence: 'My sisters\' friends are coming over tonight.', options: ['My sisters\' friends are coming over tonight.', 'My sister\'s friends are coming over tonight.', 'My sisters friends are coming over tonight.', 'No change needed'], correct: 3 },
-                { sentence: 'The teachers\' meeting lasted for two hours.', options: ['The teachers\' meeting lasted for two hours.', 'The teacher\'s meeting lasted for two hours.', 'The teachers meeting lasted for two hours.', 'No change needed'], correct: 3 }
+                { sentence: 'My sisters\' friends are coming over tonight.', options: ['My sisters\' friend\'s are coming over tonight.', 'My sister\'s friends are coming over tonight.', 'My sisters friends are coming over tonight.', 'No change needed'], correct: 3 },
+                { sentence: 'The teachers\' meeting lasted for two hours.', options: ['The teachers\' meeting lasted for two hour\'s.', 'The teacher\'s meeting lasted for two hours.', 'The teachers meeting lasted for two hours.', 'No change needed'], correct: 3 }
             ] },
             { id: 'punct-59', type: 'punctuation', explanation: 'Use a comma before "so" when joining independent clauses.', variants: [
                 { sentence: 'She asked me to help so I did.', options: ['She asked me to help, so I did.', 'She asked me to help so I did.', 'She asked me to help; so I did.', 'No change needed'], correct: 0 },
@@ -3324,8 +3324,8 @@
                 { sentence: 'She _____ finished her homework before her parents came home.', options: ['have', 'has', 'had', 'was'], correct: 2 }
             ] },
             { id: 'cloze-8', type: 'cloze', explanation: '\'Can\' shows ability or possibility. Flowers are able to grow in spring.', variants: [
-                { sentence: 'The flowers _____ grow in the spring when it gets warmer.', options: ['will', 'shall', 'can', 'is'], correct: 2 },
-                { sentence: 'Birds _____ fly high into the sky using their strong wings.', options: ['will', 'shall', 'can', 'do'], correct: 2 }
+                { sentence: 'The flowers _____ grow in the spring when it gets warmer.', options: ['have', 'is', 'can', 'are'], correct: 2 },
+                { sentence: 'Birds _____ fly high into the sky using their strong wings.', options: ['is', 'have', 'can', 'are'], correct: 2 }
             ] },
             { id: 'cloze-9', type: 'cloze', explanation: '\'Lost\' is past tense. He couldn\'t open the door because he had already lost them.', variants: [
                 { sentence: 'He _____ his keys, so he couldn\'t open the door.', options: ['lose', 'lost', 'loses', 'losing'], correct: 1 },
@@ -3344,18 +3344,18 @@
                 { sentence: 'He set his alarm early _____ he could catch the first train.', options: ['unless', 'although', 'so that', 'while'], correct: 2 }
             ] },
             { id: 'cloze-13', type: 'cloze', explanation: '\'After\' shows the order of events. First chores, then the park.', variants: [
-                { sentence: 'We can go to the park _____ you finish your chores first.', options: ['when', 'before', 'after', 'unless'], correct: 2 },
+                { sentence: 'We can go to the park _____ you finish your chores first.', options: ['while', 'before', 'after', 'unless'], correct: 2 },
                 { sentence: 'He watered the plants _____ returning from his long holiday.', options: ['when', 'before', 'after', 'unless'], correct: 2 }
             ] },
             { id: 'cloze-14', type: 'cloze', explanation: '\'But\' shows a contrast between what she wanted and what stopped her.', variants: [
-                { sentence: 'I wanted to play football, _____ it was raining too hard.', options: ['so', 'or', 'yet', 'but'], correct: 3 },
-                { sentence: 'He studied all week, _____ he still found the test very difficult.', options: ['so', 'or', 'yet', 'but'], correct: 3 }
+                { sentence: 'I wanted to play football, _____ it was raining too hard.', options: ['so', 'or', 'because', 'but'], correct: 3 },
+                { sentence: 'He studied all week, _____ he still found the test very difficult.', options: ['so', 'or', 'because', 'but'], correct: 3 }
             ] },
             { id: 'cloze-15', type: 'cloze', explanation: '\'Because\' explains why the house was dark — the power cut was the reason.', variants: [
-                { sentence: 'The house was dark _____ the power had gone out.', options: ['if', 'because', 'while', 'since'], correct: 1 },
-                { sentence: 'The teacher praised the class _____ everyone had worked so hard.', options: ['if', 'because', 'while', 'since'], correct: 1 }
+                { sentence: 'The house was dark _____ the power had gone out.', options: ['if', 'because', 'while', 'although'], correct: 1 },
+                { sentence: 'The teacher praised the class _____ everyone had worked so hard.', options: ['if', 'because', 'while', 'although'], correct: 1 }
             ] },
-            { id: 'cloze-16', type: 'cloze', explanation: '\'Or\' shows a choice between two options.', variants: [
+            { id: 'cloze-16', type: 'cloze', explanation: '\'Or\' offers a choice between alternatives — you pick one, not both. Here: tea OR coffee; a film OR a board game.', variants: [
                 { sentence: 'You can choose tea _____ coffee with your breakfast.', options: ['or', 'and', 'but', 'yet'], correct: 0 },
                 { sentence: 'We will watch a film _____ play a board game after supper.', options: ['or', 'and', 'but', 'yet'], correct: 0 }
             ] },
@@ -3463,7 +3463,7 @@
                 { sentence: 'She decided to _____ the job because it was too difficult.', options: ['accept', 'decline', 'complete', 'begin'], correct: 1 },
                 { sentence: 'She chose to _____ the invitation as she had other commitments.', options: ['accept', 'decline', 'complete', 'begin'], correct: 1 }
             ] },
-            { id: 'cloze-42', type: 'cloze', explanation: '\'Distance\' is how far apart two places are.', variants: [
+            { id: 'cloze-42', type: 'cloze', explanation: '\'Distance\' measures how far apart two places are. Width, height and depth measure other dimensions — the gap between two cities is its distance.', variants: [
                 { sentence: 'The _____ between the two cities is about 50 miles.', options: ['width', 'distance', 'height', 'depth'], correct: 1 },
                 { sentence: 'The _____ from London to Paris is around three hundred miles.', options: ['width', 'distance', 'height', 'depth'], correct: 1 }
             ] },
@@ -3487,7 +3487,7 @@
                 { sentence: 'It was a _____ day with blue skies and warm sunshine.', options: ['terrible', 'perfect', 'foggy', 'stormy'], correct: 1 },
                 { sentence: 'The beach was _____ for swimming with clear water and gentle waves.', options: ['terrible', 'perfect', 'foggy', 'stormy'], correct: 1 }
             ] },
-            { id: 'cloze-48', type: 'cloze', explanation: '\'Peak\' is the highest point of a mountain.', variants: [
+            { id: 'cloze-48', type: 'cloze', explanation: '\'Peak\' is the highest point of a mountain. The base is the bottom and the slope is the side — a flag planted at the very top sits on the peak.', variants: [
                 { sentence: 'The _____ of the mountain was covered in snow.', options: ['base', 'peak', 'slope', 'valley'], correct: 1 },
                 { sentence: 'The flag was planted at the very _____ of the mountain after the long climb.', options: ['base', 'peak', 'slope', 'valley'], correct: 1 }
             ] },
@@ -3495,7 +3495,7 @@
                 { sentence: 'She wore a _____ scarf around her neck.', options: ['rough', 'soft', 'sharp', 'bitter'], correct: 1 },
                 { sentence: 'The mother sang in a _____ voice to help the baby fall asleep peacefully.', options: ['rough', 'soft', 'sharp', 'bitter'], correct: 1 }
             ] },
-            { id: 'cloze-50', type: 'cloze', explanation: '\'Dog\' is the animal that barks.', variants: [
+            { id: 'cloze-50', type: 'cloze', explanation: 'A \'dog\' is the animal that barks and wags its tail. Cats, birds and fish do neither — the barking, tail-wagging clues point to a dog.', variants: [
                 { sentence: 'The _____ barked when someone knocked on the door.', options: ['cat', 'bird', 'dog', 'fish'], correct: 2 },
                 { sentence: 'The _____ wagged its tail and licked her hand when she came home.', options: ['cat', 'bird', 'dog', 'fish'], correct: 2 }
             ] },
@@ -3519,11 +3519,11 @@
                 { sentence: 'It is _____ to wear a helmet when riding a bicycle.', options: ['dangerous', 'important', 'silly', 'impossible'], correct: 1 },
                 { sentence: 'Eating a healthy breakfast is _____ for having energy all day.', options: ['unnecessary', 'harmful', 'important', 'difficult'], correct: 2 }
             ] },
-            { id: 'cloze-56', type: 'cloze', explanation: '\'Forest\' is a place with lots of trees.', variants: [
+            { id: 'cloze-56', type: 'cloze', explanation: 'A \'forest\' is a place filled with tall trees. A desert, beach or city has few or none — \'lots of tall trees\' and a deer point to a forest.', variants: [
                 { sentence: 'The _____ was magnificent with lots of tall trees.', options: ['desert', 'forest', 'beach', 'city'], correct: 1 },
                 { sentence: 'They went for a walk through the _____ and spotted a deer.', options: ['market', 'playground', 'forest', 'car park'], correct: 2 }
             ] },
-            { id: 'cloze-57', type: 'cloze', explanation: '\'Useful\' advice is helpful and practical.', variants: [
+            { id: 'cloze-57', type: 'cloze', explanation: '\'Useful\' means helpful and practical. Its opposites here — silly, vague, confusing — give no real help; advice or a dictionary that helps you is useful.', variants: [
                 { sentence: 'She gave me some _____ advice about my problem.', options: ['silly', 'useful', 'vague', 'confusing'], correct: 1 },
                 { sentence: 'The dictionary was very _____ for finding difficult words.', options: ['heavy', 'useful', 'boring', 'colourful'], correct: 1 }
             ] },
