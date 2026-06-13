@@ -1397,7 +1397,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.37.4';
+        const APP_VERSION = 'v1.38.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -2726,7 +2726,7 @@
                 { sections: ['The teacher told us to', 'put the books into', 'seperate piles based on', 'their colour and size.'], correct: 2 }
             ] },
             { id: 'spelling-occurred', type: 'spelling', misspelled: 'occured', correction: 'occurred', explanation: 'Double the "r" before "-ed": occurred', variants: [
-                { sections: ['The occured', 'incident was discussed in the', 'staff', 'meeting.'], correct: 0 }
+                { sections: ['The incident occured', 'just before the', 'staff meeting', 'on Friday afternoon.'], correct: 0 }
             ,
                 { sections: ['The accident on the road', 'happened just after school', 'ended and it all', 'occured quite suddenly.'], correct: 3 }
             ] },
@@ -2771,7 +2771,7 @@
                 { sections: ['The firefighter showed great', 'courage and skill in saving', 'the trapped kitten with real', 'bravry and compassion.'], correct: 3 }
             ] },
             { id: 'spelling-receive', type: 'spelling', misspelled: 'recieve', correction: 'receive', explanation: '"i before e except after c" — receive', variants: [
-                { sections: ['The recieve', 'of the', 'package was', 'confirmed yesterday.'], correct: 0 }
+                { sections: ['We will recieve', 'the package', 'tomorrow morning', 'before school starts.'], correct: 0 }
             ,
                 { sections: ['The school asked every', 'family to check that', 'they recieve the letter', 'about the trip.'], correct: 2 }
             ] },
@@ -3323,7 +3323,7 @@
                 { sentence: 'They _____ already eaten their lunch before we arrived.', options: ['have', 'has', 'had', 'are'], correct: 2 },
                 { sentence: 'She _____ finished her homework before her parents came home.', options: ['have', 'has', 'had', 'was'], correct: 2 }
             ] },
-            { id: 'cloze-8', type: 'cloze', explanation: '\'Can\' shows ability or possibility. Flowers are able to grow in spring.', variants: [
+            { id: 'cloze-8', type: 'cloze', explanation: '\'Can\' is the only word that makes correct English before an action word like \'grow\' or \'fly\' — \'can grow\', \'can fly\'. \'Have grow\', \'is grow\' and \'are grow\' don\'t work.', variants: [
                 { sentence: 'The flowers _____ grow in the spring when it gets warmer.', options: ['have', 'is', 'can', 'are'], correct: 2 },
                 { sentence: 'Birds _____ fly high into the sky using their strong wings.', options: ['is', 'have', 'can', 'are'], correct: 2 }
             ] },
@@ -3345,7 +3345,7 @@
             ] },
             { id: 'cloze-13', type: 'cloze', explanation: '\'After\' shows the order of events. First chores, then the park.', variants: [
                 { sentence: 'We can go to the park _____ you finish your chores first.', options: ['while', 'before', 'after', 'unless'], correct: 2 },
-                { sentence: 'He watered the plants _____ returning from his long holiday.', options: ['when', 'before', 'after', 'unless'], correct: 2 }
+                { sentence: 'He watered the plants _____ returning from his long holiday.', options: ['without', 'before', 'after', 'unless'], correct: 2 }
             ] },
             { id: 'cloze-14', type: 'cloze', explanation: '\'But\' shows a contrast between what she wanted and what stopped her.', variants: [
                 { sentence: 'I wanted to play football, _____ it was raining too hard.', options: ['so', 'or', 'because', 'but'], correct: 3 },
@@ -3610,9 +3610,9 @@
                 { options: ['full', 'vacant', 'crowded', 'busy'], correct: 1, sentence: 'The classroom was empty when the children left for the holidays.', optionTags: ['far', 'correct', 'far', 'far'] },
                 { options: ['blank', 'occupied', 'filled', 'inhabited'], correct: 0, sentence: 'Her glass was empty so she went to the kitchen for more water.', optionTags: ['correct', 'far', 'far', 'far'] }
             ] },
-            { id: 'synonym-difficult', type: 'synonym', word: 'difficult', explanation: '\'Difficult\' and \'challenging\' both mean hard to do or understand.', variants: [
+            { id: 'synonym-difficult', type: 'synonym', word: 'difficult', explanation: '\'Difficult\' and \'challenging\' both mean hard to do or understand. A Tier-3 synonym is \'arduous\' — requiring great effort and difficult to get through.', variants: [
                 { options: ['easy', 'challenging', 'simple', 'clear'], correct: 1, sentence: 'The puzzle was so difficult that even the teacher had to think carefully.', optionTags: ['far', 'correct', 'far', 'far'] },
-                { options: ['tough', 'straightforward', 'effortless', 'obvious'], correct: 0, sentence: 'Climbing the steep hill was difficult on such a hot day.', optionTags: ['correct', 'far', 'far', 'far'] }
+                { options: ['arduous', 'tedious', 'tiresome', 'delicate'], correct: 0, sentence: 'Climbing the steep hill was difficult on such a hot day.', optionTags: ['correct', 'close', 'close', 'far'] }
             ] },
             { id: 'synonym-delighted', type: 'synonym', word: 'delighted', explanation: '\'Delighted\' and \'pleased\' both mean very happy. A Tier-3 synonym is \'jubilant\' — feeling or showing great happiness and triumph.', variants: [
                 { options: ['miserable', 'angry', 'pleased', 'bored'], correct: 2, sentence: 'Grandma was delighted when the grandchildren came to stay for the weekend.', optionTags: ['far', 'far', 'correct', 'far'] },
@@ -3681,9 +3681,9 @@
                 { options: ['wealthy', 'poor', 'happy', 'successful'], correct: 1, sentence: 'The rich merchant owned three ships and a fine house in the city.', optionTags: ['close', 'correct', 'far', 'far'] },
                 { options: ['affluent', 'destitute', 'prosperous', 'comfortable'], correct: 1, sentence: 'A rich banker donated a large sum of money to the village school.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
-            { id: 'antonym-strong', type: 'antonym', word: 'strong', explanation: '\'Strong\' means having great power; \'weak\' is the opposite.', variants: [
+            { id: 'antonym-strong', type: 'antonym', word: 'strong', explanation: '\'Strong\' means having great power; \'weak\' is the plain-English opposite. A Tier-3 antonym is \'feeble\' — lacking strength and easily overcome.', variants: [
                 { options: ['powerful', 'weak', 'mighty', 'tough'], correct: 1, sentence: 'The strong horse pulled the heavy plough across the muddy field.', optionTags: ['close', 'correct', 'close', 'close'] },
-                { options: ['muscular', 'fragile', 'robust', 'sturdy'], correct: 1, sentence: 'A strong oak tree had stood at the centre of the field for centuries.', optionTags: ['close', 'correct', 'close', 'close'] }
+                { options: ['muscular', 'feeble', 'robust', 'sturdy'], correct: 1, sentence: 'A strong oak tree had stood at the centre of the field for centuries.', optionTags: ['close', 'correct', 'close', 'close'] }
             ] },
             { id: 'antonym-young', type: 'antonym', word: 'young', explanation: '\'Young\' means early in life; \'old\' is the opposite. A Tier-3 antonym is \'aged\' — having lived for a long time, with the marks of age.', variants: [
                 { options: ['small', 'old', 'fresh', 'new'], correct: 1, sentence: 'The young puppy chased its tail in circles on the kitchen floor.', optionTags: ['far', 'correct', 'far', 'far'] },
@@ -4799,7 +4799,14 @@
                 //          scans the four sections with the hint in view; the hint names the
                 //          'or N' affordance because Year-6 children may not realise the "no error"
                 //          option is selectable at maximum support.
-                // Level 2 (default) and Level 3: render bit-for-bit unchanged.
+                // Level 2 (default): renders bit-for-bit unchanged.
+                // Level 3 (Build #64, v1.38.0): Phase 3 L3 surface differentiation — GL-paper-
+                //          density compression of the labelled-bracket display (third type after
+                //          comprehension #51 and punctuation #58). The brief targeted cloze, but
+                //          .cloze-sentence has no CSS rule (bare div — no breathing-room scaffold
+                //          to withdraw), so the brief's pre-authorised fallback to spelling
+                //          applies. Spacing only is withdrawn; bracket borders, labels and
+                //          colours are preserved so the GL format stays recognisable.
                 // Mirrors the Build #22 / #29 / #38 / #43 / #45 pattern.
                 const scaffoldLevel = (item && typeof item.scaffoldLevel === 'number') ? item.scaffoldLevel : 2;
 
@@ -4826,6 +4833,11 @@
                     const sectionText = document.createElement('span');
                     sectionText.className = 'spelling-section-text';
                     sectionText.textContent = section;
+                    if (scaffoldLevel === 3) {
+                        bracket.style.padding = '6px 4px 4px';
+                        sectionText.style.lineHeight = '1.35';
+                        sectionText.style.marginBottom = '4px';
+                    }
                     bracket.appendChild(sectionText);
 
                     const label = document.createElement('span');
