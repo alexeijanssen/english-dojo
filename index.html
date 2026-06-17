@@ -1397,7 +1397,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.39.0';
+        const APP_VERSION = 'v1.40.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -2990,8 +2990,8 @@
                 { sentence: 'She whispered I have a secret to tell you.', options: ['She whispered, "I have a secret to tell you."', 'She whispered "I have a secret to tell you."', 'She whispered; "I have a secret to tell you."', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-21', type: 'punctuation', explanation: 'Remove the colon before a list of items.', variants: [
-                { sentence: 'We need: pencils, paper, and pens.', options: ['We need pencils, paper, and pens.', 'We need: pencils; paper; and pens.', 'We need—pencils, paper, and pens.', 'No change needed'], correct: 0 },
-                { sentence: 'For lunch we had: sandwiches, fruit, and juice.', options: ['For lunch we had sandwiches, fruit, and juice.', 'For lunch we had; sandwiches, fruit, and juice.', 'For lunch we had: sandwiches; fruit; and juice.', 'No change needed'], correct: 0 }
+                { sentence: 'We need: pencils, paper, and pens.', options: ['We need pencils, paper and pens.', 'We need: pencils; paper; and pens.', 'We need—pencils, paper, and pens.', 'No change needed'], correct: 0 },
+                { sentence: 'For lunch we had: sandwiches, fruit, and juice.', options: ['For lunch we had sandwiches, fruit and juice.', 'For lunch we had; sandwiches, fruit, and juice.', 'For lunch we had: sandwiches; fruit; and juice.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-22', type: 'punctuation', explanation: 'For plural possession, put the apostrophe after the \'s\' (e.g. teachers\' car park, girls\' team).', variants: [
                 { sentence: 'The girls soccer team won the final match.', options: ['The girls\' soccer team won the final match.', 'The girl\'s soccer team won the final match.', 'The girls soccer team won the final match.', 'No change needed'], correct: 0 },
@@ -3062,8 +3062,8 @@
                 { sentence: 'Climbing up the hill the hiker paused for breath.', options: ['Climbing up the hill, the hiker paused for breath.', 'Climbing up the hill. The hiker paused for breath.', 'Climbing up the hill; the hiker paused for breath.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-39', type: 'punctuation', explanation: 'No colon before a list after "are".', variants: [
-                { sentence: 'The students are: excited, nervous, and hopeful.', options: ['The students are excited, nervous, and hopeful.', 'The students are: excited, nervous, and hopeful.', 'The students are; excited, nervous, and hopeful.', 'No change needed'], correct: 0 },
-                { sentence: 'The colours of the flag are: red, white, and blue.', options: ['The colours of the flag are red, white, and blue.', 'The colours of the flag are: red, white, and blue.', 'The colours of the flag are; red, white, and blue.', 'No change needed'], correct: 0 }
+                { sentence: 'The students are: excited, nervous, and hopeful.', options: ['The students are excited, nervous and hopeful.', 'The students are: excited, nervous, and hopeful.', 'The students are; excited, nervous, and hopeful.', 'No change needed'], correct: 0 },
+                { sentence: 'The colours of the flag are: red, white, and blue.', options: ['The colours of the flag are red, white and blue.', 'The colours of the flag are: red, white, and blue.', 'The colours of the flag are; red, white, and blue.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-40', type: 'punctuation', explanation: 'Appositive nouns need commas on both sides.', variants: [
                 { sentence: 'My best friend Sarah is very clever.', options: ['My best friend, Sarah, is very clever.', 'My best friend Sarah is very clever.', 'My best friend Sarah, is very clever.', 'No change needed'], correct: 0 },
@@ -3114,7 +3114,7 @@
                 { sentence: 'The test was long but fair.', options: ['The test was long, but fair.', 'The test was long; but fair.', 'The test was long but, fair.', 'No change needed'], correct: 3 }
             ] },
             { id: 'punct-52', type: 'punctuation', explanation: 'Questions need question marks.', variants: [
-                { sentence: 'Have you seen the movie Inception', options: ['Have you seen the movie "Inception"?', 'Have you seen the movie Inception?', 'Have you seen the movie "Inception".', 'No change needed'], correct: 1 },
+                { sentence: 'Have you seen the movie Inception', options: ['Have you seen the movie "Inception"!', 'Have you seen the movie Inception?', 'Have you seen the movie "Inception".', 'No change needed'], correct: 1 },
                 { sentence: 'Where did you put the car keys', options: ['Where did you put the car keys.', 'Where did you put the car keys?', 'Where did you put the car keys!', 'No change needed'], correct: 1 }
             ] },
             { id: 'punct-53', type: 'punctuation', explanation: 'Direct questions need question marks and quotation marks.', variants: [
@@ -3134,8 +3134,8 @@
                 { sentence: 'Actually I think you are right about that.', options: ['Actually, I think you are right about that.', 'Actually; I think you are right about that.', 'Actually. I think you are right about that.', 'No change needed'], correct: 0 }
             ] },
             { id: 'punct-57', type: 'punctuation', explanation: 'Non-essential relative clauses need commas.', variants: [
-                { sentence: 'The book which won an award is available now.', options: ['The book which won an award, is available now.', 'The book, which won an award, is available now.', 'The book which won an award is available now.', 'No change needed'], correct: 1 },
-                { sentence: 'The painting which hung in the hall was very old.', options: ['The painting which hung in the hall, was very old.', 'The painting, which hung in the hall, was very old.', 'The painting which hung in the hall was very old.', 'No change needed'], correct: 1 }
+                { sentence: 'The book which I read last summer is available now.', options: ['The book which I read last summer, is available now.', 'The book, which I read last summer, is available now.', 'The book which I read last summer is available now.', 'No change needed'], correct: 1 },
+                { sentence: 'The painting which we bought in France was very old.', options: ['The painting which we bought in France, was very old.', 'The painting, which we bought in France, was very old.', 'The painting which we bought in France was very old.', 'No change needed'], correct: 1 }
             ] },
             { id: 'punct-58', type: 'punctuation', explanation: 'For a plural noun ending in \'s\' that owns something, put the apostrophe AFTER the \'s\' (sisters\' friends = the friends belonging to multiple sisters). One sister would be \'sister\'s friends\'.', variants: [
                 { sentence: 'My sisters\' friends are coming over tonight.', options: ['My sisters\' friend\'s are coming over tonight.', 'My sister\'s friends are coming over tonight.', 'My sisters friends are coming over tonight.', 'No change needed'], correct: 3 },
@@ -3152,6 +3152,10 @@
             { id: 'punct-61', type: 'punctuation', explanation: 'When a transitional word (however, therefore, moreover) joins two complete sentences, end the first with a period and start the second with a capitalised transitional, followed by a comma.', variants: [
                 { sentence: 'I think therefore I am.', options: ['I think therefore, I am.', 'I think. Therefore, I am.', 'I think, therefore I am.', 'No change needed'], correct: 1 },
                 { sentence: 'She was late however she still passed the test.', options: ['She was late however, she still passed the test.', 'She was late. However, she still passed the test.', 'She was late, however she still passed the test.', 'No change needed'], correct: 1 }
+            ] },
+            { id: 'punct-hyphen-compound', type: 'punctuation', explanation: 'Use a hyphen to join words that act together as a single adjective before a noun (a well-known author, a ten-year-old boy).', variants: [
+                { sentence: 'She is a well known author in our town.', options: ['She is a well-known author in our town.', 'She is a well, known author in our town.', 'She is a well known-author in our town.', 'No change needed'], correct: 0 },
+                { sentence: 'They adopted a four year old puppy from the shelter.', options: ['They adopted a four year-old puppy from the shelter.', 'They adopted a four, year, old puppy from the shelter.', 'They adopted a four-year-old puppy from the shelter.', 'No change needed'], correct: 2 }
             ] },
         ];
 
