@@ -1397,7 +1397,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.40.0';
+        const APP_VERSION = 'v1.41.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -2751,7 +2751,7 @@
                 { sections: ['I will definately come to', 'your party next Saturday', 'and bring a nice present', 'for you.'], correct: 0 }
             ] },
             { id: 'spelling-unknown-4', type: 'spelling', explanation: 'No spelling mistakes!', variants: [
-                { sections: ['No spelling', 'mistakes appear in this', 'sentence at', 'all.'], correct: -1 }
+                { sections: ['The gardener planted', 'rows of vegetables', 'along the', 'wooden fence.'], correct: -1 }
             ,
                 { sections: ['Music lessons are exciting and', 'help students learn instruments', 'like piano guitar and violin', 'every week.'], correct: -1 }
             ] },
@@ -2778,7 +2778,7 @@
             { id: 'spelling-originally', type: 'spelling', misspelled: 'originaly', correction: 'originally', explanation: '"Original" + "-ly" = "originally"', variants: [
                 { sections: ['The painting', 'was originaly', 'created in', 'the 1920s.'], correct: 1 }
             ,
-                { sections: ['The book was written long', 'ago and published in France', 'but was later changed and', 'originaly came from Paris.'], correct: 3 }
+                { sections: ['The house was', 'originaly painted white', 'before the new owners', 'chose blue.'], correct: 1 }
             ] },
             { id: 'spelling-truthful', type: 'spelling', misspelled: 'truthfull', correction: 'truthful', explanation: '"-ful" uses only one "l"', variants: [
                 { sections: ['The witness', 'gave a truthfull', 'account of', 'what happened.'], correct: 1 }
@@ -2826,7 +2826,7 @@
                 { sections: ['The police searched high', 'and low to catch the', 'theif who had stolen from', 'the corner shop.'], correct: 2 }
             ] },
             { id: 'spelling-perseverance', type: 'spelling', misspelled: 'perseverence', correction: 'perseverance', explanation: '"-ance" not "-ence"', variants: [
-                { sections: ['She showed', 'great perseverence in', 'her efforts', 'to improve.'], correct: 1 }
+                { sections: ['The marathon runner\'s', 'perseverence carried her', 'through the', 'final mile.'], correct: 1 }
             ,
                 { sections: ['With perseverence and hard', 'work you can achieve your', 'dreams and reach your goals', 'in life.'], correct: 0 }
             ] },
@@ -2853,7 +2853,7 @@
             { id: 'spelling-questionnaire', type: 'spelling', misspelled: 'questionaire', correction: 'questionnaire', explanation: 'Double "n" and ends in "-aire"', variants: [
                 { sections: ['The questionaire', 'asked about', 'favourite subjects', 'and hobbies.'], correct: 0 }
             ,
-                { sections: ['The teacher gave us a', 'long form to complete with', 'questionaire questions about our', 'favourite subjects and hobbies.'], correct: 2 }
+                { sections: ['The teacher asked us', 'to fill in a questionaire', 'about our favourite', 'subjects.'], correct: 1 }
             ] },
             { id: 'spelling-existence', type: 'spelling', misspelled: 'existance', correction: 'existence', explanation: 'The \'-ence\' vs \'-ance\' rule: these four nouns take \'-ence\' — persist → persistence; exist → existence; confide → confidence; compete → competence. Many similar English nouns take \'-ance\' instead (perform → performance; assist → assistance); the ending follows each Latin root, so the \'-ence\' family is best memorised as a set.', variants: [
                 { sections: ['The existance', 'of aliens', 'remains', 'scientifically unclear.'], correct: 0 }
@@ -5147,6 +5147,17 @@
 
                 const passage = document.createElement('div');
                 passage.className = 'passage';
+                // Phase 3 Level-3 surface differentiation — context-clues (4th type in the L3
+                // programme, after comprehension #51, punctuation #58, spelling #64). Same
+                // precedented .passage compression comprehension applies: withdraw the breathing
+                // room so the child meets the stem at GL-paper density. Background/radius/colour
+                // preserved from the .passage class so the GL format stays recognisable; only the
+                // spacing scaffold is withdrawn. L1 hint + L2 default render byte-stable.
+                if (scaffoldLevel === 3) {
+                    passage.style.padding = '15px 18px';
+                    passage.style.marginBottom = '12px';
+                    passage.style.lineHeight = '1.55';
+                }
                 // Highlight the target word in the passage
                 const parts = question.passage.split(question.targetWord);
                 if (parts.length > 1) {
