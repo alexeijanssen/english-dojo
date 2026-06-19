@@ -1397,7 +1397,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.41.0';
+        const APP_VERSION = 'v1.42.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -3461,7 +3461,7 @@
             ] },
             { id: 'cloze-40', type: 'cloze', explanation: '\'Supermarket\' is a place that gets crowded with shoppers.', variants: [
                 { sentence: 'The _____ was very crowded with shoppers.', options: ['beach', 'supermarket', 'mountain', 'desert'], correct: 1 },
-                { sentence: 'We walked to the _____ to buy milk, bread, and apples.', options: ['beach', 'supermarket', 'mountain', 'desert'], correct: 1 }
+                { sentence: 'We walked to the _____ to buy milk, bread and apples.', options: ['beach', 'supermarket', 'mountain', 'desert'], correct: 1 }
             ] },
             { id: 'cloze-41', type: 'cloze', explanation: '\'Decline\' means to refuse or say no to something.', variants: [
                 { sentence: 'She decided to _____ the job because it was too difficult.', options: ['accept', 'decline', 'complete', 'begin'], correct: 1 },
@@ -3512,7 +3512,7 @@
                 { sentence: 'She _____ across the river to reach the other side.', options: ['drove', 'swam', 'climbed', 'flew'], correct: 1 }
             ] },
             { id: 'cloze-53', type: 'cloze', explanation: '\'Satisfied\' is a good feeling about getting good results.', variants: [
-                { sentence: 'She felt _____ about her exam results.', options: ['angry', 'satisfied', 'bored', 'confused'], correct: 1 },
+                { sentence: 'She felt _____ about her excellent exam results.', options: ['angry', 'satisfied', 'bored', 'confused'], correct: 1 },
                 { sentence: 'The customer was _____ with the excellent service at the restaurant.', options: ['disappointed', 'worried', 'satisfied', 'frightened'], correct: 2 }
             ] },
             { id: 'cloze-54', type: 'cloze', explanation: '\'Plot\' is the story that keeps readers interested.', variants: [
@@ -3538,6 +3538,10 @@
             { id: 'cloze-59', type: 'cloze', explanation: '\'Excited\' means feeling happy and eager about something fun.', variants: [
                 { sentence: 'He was _____ about the school trip.', options: ['sad', 'excited', 'tired', 'worried'], correct: 1 },
                 { sentence: 'The children were _____ to open their birthday presents.', options: ['bored', 'annoyed', 'excited', 'sleepy'], correct: 2 }
+            ] },
+            { id: 'cloze-relative-pronoun', type: 'cloze', explanation: '\'Who\' refers to people, \'which\' refers to things or animals, and \'whose\' shows belonging. Pick the relative pronoun that matches what the gap describes — a person here takes \'who\'.', variants: [
+                { sentence: 'The girl _____ won the race trained every single day.', options: ['which', 'who', 'whose', 'where'], correct: 1 },
+                { sentence: 'The book _____ I borrowed from the library was thrilling.', options: ['who', 'which', 'whose', 'whom'], correct: 1 }
             ] }
         ];
 
