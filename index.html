@@ -1397,7 +1397,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.42.0';
+        const APP_VERSION = 'v1.43.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -3282,7 +3282,7 @@
             ] },
             { id: 'comp-30', type: 'comprehension', explanation: 'The passage shows she refused to accept the prognosis and underwent two years of intense rehabilitation.', variants: [
                 { passage: 'The athlete injured her knee during training. Doctors said she might never compete again. She refused to accept this. For two years, she underwent intense rehabilitation. Against all odds, she returned to competition and won a medal at the Olympics.', question: 'What quality did the athlete demonstrate?', options: ['She was lucky', 'She had exceptional determination and refused to give up', 'She didn\'t listen to medical advice', 'She worked harder than others naturally'], correct: 1 },
-                { passage: 'Marcus lost most of his hearing after a serious illness in childhood. Specialists warned him that certain careers would be closed to him forever. With patient support from his parents and his older sister, he learned to lip-read, mastered sign language, and practised his speech every day after school. Years later, he qualified as a teacher and now leads a classroom of his own — refusing, at every step, to let his hearing loss decide what he could become.', question: 'What does this passage tell us about Marcus?', options: ['He has a hearing disability.', 'His family ran a school for deaf children.', 'He showed determination and would not let his hearing loss limit his life.', 'He gave up on his ambitions after the specialists\' warning.'], correct: 2, explanation: 'Like the injured athlete refusing to give up on her recovery, Marcus refuses to let his hearing loss define what he can become. Both passages show how determination through a real physical setback can take someone past what others said was possible — sometimes from inside the person, sometimes with the people around them helping carry the weight.' }
+                { passage: 'Marcus lost most of his hearing after a serious illness in childhood. Specialists warned him that certain careers would be closed to him forever. With patient support from his parents and his older sister, he learned to lip-read, mastered sign language, and practised his speech every day after school. Years later, he qualified as a teacher and now leads a classroom of his own — refusing, at every step, to let his hearing loss decide what he could become.', question: 'What does this passage tell us about Marcus?', options: ['He was born unable to hear.', 'His family ran a school for deaf children.', 'He showed determination and would not let his hearing loss limit his life.', 'He gave up on his ambitions after the specialists\' warning.'], correct: 2, explanation: 'Like the injured athlete refusing to give up on her recovery, Marcus refuses to let his hearing loss define what he can become. Both passages show how determination through a real physical setback can take someone past what others said was possible — sometimes from inside the person, sometimes with the people around them helping carry the weight.' }
             ] },
             { id: 'comp-31', type: 'comprehension', explanation: 'The passage shows the press enabled knowledge to be reproduced and shared, helping more people learn.', variants: [
                 { passage: 'The invention of the printing press in 1440 changed the world. Before it, books were handwritten and extremely rare. After it, knowledge could be reproduced and shared. More people learned to read. Ideas spread faster. The press democratised information.', question: 'What was the most significant impact of the printing press?', options: ['It made paper cheaper', 'It allowed knowledge to be shared widely and more people to learn', 'It made handwritten books disappear', 'It eliminated the need for libraries'], correct: 1 },
@@ -5211,6 +5211,19 @@
 
                 const sentence = document.createElement('div');
                 sentence.className = 'vocab-sentence';
+                // Build #69 (v1.43.0): Phase 3 Level-3 surface differentiation — homophone
+                // (5th type in the L3 programme, after comprehension #51, punctuation #58,
+                // spelling #64, context-clues #67). Same precedented compression: withdraw the
+                // .vocab-sentence breathing room so the child meets the stem at GL-paper density.
+                // Background, border-left, border-radius, font-size and font-style preserved from
+                // the .vocab-sentence class so the GL format stays recognisable; only the spacing
+                // scaffold is withdrawn. Guard fires ONLY at scaffoldLevel === 3 — L1 hint + L2
+                // default render byte-stable. Mirrors Build #67 (context-clues) precedent.
+                if (scaffoldLevel === 3) {
+                    sentence.style.padding = '12px 15px';
+                    sentence.style.marginBottom = '12px';
+                    sentence.style.lineHeight = '1.55';
+                }
                 sentence.textContent = question.sentence;
                 container.appendChild(sentence);
 
