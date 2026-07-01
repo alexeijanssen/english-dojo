@@ -1397,7 +1397,7 @@
 
     <script>
         // ===== APP VERSION — BUILDERS: BUMP THIS ON EVERY DEPLOY =====
-        const APP_VERSION = 'v1.50.0';
+        const APP_VERSION = 'v1.51.0';
         document.getElementById('globalVersion').textContent = APP_VERSION;
         document.getElementById('appVersion').textContent = APP_VERSION;
         document.getElementById('persistentVersion').textContent = APP_VERSION;
@@ -3181,6 +3181,10 @@
                 { sentence: 'It is a beautiful day today isn\'t it?', options: ['It is a beautiful day today, isn\'t it?', 'It is a beautiful day, today isn\'t it?', 'It is, a beautiful day today isn\'t it?', 'No change needed'], correct: 0 },
                 { sentence: 'You will help me carry these bags won\'t you?', options: ['You will help me, carry these bags won\'t you?', 'You will help me carry these bags, won\'t you?', 'You will help me carry, these bags won\'t you?', 'No change needed'], correct: 1 }
             ] },
+            { id: 'punct-capital-i', type: 'punctuation', explanation: 'The word "I" (meaning yourself) is always written as a capital letter, wherever it appears in a sentence.', variants: [
+                { sentence: 'My brother and i walked to school together every morning.', options: ['My brother and I walked to school together every morning.', 'My brother and i, walked to school together every morning.', 'My brother, and i walked to school together every morning.', 'No change needed'], correct: 0 },
+                { sentence: 'Last summer i visited my cousins who live in Scotland.', options: ['Last summer I visited my cousins who live in Scotland.', 'Last summer, i visited my cousins who live in Scotland.', 'Last summer i, visited my cousins who live in Scotland.', 'No change needed'], correct: 0 }
+            ] },
         ];
 
         const COMPREHENSION_CONCEPTS = [
@@ -3582,6 +3586,10 @@
             { id: 'cloze-cautiously', type: 'cloze', explanation: '\'Cautiously\' means doing something carefully and warily, taking care to avoid danger or mistakes.', variants: [
                 { sentence: 'Unsure whether the ice would hold her weight, she stepped _____ onto the frozen lake.', options: ['recklessly', 'cautiously', 'carelessly', 'boldly'], correct: 1 },
                 { sentence: 'Aware that the strange dog might bite, he _____ reached out to stroke it.', options: ['confidently', 'hastily', 'cautiously', 'eagerly'], correct: 2 }
+            ] },
+            { id: 'cloze-magnificent', type: 'cloze', explanation: '\'Magnificent\' means extremely impressive, grand or beautiful. The context (something that amazes or dazzles) points to this word rather than one meaning ordinary or unimpressive.', variants: [
+                { sentence: 'From the top of the hill, they gazed at the _____ view of the entire valley below.', options: ['magnificent', 'ordinary', 'dull', 'tiny'], correct: 0 },
+                { sentence: 'The palace was truly _____, with golden ceilings and marble floors that gleamed.', options: ['plain', 'magnificent', 'shabby', 'ugly'], correct: 1 }
             ] }
         ];
 
